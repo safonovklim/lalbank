@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  bank_account_id: 1
+  number: MyString
+  is_blocked: false
+  is_hidden: false
+
+two:
+  bank_account_id: 1
+  number: MyString
+  is_blocked: false
+  is_hidden: false
