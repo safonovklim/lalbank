@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161208030909) do
+ActiveRecord::Schema.define(version: 20161208175419) do
 
   create_table "bank_accounts", force: :cascade do |t|
     t.integer  "client_id"
@@ -38,8 +38,26 @@ ActiveRecord::Schema.define(version: 20161208030909) do
     t.string   "middle_name"
     t.date     "birth_at"
     t.integer  "status",      default: 0
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  create_table "employees", force: :cascade do |t|
+    t.string   "email",                           null: false
+    t.string   "crypted_password"
+    t.string   "salt"
+    t.boolean  "is_blocked"
+    t.integer  "role"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "remember_me_token"
+    t.datetime "remember_me_token_expires_at"
+    t.string   "reset_password_token"
+    t.datetime "reset_password_token_expires_at"
+    t.datetime "reset_password_email_sent_at"
+    t.index ["email"], name: "index_employees_on_email", unique: true
+    t.index ["remember_me_token"], name: "index_employees_on_remember_me_token"
+    t.index ["reset_password_token"], name: "index_employees_on_reset_password_token"
   end
 
 end
