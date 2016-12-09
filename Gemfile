@@ -14,7 +14,8 @@ gem 'sqlite3'
 gem 'puma', '~> 3.0'
 gem 'bcrypt', '~> 3.1.9', platforms: :ruby
 # Authorization
-gem 'sorcery'
+gem 'devise'
+gem 'knock'
 gem 'validates_email_format_of'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161208175419) do
+ActiveRecord::Schema.define(version: 20161209011337) do
 
   create_table "bank_accounts", force: :cascade do |t|
     t.integer  "client_id"
@@ -42,22 +42,22 @@ ActiveRecord::Schema.define(version: 20161208175419) do
     t.datetime "updated_at",              null: false
   end
 
+  create_table "employee_tokens", force: :cascade do |t|
+    t.integer  "employee_id"
+    t.datetime "expire_at"
+    t.string   "token"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["token"], name: "index_employee_tokens_on_token", unique: true
+  end
+
   create_table "employees", force: :cascade do |t|
-    t.string   "email",                           null: false
-    t.string   "crypted_password"
-    t.string   "salt"
-    t.boolean  "is_blocked"
-    t.integer  "role"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "remember_me_token"
-    t.datetime "remember_me_token_expires_at"
-    t.string   "reset_password_token"
-    t.datetime "reset_password_token_expires_at"
-    t.datetime "reset_password_email_sent_at"
-    t.index ["email"], name: "index_employees_on_email", unique: true
-    t.index ["remember_me_token"], name: "index_employees_on_remember_me_token"
-    t.index ["reset_password_token"], name: "index_employees_on_reset_password_token"
+    t.string   "username"
+    t.integer  "role",            default: 0
+    t.string   "password_digest"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.index ["username"], name: "index_employees_on_username", unique: true
   end
 
 end
