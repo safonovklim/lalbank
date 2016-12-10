@@ -15,21 +15,21 @@ ActiveRecord::Schema.define(version: 20161209011337) do
   create_table "bank_accounts", force: :cascade do |t|
     t.integer  "client_id"
     t.string   "currency"
-    t.decimal  "amount"
+    t.decimal  "amount",     default: "0.0"
     t.integer  "type"
-    t.boolean  "is_blocked"
-    t.boolean  "is_hidden"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.boolean  "is_blocked", default: false
+    t.boolean  "is_hidden",  default: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
   create_table "cards", force: :cascade do |t|
     t.integer  "bank_account_id"
     t.string   "number"
-    t.boolean  "is_blocked"
-    t.boolean  "is_hidden"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.boolean  "is_blocked",      default: false
+    t.boolean  "is_hidden",       default: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
   end
 
   create_table "clients", force: :cascade do |t|
