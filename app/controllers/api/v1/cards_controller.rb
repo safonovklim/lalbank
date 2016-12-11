@@ -37,11 +37,9 @@ module Api::V1
     end
 
     def index
-      bank_accounts = BankAccount.find_by_client_id(params[:user_id])
-      render json: {
-          client: Client.find(params[:user_id]),
-          bank_accounts: bank_accounts
-      }
+      client = Client.find(params[:user_id])
+      cards = BankAccount.select("cards.id, cards.card_number, bank_accounts.amount, bank_accounts.currency").where('bank_accounts.client_id = ?', params[:user_id]).where('cards.status = 0').joins("INNER JOIN cards ON cards.bank_account_id = bank_accounts.id")
+      render json: cards
     end
 
     private
