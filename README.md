@@ -1,11 +1,11 @@
 # LAL Bank
 
-Virtual bank written in Ruby on Rails
+Framework: **Ruby on Rails**
 
 ## API
 ### For clients
-/api/v1/...
-* [POST] /users/sign_up<br>
+before endpoint add: **/api/v1**
+* [POST] **/users/sign_up**<br>
 Parameters:<br>
 client[last_name] - string<br>
 client[first_name] - string<br>
