@@ -27,7 +27,7 @@ Parameters:<br>
 username - string<br>
 password - string<br>
 
-Authorized requests<br>
+**Authorized requests**<br>
 Send header: Authorization: Token token=**YOUR_TOKEN**
 
 * [GET] **/users**<br>
@@ -50,5 +50,6 @@ No parameters. For all employee.
 
 * [POST] **/users/:id/cards**<br>
 For employee with role _security_staff_.
+If success, will return card_number, expire date and pin code. Send it to client and remove.<br>
 Parameters:<br>
 card[currency] - string (ex. **RUB**)<br>
