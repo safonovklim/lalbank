@@ -5,3 +5,30 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+
+TransactionCategory.create(id: 1, name: "Unknown")
+TransactionCategory.create(id: 2, name: "Not applicable")
+
+TransactionCategory.create(id: 3, name: "Income remittance")
+TransactionCategory.create(id: 4, name: "Outcome remittance")
+TransactionCategory.create(id: 5, name: "Cash withdrawal")
+
+TransactionCategory.create(id: 6, name: "Food")
+TransactionCategory.create(id: 7, name: "Restaurants")
+TransactionCategory.create(id: 8, name: "Transit")
+TransactionCategory.create(id: 9, name: "Pharmacy")
+TransactionCategory.create(id: 10, name: "Internet/Mobile phone")
+TransactionCategory.create(id: 11, name: "Goods for home")
+TransactionCategory.create(id: 12, name: "Clothes")
+TransactionCategory.create(id: 13, name: "Shoes")
+TransactionCategory.create(id: 14, name: "Pet shop")
+TransactionCategory.create(id: 15, name: "Cosmetics")
+TransactionCategory.create(id: 16, name: "Software, music, video")
+TransactionCategory.create(id: 17, name: "Services")
+TransactionCategory.create(id: 18, name: "Bar")
+TransactionCategory.create(id: 19, name: "Education")
+TransactionCategory.create(id: 20, name: "For kids")
+TransactionCategory.create(id: 21, name: "Gifts")
+TransactionCategory.create(id: 22, name: "Cinema, theater, concert")
+TransactionCategory.create(id: 23, name: "Sport")

@@ -1,5 +1,5 @@
 module Api::V1
-  class CardsController < ApiController
+  class CardController < ApiController
     before_action :authenticate_employee, only: [:index]
     before_action only: [:create] {
       authenticate_employee("security_staff")
@@ -38,7 +38,7 @@ module Api::V1
     end
 
     def index
-      client = Client.find(params[:user_id])
+      client = Client.find(params[:user_id]) # find client (will return 404 http code if not found)
       cards = BankAccount.select("cards.id, cards.card_number, bank_accounts.amount, bank_accounts.currency").where('bank_accounts.client_id = ?', params[:user_id]).where('cards.status = 0').joins("INNER JOIN cards ON cards.bank_account_id = bank_accounts.id")
       render json: cards
     end

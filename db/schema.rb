@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161211000824) do
+ActiveRecord::Schema.define(version: 20161211022714) do
 
   create_table "bank_accounts", force: :cascade do |t|
     t.integer  "client_id"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 20161211000824) do
     t.string   "pin_hash"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.index ["card_number"], name: "index_cards_on_card_number", unique: true
   end
 
   create_table "clients", force: :cascade do |t|
@@ -59,6 +60,22 @@ ActiveRecord::Schema.define(version: 20161211000824) do
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
     t.index ["username"], name: "index_employees_on_username", unique: true
+  end
+
+  create_table "transaction_categories", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_transaction_categories_on_name", unique: true
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.integer  "bank_account_id"
+    t.integer  "main_category"
+    t.decimal  "amount"
+    t.integer  "transaction_category_id"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
 end

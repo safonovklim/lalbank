@@ -5,27 +5,27 @@ Rails.application.routes.draw do
     scope module: 'api' do
       namespace :v1 do
         scope '/users' do
-          post '/sign_up' => 'clients#create'
+          post '/sign_up' => 'client#create'
 
-          get '/:user_id/cards' => 'cards#index'
-          post '/:user_id/cards' => 'cards#create'
+          get '/:user_id/cards' => 'card#index'
+          post '/:user_id/cards' => 'card#create'
 
-          get '/:id' => 'clients#show'
-          get '/' => 'clients#index'
-          put '/' => 'clients#update'
-          post '/:id/approve' => 'clients#approve'
-          post '/:id/ban' => 'clients#ban'
-          post '/:id/unban' => 'clients#unban'
+          get '/:id' => 'client#show'
+          get '/' => 'client#index'
+          put '/' => 'client#update'
+          post '/:id/approve' => 'client#approve'
+          post '/:id/ban' => 'client#ban'
+          post '/:id/unban' => 'client#unban'
         end
         scope '/employee' do
           post '/sign_up' => 'employee#create'
           post '/log_in' => 'employee_token#create'
         end
-        scope '/cards' do
-          # issue new card (request)
-          # get all cards
-          # block/unblock card
-        end
+      end
+    end
+    scope module: 'gateway' do
+      namespace :v1 do
+        post '/sexycard' => 'transaction#thru_sexycard' # SexyCard is like Visa, Mastercard, Maestro
       end
     end
   end

@@ -1,5 +1,5 @@
 module Api::V1
-  class ClientsController < ApiController
+  class ClientController < ApiController
     before_action :authenticate_employee, only: [:index, :show, :update]
     before_action only: [:approve, :ban, :unban] {
       authenticate_employee("security_staff")
