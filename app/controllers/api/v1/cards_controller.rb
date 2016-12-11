@@ -1,5 +1,6 @@
 module Api::V1
   class CardsController < ApiController
+    before_action :authenticate_employee, only: [:index]
     before_action only: [:create] {
       authenticate_employee("security_staff")
     }
