@@ -1,25 +1,32 @@
 module Api::V1
   class CardsController < ApiController
+    before_action only: [:create] {
+      authenticate_employee("security_staff")
+    }
+
     def create
-      authenticate_employee "security_staff"
-
-      puts 'employee'
-      logger.info @current_employee
-
       ncp = card_parameters # ncp is new card parameters
-      logger.info ncp
 
       if is_currency_allowed(ncp['currency'])
         @bank_account = BankAccount.new
-        @bank_account.type = "for_card"
+        @bank_account.reason = "for_card"
         @bank_account.client_id = params[:user_id]
-        @bank_account.amount = 0
         @bank_account.currency = ncp['currency']
         @bank_account.save!
 
+        @card = Card.new
+        @card.bank_account_id = @bank_account.id
+        pin_code = @card.generate_card_details
+        @card.save!
+
+
         render json: {
             issued: true,
-            bank_account: @bank_account
+            card: {
+                number: @card.card_number,
+                expire_at: @card.expire_at,
+                pin: pin_code
+            }
         }
       else
         render json: {

@@ -2,12 +2,14 @@
 
 one:
   bank_account_id: 1
-  number: MyString
-  is_blocked: false
-  is_hidden: false
+  card_number: MyString
+  status: 1
+  expire_at: 2016-12-11
+  pin_hash: MyString
 
 two:
   bank_account_id: 1
-  number: MyString
-  is_blocked: false
-  is_hidden: false
+  card_number: MyString
+  status: 1
+  expire_at: 2016-12-11
+  pin_hash: MyString

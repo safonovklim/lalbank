@@ -4,7 +4,7 @@ class CreateBankAccounts < ActiveRecord::Migration[5.0]
       t.integer :client_id
       t.string :currency
       t.decimal :amount, default: 0
-      t.integer :type
+      t.integer :reason
       t.boolean :is_blocked, default: false
       t.boolean :is_hidden, default: false
 

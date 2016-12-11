@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161209011337) do
+ActiveRecord::Schema.define(version: 20161211000824) do
 
   create_table "bank_accounts", force: :cascade do |t|
     t.integer  "client_id"
     t.string   "currency"
     t.decimal  "amount",     default: "0.0"
-    t.integer  "type"
+    t.integer  "reason"
     t.boolean  "is_blocked", default: false
     t.boolean  "is_hidden",  default: false
     t.datetime "created_at",                 null: false
@@ -25,11 +25,12 @@ ActiveRecord::Schema.define(version: 20161209011337) do
 
   create_table "cards", force: :cascade do |t|
     t.integer  "bank_account_id"
-    t.string   "number"
-    t.boolean  "is_blocked",      default: false
-    t.boolean  "is_hidden",       default: false
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.string   "card_number"
+    t.integer  "status"
+    t.date     "expire_at"
+    t.string   "pin_hash"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "clients", force: :cascade do |t|
