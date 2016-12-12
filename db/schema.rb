@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 20161212020119) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "bank_accounts", force: :cascade do |t|
     t.integer  "client_id"
     t.string   "currency"
@@ -31,7 +34,7 @@ ActiveRecord::Schema.define(version: 20161212020119) do
     t.string   "pin_hash"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
-    t.index ["card_number"], name: "index_cards_on_card_number", unique: true
+    t.index ["card_number"], name: "index_cards_on_card_number", unique: true, using: :btree
   end
 
   create_table "clients", force: :cascade do |t|
@@ -50,7 +53,7 @@ ActiveRecord::Schema.define(version: 20161212020119) do
     t.string   "token"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-    t.index ["token"], name: "index_employee_tokens_on_token", unique: true
+    t.index ["token"], name: "index_employee_tokens_on_token", unique: true, using: :btree
   end
 
   create_table "employees", force: :cascade do |t|
@@ -59,14 +62,14 @@ ActiveRecord::Schema.define(version: 20161212020119) do
     t.string   "password_digest"
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
-    t.index ["username"], name: "index_employees_on_username", unique: true
+    t.index ["username"], name: "index_employees_on_username", unique: true, using: :btree
   end
 
   create_table "transaction_categories", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_transaction_categories_on_name", unique: true
+    t.index ["name"], name: "index_transaction_categories_on_name", unique: true, using: :btree
   end
 
   create_table "transactions", force: :cascade do |t|

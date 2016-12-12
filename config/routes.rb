@@ -10,6 +10,8 @@ Rails.application.routes.draw do
           get '/:user_id/cards' => 'card#index'
           post '/:user_id/cards' => 'card#create'
 
+          get '/:user_id/tranactions' => 'card#index'
+
           get '/:id' => 'client#show'
           get '/' => 'client#index'
           put '/' => 'client#update'

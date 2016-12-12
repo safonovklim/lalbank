@@ -4,8 +4,8 @@ Framework: **Ruby on Rails**
 
 ## Installation
 1) `git clone https://github.com/safonovklim/lalbank && cd lalbank`<br>
-2) `rails db:migrate`<br>
-3) `rails db:seed`<br>
+2) Configure PostgreSQL in `config/database.yml`<br>
+3) `rake db:setup`<br>
 4) `rails server`<br>
 
 ## API Objects
@@ -31,7 +31,6 @@ Parameters:<br>
 **amount** - decimal<br>
 **currency** - string (3 chars)<br>
 **category** - integer<br>
-
 Example:<br>
 `{
     "card_number":"3440957228547920",
