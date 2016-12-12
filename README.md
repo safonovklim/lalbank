@@ -3,10 +3,10 @@
 Framework: **Ruby on Rails**
 
 ## Installation
-1) `git pull`
-2) `rails db:migrate`
-3) `rails db:seed`
-4) `rails server`
+1) `git pull`<br>
+2) `rails db:migrate`<br>
+3) `rails db:seed`<br>
+4) `rails server`<br>
 
 ## API Objects
 * **transaction**<br>
