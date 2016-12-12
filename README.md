@@ -9,10 +9,34 @@ Framework: **Ruby on Rails**
 4) `rails server`<br>
 
 ## API Objects
-* **transaction**<br>
+* **Employee**<br>
+Parameters:<br>
+**username** - string<br>
+**password** - string<br>
+**role** - string (enum: `not_activated`, `fired`, `support_agent`, `analyst`, `security_staff`, `founder`)<br>
+
+* **Client**<br>
+Parameters:<br>
+**last_name** - string<br>
+**first_name** - string<br>
+**middle_name** - string<br>
+**birth_at** - string<br>
+**status** - string (enum: `not_approved`, `activated`, `banned`)<br>
+
+Example:<br>
+`{
+    "card_number":"3440957228547920",
+    "expire_at":"2020-12-12",
+    "pin_code":"3641",
+    "amount":-100.42,
+    "currency":"RUB",
+    "category":24
+}`
+
+* **Gateway Transaction**<br>
 Parameters:<br>
 **card_number** - string (16 digits)<br>
-**expire_at** - date (16 digits)<br>
+**expire_at** - date<br>
 **pin_code** - string (4 digits)<br>
 **amount** - decimal<br>
 **currency** - string (3 chars)<br>
@@ -88,7 +112,7 @@ For SexyCard payment systems<br>
 Required header:<br>
 **X-SexyCard-Signature** - string (is SHA1 of JSON input and signature key joined with |)<br>
 Required parameters:<br>
-employee - transaction<br>
+employee - Gateway Transaction<br>
 
 ## Security
 `config/secrets.yml` file contain secret keys for all stages of project (development, test, production).<br>
@@ -97,4 +121,4 @@ Before running in production, please add to environment following keys.<br>
 * **G_SEXYCARD**
 <br>
 
-You can generate in thru `rails secret`.
+You can generate it thru `rails secret`.
