@@ -30,8 +30,8 @@ class Card < ApplicationRecord
     pin
   end
 
-  def get_pin_hash(pin)
-    Digest::SHA1.hexdigest("SaLtHeRe/ChAnGeItLaTeR|#{pin}|#{self.card_number}")
+  def get_pin_hash(pin, card_number = self.card_number)
+    Digest::SHA1.hexdigest("SaLtHeRe/ChAnGeItLaTeR|#{pin}|#{card_number}")
   end
 
   def log

@@ -7,8 +7,6 @@ module Api::V1
 
     protected
       def authenticate_employee(role = "all")
-        logger.info "Called authenticate_employee(#{role})"
-
         if role == "all"
           authenticate_employee_token || render_unauthorized
         else

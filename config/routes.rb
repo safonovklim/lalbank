@@ -23,6 +23,8 @@ Rails.application.routes.draw do
         end
       end
     end
+  end
+  scope '/gateway' do
     scope module: 'gateway' do
       namespace :v1 do
         post '/sexycard' => 'transaction#thru_sexycard' # SexyCard is like Visa, Mastercard, Maestro

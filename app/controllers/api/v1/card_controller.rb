@@ -33,7 +33,7 @@ module Api::V1
         render json: {
             issued: false,
             message: 'This currency not allowed'
-        }
+        }, status: :bad_request
       end
     end
 
