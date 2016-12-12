@@ -86,6 +86,14 @@ before endpoint add: **/gateway/v1**
 * [POST] **/sexycard**<br>
 For SexyCard payment systems<br>
 Required header:<br>
-**X-SexyCard-Signature** - string (is SHA1 of JSON input and key joined with |)<br>
+**X-SexyCard-Signature** - string (is SHA1 of JSON input and signature key joined with |)<br>
 Required parameters:<br>
 employee - transaction<br>
+
+## Security
+`config/secrets.yml` file contain secret keys for all stages of project (development, test, production).<br>
+Before running in production, please add to environment following keys.<br>
+* **SECRET_KEY_BASE**
+* **G_SEXYCARD**
+<br>
+You can generate in thru `rails secret`.
