@@ -4,15 +4,23 @@ Framework: **Ruby on Rails**
 
 ## API Objects
 * **transaction**<br>
+Parameters:<br>
+**card_number** - string (16 digits)<br>
+**expire_at** - date (16 digits)<br>
+**pin_code** - string (4 digits)<br>
+**amount** - decimal<br>
+**currency** - string (3 chars)<br>
+**category** - integer<br>
+
 Example:<br>
-{<br>
-    "card_number":"3440957228547920",<br>
-    "expire_at":"2020-12-12",<br>
-    "pin_code":"3641",<br>
-    "amount":-100.42,<br>
-    "currency":"RUB",<br>
-    "category":24<br>
-}
+`{
+    "card_number":"3440957228547920",
+    "expire_at":"2020-12-12",
+    "pin_code":"3641",
+    "amount":-100.42,
+    "currency":"RUB",
+    "category":24
+}`
 
 ## API Methods
 
