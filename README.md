@@ -2,6 +2,12 @@
 
 Framework: **Ruby on Rails**
 
+## Installation
+1) `git pull`
+2) `rails db:migrate`
+3) `rails db:seed`
+4) `rails server`
+
 ## API Objects
 * **transaction**<br>
 Parameters:<br>
