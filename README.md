@@ -3,7 +3,7 @@
 Framework: **Ruby on Rails**
 
 ## Installation
-1) `git pull`<br>
+1) `git clone https://github.com/safonovklim/lalbank`<br>
 2) `rails db:migrate`<br>
 3) `rails db:seed`<br>
 4) `rails server`<br>
