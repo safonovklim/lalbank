@@ -53,3 +53,13 @@ For employee with role _security_staff_.<br>
 If success, will return card_number, expire date and pin code. Send it to client and remove.<br>
 Parameters:<br>
 card[currency] - string (ex. **RUB**)<br>
+
+### For payments
+before endpoint add: **/gateway/v1**
+
+* [POST] **/sexycard**<br>
+For SexyCard payment systems<br>
+Required header:<br>
+**X-SexyCard-Signature** - string (is SHA1 of JSON input and key joined with |)<br>
+Required parameters:<br>
+employee - transaction<br>
