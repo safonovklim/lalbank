@@ -2,7 +2,19 @@
 
 Framework: **Ruby on Rails**
 
-## API
+## API Objects
+* **transaction**<br>
+Example:<br>
+{<br>
+    "card_number":"3440957228547920",<br>
+    "expire_at":"2020-12-12",<br>
+    "pin_code":"3641",<br>
+    "amount":-100.42,<br>
+    "currency":"RUB",<br>
+    "category":24<br>
+}
+
+## API Methods
 
 ### For clients
 before endpoint add: **/api/v1**
