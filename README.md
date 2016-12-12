@@ -3,7 +3,7 @@
 Framework: **Ruby on Rails**
 
 ## Installation
-1) `git clone https://github.com/safonovklim/lalbank`<br>
+1) `git clone https://github.com/safonovklim/lalbank && cd lalbank`<br>
 2) `rails db:migrate`<br>
 3) `rails db:seed`<br>
 4) `rails server`<br>
@@ -22,16 +22,6 @@ Parameters:<br>
 **middle_name** - string<br>
 **birth_at** - string<br>
 **status** - string (enum: `not_approved`, `activated`, `banned`)<br>
-
-Example:<br>
-`{
-    "card_number":"3440957228547920",
-    "expire_at":"2020-12-12",
-    "pin_code":"3641",
-    "amount":-100.42,
-    "currency":"RUB",
-    "category":24
-}`
 
 * **Gateway Transaction**<br>
 Parameters:<br>
@@ -88,12 +78,15 @@ No parameters
 
 * [POST] **/users/:id/approve**<br>
 No parameters. For employee with role _security_staff_.
+Will change Client `status` from **not_approved** to **activated**
 
 * [POST] **/users/:id/ban**<br>
-No parameters. For employee with role _security_staff_.
+No parameters. For employee with role _security_staff_.<br>
+Will change Client `status` from **activated** to **banned**
 
 * [POST] **/users/:id/unban**<br>
 No parameters. For employee with role _security_staff_.
+Will change Client `status` from **banned** to **activated**
 
 * [GET] **/users/:id/cards**<br>
 No parameters. For all employee.
