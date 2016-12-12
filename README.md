@@ -96,4 +96,5 @@ Before running in production, please add to environment following keys.<br>
 * **SECRET_KEY_BASE**
 * **G_SEXYCARD**
 <br>
+
 You can generate in thru `rails secret`.
