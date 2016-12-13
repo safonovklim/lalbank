@@ -3,14 +3,14 @@
 Framework: **Ruby on Rails**
 
 ## Installation
-* Install back-end (first)
+* Install back-end (first)<br>
 1) `git clone https://github.com/safonovklim/lalbank && cd lalbank`<br>
 2) Configure PostgreSQL in `config/database.yml`<br>
 3) Configure secrets (more info below)
 4) `rake db:setup`<br>
 5) `rails server`<br>
 
-* Install front-end (second)
+* Install front-end (second)<br>
 1) `cd react-view`<br>
 4) `npm install`<br>
 5) `webpack`<br>
