@@ -10,6 +10,9 @@ Rails.application.routes.draw do
         scope '/me' do
           get '/' => 'client#index'
         end
+        scope '/cards' do
+          get '/' => 'card#index'
+        end
       end
     end
     scope module: 'admin_api' do

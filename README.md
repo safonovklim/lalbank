@@ -64,7 +64,7 @@ password - string<br>
 **Authorized requests**<br>
 Send header: Authorization: Token token=**YOUR_TOKEN**
 
-* [POST] **/me**<br>
+* [GET] **/me**<br>
 No parameters
 
 ### For employee
