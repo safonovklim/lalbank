@@ -67,6 +67,9 @@ Send header: Authorization: Token token=**YOUR_TOKEN**
 * [GET] **/me**<br>
 No parameters
 
+* [GET] **/cards**<br>
+No parameters
+
 ### For employee
 before endpoint add: **/api/v1**
 
