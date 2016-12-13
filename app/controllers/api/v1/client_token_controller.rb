@@ -18,11 +18,12 @@ module Api::V1
           token.client_id = client.id
           token.save!
           render json: {
-              :authorized => true,
+              authorized: true,
               token: {
                   value: token.token,
                   expire_at: token.expire_at
-              }
+              },
+              client: client
           }
         end
 

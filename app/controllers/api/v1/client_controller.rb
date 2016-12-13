@@ -3,7 +3,9 @@ module Api::V1
     before_action :authenticate_client, only: [:index]
 
     def index
-      render json: @current_client
+      render json: {
+          client: @current_client
+      }
     end
 
     def create

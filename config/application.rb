@@ -27,5 +27,11 @@ module Lalbank
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
     config.logger = Logger.new(STDOUT)
+    Rails.application.config.middleware.insert_after(
+        ActionDispatch::Static,
+        ActionDispatch::Static,
+        Rails.root.join("react-view/public").to_s,
+        Rails.application.config.static_cache_control
+    )
   end
 end

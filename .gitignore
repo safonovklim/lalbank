@@ -21,3 +21,5 @@
 .byebug_history
 
 /.idea
+/react-view/node_modules
+/react-view/node_modules/*
