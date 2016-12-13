@@ -6,24 +6,27 @@ module Api::V1
       ncp = card_parameters # ncp is new card parameters
 
       if is_currency_allowed(ncp['currency'])
-        @bank_account = BankAccount.new
-        @bank_account.reason = "for_card"
-        @bank_account.client_id = @current_client[:id]
-        @bank_account.currency = ncp['currency']
-        @bank_account.save!
+        bank_account = BankAccount.new
+        bank_account.reason = "for_card"
+        bank_account.client_id = @current_client[:id]
+        bank_account.currency = ncp['currency']
+        bank_account.save!
 
-        @card = Card.new
-        @card.bank_account_id = @bank_account.id
-        pin_code = @card.generate_card_details
-        @card.save!
+        card = Card.new
+        card.bank_account_id = bank_account.id
+        pin_code = card.generate_card_details
+        card.save!
 
 
         render json: {
             issued: true,
             card: {
-                number: @card.card_number,
-                expire_at: @card.expire_at,
-                pin: pin_code
+                id: card.id,
+                card_number: card.card_number,
+                expire_at: card.expire_at,
+                pin: pin_code,
+                amount: bank_account.amount,
+                currency: bank_account.currency
             }
         }
       else
@@ -35,7 +38,7 @@ module Api::V1
     end
 
     def index
-      cards = BankAccount.select("cards.id, cards.card_number, bank_accounts.amount, bank_accounts.currency").where('bank_accounts.client_id = ?', @current_client[:id]).where('cards.status = 0').joins("INNER JOIN cards ON cards.bank_account_id = bank_accounts.id")
+      cards = BankAccount.select("cards.id, cards.card_number, bank_accounts.amount, bank_accounts.currency").where('bank_accounts.client_id = ?', @current_client[:id]).where('cards.status = 0 or cards.status = 1').joins("INNER JOIN cards ON cards.bank_account_id = bank_accounts.id")
       render json: cards
     end
 

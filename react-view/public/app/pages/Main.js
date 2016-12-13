@@ -9,7 +9,8 @@ export default class Main extends React.Component {
     render() {
         return(
             <div>
-                Just page
+                Just page<br/>
+                If you first time here, welcome to <Link to="signup">sign up form</Link>
             </div>
         )
     }

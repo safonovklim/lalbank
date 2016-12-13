@@ -64,27 +64,31 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _Template = __webpack_require__(307);
+	var _Template = __webpack_require__(309);
 	
 	var _Template2 = _interopRequireDefault(_Template);
 	
-	var _Main = __webpack_require__(309);
+	var _Main = __webpack_require__(311);
 	
 	var _Main2 = _interopRequireDefault(_Main);
 	
-	var _About = __webpack_require__(310);
+	var _About = __webpack_require__(312);
 	
 	var _About2 = _interopRequireDefault(_About);
 	
-	var _Login = __webpack_require__(311);
+	var _SignUp = __webpack_require__(313);
+	
+	var _SignUp2 = _interopRequireDefault(_SignUp);
+	
+	var _Login = __webpack_require__(314);
 	
 	var _Login2 = _interopRequireDefault(_Login);
 	
-	var _Profile = __webpack_require__(312);
+	var _Profile = __webpack_require__(315);
 	
 	var _Profile2 = _interopRequireDefault(_Profile);
 	
-	var _routeProtector = __webpack_require__(313);
+	var _routeProtector = __webpack_require__(318);
 	
 	var _routeProtector2 = _interopRequireDefault(_routeProtector);
 	
@@ -119,6 +123,7 @@
 	                { path: '/', component: _Template2.default },
 	                _react2.default.createElement(_reactRouter.IndexRoute, { component: _Main2.default }),
 	                _react2.default.createElement(_reactRouter.Route, { path: 'about', component: _About2.default }),
+	                _react2.default.createElement(_reactRouter.Route, { path: 'signup', component: _SignUp2.default }),
 	                _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _Login2.default }),
 	                _react2.default.createElement(_reactRouter.Route, { path: 'profile', component: (0, _routeProtector2.default)(_Profile2.default, _routeProtector.ONLY_AUTHENTICATED) })
 	            )
@@ -30041,6 +30046,10 @@
 	
 	var _client = __webpack_require__(278);
 	
+	var _client_cards = __webpack_require__(307);
+	
+	var _client_signup = __webpack_require__(308);
+	
 	var _reactCookie = __webpack_require__(305);
 	
 	var _reactCookie2 = _interopRequireDefault(_reactCookie);
@@ -30048,9 +30057,22 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var initialState = {
+	    errors: {
+	        auth: null,
+	        cards: null
+	    },
 	    isAuthenticated: false,
-	    error: null,
-	    user: null
+	    profile: null,
+	    data: {
+	        cards: [],
+	        issued_card: null
+	    },
+	
+	    newbie: {
+	        created: false,
+	        errors: null, // fields
+	        error: null // message
+	    }
 	};
 	
 	function client() {
@@ -30060,11 +30082,7 @@
 	    switch (action.type) {
 	        case _client.AUTHENTICATE_START:
 	            {
-	                return Object.assign({}, state, {
-	                    isAuthenticated: false,
-	                    error: null,
-	                    user: null
-	                });
+	                return Object.assign({}, state, initialState);
 	            }
 	        case _client.AUTHENTICATE_OK:
 	            {
@@ -30074,34 +30092,117 @@
 	                    });
 	                }
 	                return Object.assign({}, state, {
+	                    errors: initialState.errors,
 	                    isAuthenticated: true,
-	                    user: action.data.client,
-	                    error: null
+	                    profile: action.data.client,
+	                    data: initialState.data
 	                });
 	            }
 	        case _client.AUTHENTICATE_FAILED:
 	            {
-	                if (action.data.message) {
-	                    return Object.assign({}, state, {
-	                        isAuthenticated: false,
-	                        user: null,
-	                        error: action.data.message
-	                    });
-	                } else {
-	                    return Object.assign({}, state, {
-	                        isAuthenticated: false,
-	                        user: null,
-	                        error: 'Internal script error'
-	                    });
-	                }
+	                console.log(action);
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        auth: action.data['message'] ? action.data.message : 'Internal script error'
+	                    }),
+	                    isAuthenticated: false,
+	                    profile: initialState.profile,
+	                    data: initialState.data
+	                });
 	            }
 	        case _client.ACCESS_DENIED:
+	            {
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        auth: action.data['message'] ? action.data.message : 'Internal script error'
+	                    }),
+	                    isAuthenticated: false,
+	                    profile: initialState.profile,
+	                    data: initialState.data
+	                });
+	            }
 	        case _client.LOG_OUT:
 	            {
 	                return Object.assign({}, state, {
+	                    errors: initialState.errors,
 	                    isAuthenticated: false,
-	                    error: action.data.message,
-	                    user: null
+	                    profile: initialState.profile,
+	                    data: initialState.data
+	                });
+	            }
+	        case _client_cards.GET_MY_CARDS_OK:
+	            {
+	                return Object.assign({}, state, {
+	                    data: Object.assign({}, state.data, {
+	                        cards: action.data
+	                    }),
+	                    errors: Object.assign({}, state.errors, {
+	                        cards: initialState.errors.cards
+	                    })
+	                });
+	            }
+	        case _client_cards.GET_MY_CARDS_FAILED:
+	            {
+	                console.log(action);
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        cards: action.data['message'] ? action.data['message'] : 'Internal script error'
+	                    }),
+	                    data: Object.assign({}, state.data, {
+	                        cards: initialState.data.cards
+	                    })
+	                });
+	            }
+	        case _client_signup.SIGN_UP_OK:
+	            {
+	                return Object.assign({}, state, {
+	                    newbie: {
+	                        created: action.data.created,
+	                        errors: initialState.newbie.errors,
+	                        error: initialState.newbie.error
+	                    }
+	                });
+	            }
+	        case _client_signup.SIGN_UP_FAILED:
+	            {
+	                console.log(action);
+	                var response = action.data.handle.response.data;
+	                return Object.assign({}, state, {
+	                    newbie: {
+	                        created: response.created,
+	                        errors: response['errors'] ? response['errors'] : initialState.newbie.errors,
+	                        error: response['error'] ? response['error'] : 'Validation error'
+	                    }
+	                });
+	            }
+	        case _client_cards.ISSUE_CARD_OK:
+	            {
+	                var new_card = action.data.card;
+	                var new_state = Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        cards: initialState.errors.cards
+	                    })
+	                });
+	                console.log(new_card, new_state);
+	                new_state.data.issued_card = new_card;
+	                new_state.data.cards.push({
+	                    amount: new_card.amount,
+	                    card_number: new_card.card_number,
+	                    currency: new_card.currency,
+	                    id: new_card.id
+	                });
+	                return new_state;
+	            }
+	        case _client_cards.ISSUE_CARD_FAILED:
+	            {
+	                console.log(action);
+	                return Object.assign({}, state, {
+	                    data: Object.assign({}, state.data, {
+	                        issued_card: null
+	                    }),
+	                    errors: Object.assign({}, state.errors, {
+	                        cards: action.data['message'] ? action.data['message'] : 'Internal error'
+	                    })
 	                });
 	            }
 	        default:
@@ -30246,8 +30347,7 @@
 	    var headers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	
 	    var client_token = _reactCookie2.default.load('client_token');
-	    if (client_token.length > 0) {
-	        console.log('auth token for client set');
+	    if (client_token && client_token['length'] > 0) {
 	        headers['Authorization'] = 'Token token=' + client_token;
 	    }
 	    return _axios2.default.create(Object.assign({}, {
@@ -32055,6 +32155,122 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.ISSUE_CARD_FAILED = exports.ISSUE_CARD_OK = exports.GET_MY_CARDS_FAILED = exports.GET_MY_CARDS_OK = undefined;
+	exports.get_cards = get_cards;
+	exports.issue_card = issue_card;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var GET_MY_CARDS_OK = exports.GET_MY_CARDS_OK = 'GET_MY_CARDS_OK';
+	var GET_MY_CARDS_FAILED = exports.GET_MY_CARDS_FAILED = 'GET_MY_CARDS_FAILED';
+	
+	var ISSUE_CARD_OK = exports.ISSUE_CARD_OK = 'ISSUE_CARD_OK';
+	var ISSUE_CARD_FAILED = exports.ISSUE_CARD_FAILED = 'ISSUE_CARD_FAILED';
+	
+	function get_cards() {
+	    return function (dispatch) {
+	        my_api.get("api/v1/cards").then(function (response) {
+	            dispatch({
+	                type: GET_MY_CARDS_OK,
+	                data: response.data
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: GET_MY_CARDS_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+	function issue_card(currency) {
+	    return function (dispatch) {
+	        my_api.post("api/v1/cards", {
+	            card: {
+	                currency: currency
+	            }
+	        }).then(function (response) {
+	            dispatch({
+	                type: ISSUE_CARD_OK,
+	                data: response.data
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: ISSUE_CARD_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+
+/***/ },
+/* 308 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.SIGN_UP_FAILED = exports.SIGN_UP_OK = undefined;
+	exports.sign_up = sign_up;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var SIGN_UP_OK = exports.SIGN_UP_OK = 'SIGN_UP_OK';
+	var SIGN_UP_FAILED = exports.SIGN_UP_FAILED = 'SIGN_UP_FAILED';
+	
+	function sign_up(client_data) {
+	
+	    return function (dispatch) {
+	
+	        my_api.post("api/v1/sign_up", client_data).then(function (response) {
+	            my_api = (0, _api2.default)();
+	            dispatch({
+	                type: SIGN_UP_OK,
+	                data: response.data
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: SIGN_UP_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+
+/***/ },
+/* 309 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	exports.default = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -32063,7 +32279,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Header = __webpack_require__(308);
+	var _Header = __webpack_require__(310);
 	
 	var _Header2 = _interopRequireDefault(_Header);
 	
@@ -32102,7 +32318,7 @@
 	exports.default = Template;
 
 /***/ },
-/* 308 */
+/* 310 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32181,9 +32397,9 @@
 	                            _react2.default.createElement(
 	                                _reactRouter.Link,
 	                                { to: 'profile', className: 'navbar-link' },
-	                                auth.user['last_name'],
+	                                auth.profile['last_name'],
 	                                ' ',
-	                                auth.user['first_name']
+	                                auth.profile['first_name']
 	                            ),
 	                            ' '
 	                        ),
@@ -32230,7 +32446,7 @@
 	exports.default = Header;
 
 /***/ },
-/* 309 */
+/* 311 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32277,7 +32493,14 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                'Just page'
+	                'Just page',
+	                _react2.default.createElement('br', null),
+	                'If you first time here, welcome to ',
+	                _react2.default.createElement(
+	                    _reactRouter.Link,
+	                    { to: 'signup' },
+	                    'sign up form'
+	                )
 	            );
 	        }
 	    }]);
@@ -32288,7 +32511,7 @@
 	exports.default = Main;
 
 /***/ },
-/* 310 */
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32341,7 +32564,173 @@
 	exports.default = About;
 
 /***/ },
-/* 311 */
+/* 313 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _client_signup = __webpack_require__(308);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var SignUp = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        client: store.reducer.client
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(SignUp, _React$Component);
+	
+	    function SignUp(props) {
+	        _classCallCheck(this, SignUp);
+	
+	        var _this = _possibleConstructorReturn(this, (SignUp.__proto__ || Object.getPrototypeOf(SignUp)).call(this, props));
+	
+	        _this.state = {
+	            client: {
+	                last_name: '',
+	                first_name: '',
+	                middle_name: '',
+	                username: '',
+	                password: '',
+	                password_confirmation: ''
+	            },
+	            input_validation_errors: {}
+	        };
+	
+	        _this.onChange = _this.onChange.bind(_this);
+	        _this.onSubmit = _this.onSubmit.bind(_this);
+	        _this.renderInput = _this.renderInput.bind(_this);
+	        return _this;
+	    }
+	
+	    _createClass(SignUp, [{
+	        key: 'onChange',
+	        value: function onChange(e) {
+	            console.log(e.target.name + ' == ' + e.target.value);
+	            var new_state = Object.assign({}, this.state);
+	            new_state.client[e.target.name] = e.target.value;
+	            this.setState(new_state);
+	            console.log(this.state);
+	        }
+	    }, {
+	        key: 'onSubmit',
+	        value: function onSubmit(e) {
+	            e.preventDefault();
+	            // console.info('Login: ' + this.state.login);
+	            // console.info('Password: ' + this.state.password);
+	            this.props.dispatch((0, _client_signup.sign_up)({ client: this.state.client }));
+	        }
+	    }, {
+	        key: 'renderInput',
+	        value: function renderInput(name) {
+	            var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
+	            var placeholder = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
+	            var type = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "text";
+	            var required = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
+	
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'form-group' },
+	                _react2.default.createElement('input', { className: 'form-control', onChange: this.onChange, type: type, name: name, defaultValue: value, placeholder: placeholder, required: required }),
+	                this.state.input_validation_errors && this.state.input_validation_errors[name] ? _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    this.state.input_validation_errors[name].join(',')
+	                ) : _react2.default.createElement('span', null)
+	            );
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            // console.log(this);
+	            if (this.props.client.isAuthenticated) {
+	                this.props.router.push('profile');
+	            }
+	            var alert = _react2.default.createElement('div', null);
+	            if (this.props.client.newbie['error']) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    this.props.client.newbie['error']
+	                );
+	            }
+	            if (this.props.client.newbie.created === true) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-success' },
+	                    'Successful registered. Please wait for approving by our security staff.'
+	                );
+	            }
+	            this.state.input_validation_errors = this.props.client.newbie.errors;
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'col-sm-12 col-md-6 col-md-offset-3' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            { className: 'panel-title' },
+	                            'Join us'
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        _react2.default.createElement(
+	                            'form',
+	                            { onSubmit: this.onSubmit },
+	                            alert,
+	                            this.renderInput("last_name", '', 'Last name'),
+	                            this.renderInput("first_name", '', 'First name'),
+	                            this.renderInput("middle_name", '', 'Middle name', 'text', false),
+	                            this.renderInput("birth_at", '', 'Birth date', 'date'),
+	                            _react2.default.createElement('hr', null),
+	                            this.renderInput("username", '', 'Login'),
+	                            this.renderInput("password", '', 'Password', 'password'),
+	                            this.renderInput("password_confirmation", '', 'Password confirmation', 'password'),
+	                            _react2.default.createElement(
+	                                'button',
+	                                { type: 'submit', className: 'btn btn-primary' },
+	                                'Sign up'
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return SignUp;
+	}(_react2.default.Component)) || _class);
+	exports.default = SignUp;
+
+/***/ },
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32387,8 +32776,7 @@
 	
 	        _this.state = {
 	            login: '',
-	            password: '',
-	            isLoading: false
+	            password: ''
 	        };
 	
 	        _this.onChange = _this.onChange.bind(_this);
@@ -32418,11 +32806,11 @@
 	                this.props.router.push('profile');
 	            }
 	            var alert = _react2.default.createElement('div', { className: '' });
-	            if (this.props.client.error) {
+	            if (this.props.client.errors['auth']) {
 	                alert = _react2.default.createElement(
 	                    'div',
 	                    { className: 'alert alert-danger' },
-	                    this.props.client.error
+	                    this.props.client.errors['auth']
 	                );
 	            }
 	            return _react2.default.createElement(
@@ -32445,7 +32833,7 @@
 	                    _react2.default.createElement(
 	                        'button',
 	                        { type: 'submit', className: 'btn btn-primary' },
-	                        'Sign in'
+	                        'Log in'
 	                    )
 	                )
 	            );
@@ -32457,7 +32845,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 312 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32476,6 +32864,14 @@
 	var _react2 = _interopRequireDefault(_react);
 	
 	var _reactRedux = __webpack_require__(233);
+	
+	var _MainInfo = __webpack_require__(316);
+	
+	var _MainInfo2 = _interopRequireDefault(_MainInfo);
+	
+	var _Cards = __webpack_require__(317);
+	
+	var _Cards2 = _interopRequireDefault(_Cards);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -32501,28 +32897,24 @@
 	    _createClass(Profile, [{
 	        key: 'render',
 	        value: function render() {
-	            var user = this.props.client;
-	            if (user.isAuthenticated === false) {
+	            var client = this.props.client;
+	            if (client.isAuthenticated === false) {
 	                return _react2.default.createElement('div', null);
 	            }
 	
-	            var user_info = user['user'];
-	
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'col-sm-12 col-md-6' },
-	                'ID: ',
-	                user_info['id'],
-	                _react2.default.createElement('br', null),
-	                'Login: ',
-	                user_info['username'],
-	                _react2.default.createElement('br', null),
-	                'Full name: ',
-	                user_info['last_name'] + ' ' + user_info['first_name'] + ' ' + user_info['middle_name'],
-	                _react2.default.createElement('br', null),
-	                'Date of birth: ',
-	                user_info['birth_at'],
-	                _react2.default.createElement('br', null)
+	                { className: 'row' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-sm-12 col-md-6' },
+	                    _react2.default.createElement(_MainInfo2.default, { client: client })
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-sm-12 col-md-6' },
+	                    _react2.default.createElement(_Cards2.default, { client: client })
+	                )
 	            );
 	        }
 	    }]);
@@ -32532,7 +32924,283 @@
 	exports.default = Profile;
 
 /***/ },
-/* 313 */
+/* 316 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var MainInfo = function (_React$Component) {
+	    _inherits(MainInfo, _React$Component);
+	
+	    function MainInfo(props) {
+	        _classCallCheck(this, MainInfo);
+	
+	        return _possibleConstructorReturn(this, (MainInfo.__proto__ || Object.getPrototypeOf(MainInfo)).call(this, props));
+	    }
+	
+	    _createClass(MainInfo, [{
+	        key: 'render',
+	        value: function render() {
+	            var user = this.props.client;
+	            var user_info = user['profile'];
+	
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'panel panel-default' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel-heading' },
+	                    _react2.default.createElement(
+	                        'h3',
+	                        { className: 'panel-title' },
+	                        'Information'
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'ul',
+	                    { className: 'list-group' },
+	                    _react2.default.createElement(
+	                        'li',
+	                        { className: 'list-group-item' },
+	                        user_info['last_name'] + ' ' + user_info['first_name'] + ' ' + user_info['middle_name']
+	                    ),
+	                    _react2.default.createElement(
+	                        'li',
+	                        { className: 'list-group-item' },
+	                        'Birth date ',
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            user_info['birth_at']
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'li',
+	                        { className: 'list-group-item' },
+	                        'Login ',
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            user_info['username']
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return MainInfo;
+	}(_react2.default.Component);
+	
+	exports.default = MainInfo;
+
+/***/ },
+/* 317 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _client_cards = __webpack_require__(307);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// this.props.dispatch(authenticate_user(this.state.login, this.state.password))
+	var Cards = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        data: store.reducer.client.data,
+	        errors: store.reducer.client.errors
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(Cards, _React$Component);
+	
+	    function Cards(props) {
+	        _classCallCheck(this, Cards);
+	
+	        var _this = _possibleConstructorReturn(this, (Cards.__proto__ || Object.getPrototypeOf(Cards)).call(this, props));
+	
+	        _this.props.dispatch((0, _client_cards.get_cards)());
+	        _this.issueCard = _this.issueCard.bind(_this);
+	        return _this;
+	    }
+	
+	    _createClass(Cards, [{
+	        key: 'issueCard',
+	        value: function issueCard(currency) {
+	            this.props.dispatch((0, _client_cards.issue_card)(currency));
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+	
+	            var card_error = this.props.errors.cards;
+	            var client_data = this.props.data;
+	            console.log(client_data);
+	
+	            var alert = _react2.default.createElement('div', null);
+	            if (client_data['issued_card']) {
+	                var nc = client_data.issued_card; // NEW CARD
+	                var ed = new Date(nc.expire_at); // EXPIRE DATE
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-success' },
+	                    'A new card issued. Please remember or save card details in safe place.',
+	                    _react2.default.createElement('br', null),
+	                    'Card number: ',
+	                    _react2.default.createElement(
+	                        'b',
+	                        null,
+	                        nc.card_number
+	                    ),
+	                    _react2.default.createElement('br', null),
+	                    'Expire at (MM/DD/YYYY): ',
+	                    _react2.default.createElement(
+	                        'b',
+	                        null,
+	                        ed.getUTCMonth() + 1 + '/' + ed.getUTCDate() + '/' + ed.getUTCFullYear()
+	                    ),
+	                    _react2.default.createElement('br', null),
+	                    'Pin code: ',
+	                    _react2.default.createElement(
+	                        'b',
+	                        null,
+	                        nc.pin
+	                    ),
+	                    _react2.default.createElement('br', null)
+	                );
+	            } else if (card_error) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    card_error
+	                );
+	            }
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                alert,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            { className: 'panel-title' },
+	                            'Your cards'
+	                        )
+	                    ),
+	                    client_data['error'] ? _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        'An error occurred: ',
+	                        client_data['error'],
+	                        ','
+	                    ) : client_data['cards'].length > 0 ? _react2.default.createElement(
+	                        'ul',
+	                        { className: 'list-group' },
+	                        client_data['cards'].map(function (card) {
+	                            return _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item', key: card.id },
+	                                _react2.default.createElement(
+	                                    'b',
+	                                    null,
+	                                    card.amount,
+	                                    ' ',
+	                                    card.currency
+	                                ),
+	                                ' - ',
+	                                card.card_number
+	                            );
+	                        })
+	                    ) : _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        'No cards issued.'
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-footer' },
+	                        'Issue card:',
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'btn-group', role: 'group' },
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-primary', onClick: function onClick() {
+	                                        return _this2.issueCard('RUB');
+	                                    } },
+	                                'RUB'
+	                            ),
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-primary', onClick: function onClick() {
+	                                        return _this2.issueCard('USD');
+	                                    } },
+	                                'USD'
+	                            ),
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-primary', onClick: function onClick() {
+	                                        return _this2.issueCard('EUR');
+	                                    } },
+	                                'EUR'
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Cards;
+	}(_react2.default.Component)) || _class);
+	exports.default = Cards;
+
+/***/ },
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

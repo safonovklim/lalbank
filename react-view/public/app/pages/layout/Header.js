@@ -32,7 +32,7 @@ export default class Header extends React.Component {
             header_auth = (
                 <div className="navbar-right">
                     <p className="navbar-text">
-                       <b><Link to="profile" className="navbar-link">{auth.user['last_name']} {auth.user['first_name']}</Link> </b> | <Link className="navbar-link" onClick={this.onLogoutClick}>Log out</Link>
+                       <b><Link to="profile" className="navbar-link">{auth.profile['last_name']} {auth.profile['first_name']}</Link> </b> | <Link className="navbar-link" onClick={this.onLogoutClick}>Log out</Link>
                     </p>
                 </div>
             )

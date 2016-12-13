@@ -4,7 +4,7 @@ class Card < ApplicationRecord
   # before_create :generate_card_details
   # before_validation :log
 
-  enum status: [:active, :blocked]
+  enum status: [:active, :blocked, :blocked_hidden]
 
   belongs_to :bank_account
   validates :card_number, presence: true, uniqueness: true, length: { is: 16 }

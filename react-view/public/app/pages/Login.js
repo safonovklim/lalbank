@@ -14,8 +14,7 @@ export default class Login extends React.Component {
 
         this.state = {
             login: '',
-            password: '',
-            isLoading: false
+            password: ''
         };
 
         this.onChange = this.onChange.bind(this);
@@ -37,8 +36,8 @@ export default class Login extends React.Component {
             this.props.router.push('profile');
         }
         let alert = <div className=""></div>;
-        if (this.props.client.error) {
-            alert = <div className="alert alert-danger">{this.props.client.error}</div>
+        if (this.props.client.errors['auth']) {
+            alert = <div className="alert alert-danger">{this.props.client.errors['auth']}</div>
         }
         return(
             <div className="col-sm-12 col-md-6 col-md-offset-3">
@@ -50,7 +49,7 @@ export default class Login extends React.Component {
                     <div className="form-group">
                         <input type="password" className="form-control" name="password" onChange={this.onChange} placeholder="Password"/>
                     </div>
-                    <button type="submit" className="btn btn-primary">Sign in</button>
+                    <button type="submit" className="btn btn-primary">Log in</button>
                 </form>
             </div>
         )

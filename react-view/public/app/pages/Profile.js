@@ -1,5 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
+import MainInfo from './for_profile/MainInfo'
+import Cards from './for_profile/Cards'
 
 @connect((store) => {
     return {
@@ -12,22 +14,19 @@ export default class Profile extends React.Component {
         super(props);
     }
     render() {
-        const user = this.props.client;
-        if (user.isAuthenticated === false) {
+        const client = this.props.client;
+        if (client.isAuthenticated === false) {
             return (<div></div>);
         }
 
-
-
-        const user_info = user['user'];
-
         return(
-            <div className="col-sm-12 col-md-6">
-                ID: {user_info['id']}<br/>
-                Login: {user_info['username']}<br/>
-                Full name: {user_info['last_name'] + ' ' + user_info['first_name'] + ' ' + user_info['middle_name']}<br/>
-                Date of birth: {user_info['birth_at']}<br/>
-
+            <div className="row">
+                <div className="col-sm-12 col-md-6">
+                    <MainInfo client={client}/>
+                </div>
+                <div className="col-sm-12 col-md-6">
+                    <Cards client={client}/>
+                </div>
             </div>
         )
     }

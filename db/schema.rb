@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(version: 20161212230001) do
     t.string   "currency"
     t.decimal  "amount",     default: "0.0"
     t.integer  "reason"
+    t.integer "transactions_success", default: 0
+    t.integer "transactions_failed", default: 0
     t.boolean  "is_blocked", default: false
     t.boolean  "is_hidden",  default: false
     t.datetime "created_at",                 null: false

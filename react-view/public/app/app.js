@@ -26,6 +26,7 @@ import VTemplate from './pages/layout/Template'
 import VMain from './pages/Main'
 import VAbout from './pages/About'
 
+import VSignUp from './pages/SignUp'
 import VLogin from './pages/Login'
 import VProfile from './pages/Profile'
 
@@ -42,6 +43,8 @@ store.dispatch(restore_session(function () {
                 <Route path="/" component={VTemplate}>
                     <IndexRoute component={VMain}></IndexRoute>
                     <Route path="about" component={VAbout}></Route>
+
+                    <Route path="signup" component={VSignUp}></Route>
 
                     <Route path="login" component={VLogin}></Route>
                     <Route path="profile" component={routeProtector(VProfile, ONLY_AUTHENTICATED)}></Route>
