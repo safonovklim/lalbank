@@ -1,4 +1,4 @@
-module AdminApi::V1
+module Api::V1
   class ClientTokenController < ApiController
     def create
       client = Client.find_by_username(params[:username])
