@@ -1,4 +1,4 @@
-module Api::V1
+module AdminApi::V1
   class EmployeeTokenController < ApiController
     def create
       @employee = Employee.find_by_username(params[:username])

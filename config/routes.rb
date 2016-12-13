@@ -4,13 +4,23 @@ Rails.application.routes.draw do
   scope '/api' do
     scope module: 'api' do
       namespace :v1 do
-        scope '/users' do
+        scope '/clients' do
           post '/sign_up' => 'client#create'
+          post '/log_in' => 'client_token#create'
 
+          scope '/me' do
+            get '/' => 'client#index'
+          end
+        end
+      end
+    end
+    scope module: 'admin_api' do
+      namespace :v1 do
+        scope '/clients' do
           get '/:user_id/cards' => 'card#index'
           post '/:user_id/cards' => 'card#create'
 
-          get '/:user_id/tranactions' => 'card#index'
+          # get '/:user_id/transactions' => 'card#index'
 
           get '/:id' => 'client#show'
           get '/' => 'client#index'

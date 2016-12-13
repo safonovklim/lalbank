@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161212020119) do
+ActiveRecord::Schema.define(version: 20161212230001) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,14 +37,25 @@ ActiveRecord::Schema.define(version: 20161212020119) do
     t.index ["card_number"], name: "index_cards_on_card_number", unique: true, using: :btree
   end
 
+  create_table "client_tokens", force: :cascade do |t|
+    t.integer  "client_id"
+    t.datetime "expire_at"
+    t.string   "token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["token"], name: "index_client_tokens_on_token", unique: true, using: :btree
+  end
+
   create_table "clients", force: :cascade do |t|
+    t.string   "username"
+    t.string   "password_digest"
     t.string   "last_name"
     t.string   "first_name"
     t.string   "middle_name"
     t.date     "birth_at"
-    t.integer  "status",      default: 0
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.integer  "status",          default: 0
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   create_table "employee_tokens", force: :cascade do |t|

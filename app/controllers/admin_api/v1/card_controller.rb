@@ -1,4 +1,4 @@
-module Api::V1
+module AdminApi::V1
   class CardController < ApiController
     before_action :authenticate_employee, only: [:index]
     before_action only: [:create] {

@@ -1,4 +1,4 @@
-module Api::V1
+module AdminApi::V1
   class EmployeeController < ApiController
     def create
       @employee = Employee.new(employee_params)

@@ -5,8 +5,9 @@ Framework: **Ruby on Rails**
 ## Installation
 1) `git clone https://github.com/safonovklim/lalbank && cd lalbank`<br>
 2) Configure PostgreSQL in `config/database.yml`<br>
-3) `rake db:setup`<br>
-4) `rails server`<br>
+3) Configure secrets (more info below)
+4) `rake db:setup`<br>
+5) `rails server`<br>
 
 ## API Objects
 * **Employee**<br>
@@ -45,7 +46,7 @@ Example:<br>
 
 ### For clients
 before endpoint add: **/api/v1**
-* [POST] **/users/sign_up**<br>
+* [POST] **/clients/sign_up**<br>
 Parameters:<br>
 client[last_name] - string<br>
 client[first_name] - string<br>
@@ -69,28 +70,28 @@ password - string<br>
 **Authorized requests**<br>
 Send header: Authorization: Token token=**YOUR_TOKEN**
 
-* [GET] **/users**<br>
+* [GET] **/clients**<br>
 No parameters
 
-* [GET] **/users/:id**<br>
+* [GET] **/clients/:id**<br>
 No parameters
 
-* [POST] **/users/:id/approve**<br>
+* [POST] **/clients/:id/approve**<br>
 No parameters. For employee with role _security_staff_.
 Will change Client `status` from **not_approved** to **activated**
 
-* [POST] **/users/:id/ban**<br>
+* [POST] **/clients/:id/ban**<br>
 No parameters. For employee with role _security_staff_.<br>
 Will change Client `status` from **activated** to **banned**
 
-* [POST] **/users/:id/unban**<br>
+* [POST] **/clients/:id/unban**<br>
 No parameters. For employee with role _security_staff_.
 Will change Client `status` from **banned** to **activated**
 
-* [GET] **/users/:id/cards**<br>
+* [GET] **/clients/:id/cards**<br>
 No parameters. For all employee.
 
-* [POST] **/users/:id/cards**<br>
+* [POST] **/clients/:id/cards**<br>
 For employee with role _security_staff_.<br>
 If success, will return card_number, expire date and pin code. Send it to client and remove.<br>
 Parameters:<br>
@@ -104,7 +105,7 @@ For SexyCard payment systems<br>
 Required header:<br>
 **X-SexyCard-Signature** - string (is SHA1 of JSON input and signature key joined with |)<br>
 Required parameters:<br>
-employee - Gateway Transaction<br>
+transaction - Gateway Transaction<br>
 
 ## Security
 `config/secrets.yml` file contain secret keys for all stages of project (development, test, production).<br>

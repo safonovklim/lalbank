@@ -6,27 +6,16 @@ module Api::V1
     # before_action: authenticate_employee
 
     protected
-      def authenticate_employee(role = "all")
-        if role == "all"
-          authenticate_employee_token || render_unauthorized
-        else
-          employee = authenticate_employee_token
-
-          if !(employee.blank?) && employee['role'] == role
-            employee
-          else
-            render_unauthorized
-          end
-        end
+      def authenticate_client
+        authenticate_client_token || render_unauthorized
       end
-
-      def authenticate_employee_token
+      def authenticate_client_token
         authenticate_with_http_token do |token, options|
-          employee_token = EmployeeToken.find_by_token(token)
-          if !employee_token.blank? && employee_token.expire_at > Time.now
-            employee = employee_token.employee
-            if !(employee['role'] == "not_activated" or employee['role'] == "fired")
-              @current_employee = employee
+          c_token = ClientToken.find_by_token(token)
+          if !c_token.blank? && c_token.expire_at > Time.now
+            client = c_token.client
+            if !(client['status'] == "not_approved" or client['role'] == "banned")
+              @current_client = client
             end
           end
 
