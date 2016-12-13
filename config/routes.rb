@@ -12,6 +12,7 @@ Rails.application.routes.draw do
         end
         scope '/cards' do
           get '/' => 'card#index'
+          post '/' => 'card#create'
         end
       end
     end
@@ -21,7 +22,6 @@ Rails.application.routes.draw do
           get '/:user_id/cards' => 'card#index'
           post '/:user_id/cards' => 'card#create'
 
-          # get '/:user_id/transactions' => 'card#index'
 
           get '/:id' => 'client#show'
           get '/' => 'client#index'

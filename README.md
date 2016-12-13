@@ -70,6 +70,11 @@ No parameters
 * [GET] **/cards**<br>
 No parameters
 
+* [POST] **/cards**<br>
+If success, will return card_number, expire date and pin code. Save it.<br>
+Parameters:<br>
+card[currency] - string (ex. **RUB**)<br>
+
 ### For employee
 before endpoint add: **/api/v1**
 
