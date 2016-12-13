@@ -46,12 +46,26 @@ Example:<br>
 
 ### For clients
 before endpoint add: **/api/v1**
-* [POST] **/clients/sign_up**<br>
+* [POST] **/sign_up**<br>
 Parameters:<br>
 client[last_name] - string<br>
 client[first_name] - string<br>
 client[middle_name] - string<br>
 client[birth_at] - date (ex. *1999-12-31*)<br>
+client[username] - string<br>
+client[password] - string<br>
+
+* [POST] **/log_in**<br>
+If success, will return token. Use it for request.<br>
+Parameters:<br>
+username - string<br>
+password - string<br>
+
+**Authorized requests**<br>
+Send header: Authorization: Token token=**YOUR_TOKEN**
+
+* [POST] **/me**<br>
+No parameters
 
 ### For employee
 before endpoint add: **/api/v1**
