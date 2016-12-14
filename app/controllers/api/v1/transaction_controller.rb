@@ -12,7 +12,7 @@ module Api::V1
               .joins('LEFT OUTER JOIN transaction_categories ts ON ts.id = t.transaction_category_id')
               .order('t.created_at DESC')
               .page(page_num)
-              .per_page(3)
+              .per_page(10)
       render json: {
           transctions: list
       }
