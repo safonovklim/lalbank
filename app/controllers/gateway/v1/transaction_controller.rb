@@ -9,10 +9,12 @@ module Gateway::V1
       # logger.info @transaction[:card_number]
       # @transaction contain input data: card_number, expire_at, pin_code, amount, currency, category
       card = Card
-                 .select("cards.id, cards.card_number, cards.pin_hash, bank_accounts.amount, bank_accounts.currency, bank_accounts.id as ba_id, bank_accounts.transactions_success, bank_accounts.transactions_failed, clients.id as c_id")
+                 .select("cards.id, cards.card_number, cards.pin_hash,
+                    bank_accounts.amount, bank_accounts.currency, bank_accounts.id as ba_id,
+                    bank_accounts.transactions_success, bank_accounts.transactions_failed, clients.id as c_id")
                  .where('card_number = ?', @transaction[:card_number])
                  .where('expire_at = ?', @transaction[:expire_at])
-                 .joins("INNER JOIN bank_accounts ON bank_accounts.id = cards.bank_account_id")
+                 .joins("INNER JOIN bank_accounts ON bank_accounts.id = cards.bank_account_id") # may be replace it to .joins(:bank_account)
                  .joins('INNER JOIN clients ON clients.id = bank_accounts.client_id')
                  .take
       if card.blank?
