@@ -14,6 +14,10 @@ Rails.application.routes.draw do
           get '/' => 'card#index'
           post '/' => 'card#create'
         end
+
+        scope '/transactions' do
+          get '/:page' => 'transaction#index'
+        end
       end
     end
     scope module: 'admin_api' do
