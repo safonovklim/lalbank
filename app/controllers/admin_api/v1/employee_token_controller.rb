@@ -18,11 +18,12 @@ module AdminApi::V1
           @token.employee_id = @employee.id
           @token.save!
           render json: {
-              :authorized => true,
+              authorized: true,
               token: {
                   value: @token.token,
                   expire_at: @token.expire_at
-              }
+              },
+              employee: @employee
           }
         end
 

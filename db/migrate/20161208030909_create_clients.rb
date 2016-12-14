@@ -8,6 +8,7 @@ class CreateClients < ActiveRecord::Migration[5.0]
       t.string :first_name
       t.string :middle_name
       t.date :birth_at
+
       t.integer :status, default: 0
 
       t.timestamps

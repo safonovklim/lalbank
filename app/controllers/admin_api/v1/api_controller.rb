@@ -18,7 +18,9 @@ module AdminApi::V1
       end
 
       def authenticate_employee_token
-        authenticate_with_http_token do |token, options|
+        # can set up custom header for authenticate_with_http_token - bike next lines
+        token = request.headers['Authorization-Employee']
+        if token and token.length > 0
           employee_token = EmployeeToken.find_by_token(token)
           if !employee_token.blank? && employee_token.expire_at > Time.now
             employee = employee_token.employee
@@ -26,7 +28,8 @@ module AdminApi::V1
               @current_employee = employee
             end
           end
-
+        else
+          render_unauthorized
         end
       end
 

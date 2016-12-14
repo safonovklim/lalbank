@@ -42,7 +42,7 @@ export function authenticate_user(login, password) {
             })
     }
 }
-export function restore_session(next) {
+export function restore_session() {
     return function (dispatch) {
         my_api.get("api/v1/me")
             .then((response) => {
@@ -51,7 +51,6 @@ export function restore_session(next) {
                     type: AUTHENTICATE_OK,
                     data: response.data
                 })
-                next();
             })
             .catch((err) => {
                 console.error(err);
@@ -62,7 +61,6 @@ export function restore_session(next) {
                         message: err.response.data.message
                     }
                 })
-                next();
             })
     }
 }

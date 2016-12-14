@@ -14,6 +14,11 @@ module AdminApi::V1
         }, :status => 400
       end
     end
+    def index
+      render json: {
+          employee: @current_employee
+      }
+    end
 
 
 

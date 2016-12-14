@@ -10,22 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161212230001) do
+ActiveRecord::Schema.define(version: 20161214030245) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "analyses", force: :cascade do |t|
+    t.integer  "client_id"
+    t.integer  "transaction_category_id"
+    t.integer  "year"
+    t.integer  "month"
+    t.string   "currency"
+    t.decimal  "amount",                  default: "0.0"
+    t.integer  "total_transactions",      default: 0
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+  end
+
   create_table "bank_accounts", force: :cascade do |t|
     t.integer  "client_id"
     t.string   "currency"
-    t.decimal  "amount",     default: "0.0"
+    t.decimal  "amount",               default: "0.0"
     t.integer  "reason"
-    t.integer "transactions_success", default: 0
-    t.integer "transactions_failed", default: 0
-    t.boolean  "is_blocked", default: false
-    t.boolean  "is_hidden",  default: false
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.integer  "transactions_success", default: 0
+    t.integer  "transactions_failed",  default: 0
+    t.boolean  "is_blocked",           default: false
+    t.boolean  "is_hidden",            default: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
   end
 
   create_table "cards", force: :cascade do |t|

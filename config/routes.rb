@@ -33,6 +33,7 @@ Rails.application.routes.draw do
         scope '/employee' do
           post '/sign_up' => 'employee#create'
           post '/log_in' => 'employee_token#create'
+          get '/me' => 'employee#index'
         end
       end
     end

@@ -132,7 +132,6 @@ export default function client(state = initialState, action) {
                     cards: initialState.errors.cards
                 })
             })
-            console.log(new_card, new_state)
             new_state.data.issued_card = new_card
             new_state.data.cards.push({
                 amount: new_card.amount,

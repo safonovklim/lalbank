@@ -64,35 +64,53 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _Template = __webpack_require__(309);
+	var _Template = __webpack_require__(312);
 	
 	var _Template2 = _interopRequireDefault(_Template);
 	
-	var _Main = __webpack_require__(311);
+	var _Main = __webpack_require__(314);
 	
 	var _Main2 = _interopRequireDefault(_Main);
 	
-	var _About = __webpack_require__(312);
+	var _About = __webpack_require__(315);
 	
 	var _About2 = _interopRequireDefault(_About);
 	
-	var _SignUp = __webpack_require__(313);
+	var _SignUp = __webpack_require__(316);
 	
 	var _SignUp2 = _interopRequireDefault(_SignUp);
 	
-	var _Login = __webpack_require__(314);
+	var _Login = __webpack_require__(317);
 	
 	var _Login2 = _interopRequireDefault(_Login);
 	
-	var _Profile = __webpack_require__(315);
+	var _Profile = __webpack_require__(318);
 	
 	var _Profile2 = _interopRequireDefault(_Profile);
 	
-	var _routeProtector = __webpack_require__(318);
+	var _Login3 = __webpack_require__(321);
+	
+	var _Login4 = _interopRequireDefault(_Login3);
+	
+	var _SignUp3 = __webpack_require__(322);
+	
+	var _SignUp4 = _interopRequireDefault(_SignUp3);
+	
+	var _routeProtector = __webpack_require__(323);
 	
 	var _routeProtector2 = _interopRequireDefault(_routeProtector);
 	
 	var _client = __webpack_require__(278);
+	
+	var _employee = __webpack_require__(310);
+	
+	var _axios = __webpack_require__(280);
+	
+	var _axios2 = _interopRequireDefault(_axios);
+	
+	var _reactCookie = __webpack_require__(305);
+	
+	var _reactCookie2 = _interopRequireDefault(_reactCookie);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -110,8 +128,8 @@
 	})
 	*/
 	
-	_store2.default.dispatch((0, _client.restore_session)(function () {
-	    var app = document.getElementById('app');
+	var app = document.getElementById('app');
+	var init_app = function init_app() {
 	    _reactDom2.default.render(_react2.default.createElement(
 	        _reactRedux.Provider,
 	        { store: _store2.default },
@@ -125,11 +143,34 @@
 	                _react2.default.createElement(_reactRouter.Route, { path: 'about', component: _About2.default }),
 	                _react2.default.createElement(_reactRouter.Route, { path: 'signup', component: _SignUp2.default }),
 	                _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _Login2.default }),
-	                _react2.default.createElement(_reactRouter.Route, { path: 'profile', component: (0, _routeProtector2.default)(_Profile2.default, _routeProtector.ONLY_AUTHENTICATED) })
+	                _react2.default.createElement(_reactRouter.Route, { path: 'profile', component: (0, _routeProtector2.default)(_Profile2.default, _routeProtector.ONLY_AUTHENTICATED) }),
+	                _react2.default.createElement(
+	                    _reactRouter.Route,
+	                    { path: 'admin/' },
+	                    _react2.default.createElement(_reactRouter.Route, { path: 'signup', component: _SignUp4.default }),
+	                    _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _Login4.default }),
+	                    _react2.default.createElement(_reactRouter.Route, { path: 'dashboard', component: (0, _routeProtector2.default)(_About2.default, _routeProtector.ONLY_EMPLOYEE_ALL) })
+	                )
 	            )
 	        )
 	    ), app);
-	}));
+	};
+	
+	new Promise(function (resolve, reject) {
+	    resolve();
+	}).then(function () {
+	    var client_token = _reactCookie2.default.load('client_token');
+	    if (client_token && client_token['length'] > 0) {
+	        _store2.default.dispatch((0, _client.restore_session)());
+	    }
+	}).then(function () {
+	    var employee_token = _reactCookie2.default.load('employee_token');
+	    if (employee_token && employee_token['length'] > 0) {
+	        _store2.default.dispatch((0, _employee.restore_e_session)());
+	    }
+	}).then(function () {
+	    init_app();
+	});
 
 /***/ },
 /* 1 */
@@ -30027,10 +30068,15 @@
 	
 	var _client2 = _interopRequireDefault(_client);
 	
+	var _employee = __webpack_require__(309);
+	
+	var _employee2 = _interopRequireDefault(_employee);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = (0, _redux.combineReducers)({
-	    client: _client2.default
+	    client: _client2.default,
+	    employee: _employee2.default
 	});
 
 /***/ },
@@ -30183,7 +30229,6 @@
 	                        cards: initialState.errors.cards
 	                    })
 	                });
-	                console.log(new_card, new_state);
 	                new_state.data.issued_card = new_card;
 	                new_state.data.cards.push({
 	                    amount: new_card.amount,
@@ -30276,7 +30321,7 @@
 	        });
 	    };
 	}
-	function restore_session(next) {
+	function restore_session() {
 	    return function (dispatch) {
 	        my_api.get("api/v1/me").then(function (response) {
 	            my_api = (0, _api2.default)();
@@ -30284,7 +30329,6 @@
 	                type: AUTHENTICATE_OK,
 	                data: response.data
 	            });
-	            next();
 	        }).catch(function (err) {
 	            console.error(err);
 	            dispatch({
@@ -30294,7 +30338,6 @@
 	                    message: err.response.data.message
 	                }
 	            });
-	            next();
 	        });
 	    };
 	}
@@ -30349,6 +30392,10 @@
 	    var client_token = _reactCookie2.default.load('client_token');
 	    if (client_token && client_token['length'] > 0) {
 	        headers['Authorization'] = 'Token token=' + client_token;
+	    }
+	    var employee_token = _reactCookie2.default.load('employee_token');
+	    if (employee_token && employee_token['length'] > 0) {
+	        headers['Authorization-Employee'] = employee_token;
 	    }
 	    return _axios2.default.create(Object.assign({}, {
 	        baseURL: 'http://localhost:3000/',
@@ -32271,6 +32318,263 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.default = employee;
+	
+	var _employee = __webpack_require__(310);
+	
+	var _employee_signup = __webpack_require__(311);
+	
+	var _reactCookie = __webpack_require__(305);
+	
+	var _reactCookie2 = _interopRequireDefault(_reactCookie);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var initialState = {
+	    errors: {
+	        auth: null
+	    },
+	    isAuthenticated: false,
+	    profile: null,
+	    data: {},
+	    newbie: {
+	        created: false,
+	        errors: null, // fields
+	        error: null // message
+	    }
+	};
+	
+	function employee() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+	    var action = arguments[1];
+	
+	    switch (action.type) {
+	        case _employee.E_AUTHENTICATE_START:
+	            {
+	                return Object.assign({}, state, initialState);
+	            }
+	        case _employee.E_AUTHENTICATE_OK:
+	            {
+	                if (action.data['token']) {
+	                    _reactCookie2.default.save('employee_token', action.data.token.value, {
+	                        expires: new Date(action.data.token.expire_at)
+	                    });
+	                }
+	                return Object.assign({}, state, {
+	                    errors: initialState.errors,
+	                    isAuthenticated: true,
+	                    profile: action.data.employee,
+	                    data: initialState.data
+	                });
+	            }
+	        case _employee.E_AUTHENTICATE_FAILED:
+	            {
+	                console.log(action);
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        auth: action.data['message'] ? action.data.message : 'Internal script error'
+	                    }),
+	                    isAuthenticated: false,
+	                    profile: initialState.profile,
+	                    data: initialState.data
+	                });
+	            }
+	        case _employee.E_ACCESS_DENIED:
+	            {
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        auth: action.data['message'] ? action.data.message : 'Internal script error'
+	                    }),
+	                    isAuthenticated: false,
+	                    profile: initialState.profile,
+	                    data: initialState.data
+	                });
+	            }
+	        case _employee.E_LOG_OUT:
+	            {
+	                return Object.assign({}, state, {
+	                    errors: initialState.errors,
+	                    isAuthenticated: false,
+	                    profile: initialState.profile,
+	                    data: initialState.data
+	                });
+	            }
+	        case _employee_signup.E_SIGN_UP_OK:
+	            {
+	                return Object.assign({}, state, {
+	                    newbie: {
+	                        created: action.data.created,
+	                        errors: initialState.newbie.errors,
+	                        error: initialState.newbie.error
+	                    }
+	                });
+	            }
+	        case _employee_signup.E_SIGN_UP_FAILED:
+	            {
+	                console.log(action);
+	                var response = action.data.handle.response.data;
+	                return Object.assign({}, state, {
+	                    newbie: {
+	                        created: response.created,
+	                        errors: response['errors'] ? response['errors'] : initialState.newbie.errors,
+	                        error: response['error'] ? response['error'] : 'Validation error'
+	                    }
+	                });
+	            }
+	        default:
+	            {
+	                return state;
+	            }
+	    }
+	}
+
+/***/ },
+/* 310 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.E_ACCESS_DENIED = exports.E_LOG_OUT = exports.E_AUTHENTICATE_FAILED = exports.E_AUTHENTICATE_OK = exports.E_AUTHENTICATE_START = undefined;
+	exports.authenticate_employee = authenticate_employee;
+	exports.restore_e_session = restore_e_session;
+	exports.auth_required = auth_required;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var E_AUTHENTICATE_START = exports.E_AUTHENTICATE_START = 'E_AUTHENTICATE_START';
+	var E_AUTHENTICATE_OK = exports.E_AUTHENTICATE_OK = 'E_AUTHENTICATE_OK';
+	var E_AUTHENTICATE_FAILED = exports.E_AUTHENTICATE_FAILED = 'E_AUTHENTICATE_FAILED';
+	var E_LOG_OUT = exports.E_LOG_OUT = 'E_LOG_OUT';
+	var E_ACCESS_DENIED = exports.E_ACCESS_DENIED = 'E_ACCESS_DENIED';
+	
+	function authenticate_employee(login, password) {
+	
+	    return function (dispatch) {
+	        dispatch({
+	            type: E_AUTHENTICATE_START,
+	            data: {
+	                login: login,
+	                password: password
+	            }
+	        });
+	        my_api.post("api/v1/employee/log_in", {
+	            username: login,
+	            password: password
+	        }).then(function (response) {
+	            my_api = (0, _api2.default)();
+	            dispatch({
+	                type: E_AUTHENTICATE_OK,
+	                data: response.data
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: E_AUTHENTICATE_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+	
+	function restore_e_session(next) {
+	    return function (dispatch) {
+	        my_api.get("api/v1/employee/me").then(function (response) {
+	            my_api = (0, _api2.default)();
+	            dispatch({
+	                type: E_AUTHENTICATE_OK,
+	                data: response.data
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: E_AUTHENTICATE_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+	
+	function auth_required(msg) {
+	    return function (dispatch) {
+	        dispatch({
+	            type: E_ACCESS_DENIED,
+	            data: {
+	                message: msg
+	            }
+	        });
+	    };
+	}
+
+/***/ },
+/* 311 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.E_SIGN_UP_FAILED = exports.E_SIGN_UP_OK = undefined;
+	exports.sign_up = sign_up;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var E_SIGN_UP_OK = exports.E_SIGN_UP_OK = 'E_SIGN_UP_OK';
+	var E_SIGN_UP_FAILED = exports.E_SIGN_UP_FAILED = 'E_SIGN_UP_FAILED';
+	
+	function sign_up(client_data) {
+	
+	    return function (dispatch) {
+	
+	        my_api.post("api/v1/employee/sign_up", client_data).then(function (response) {
+	            my_api = (0, _api2.default)();
+	            dispatch({
+	                type: E_SIGN_UP_OK,
+	                data: response.data
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: E_SIGN_UP_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+
+/***/ },
+/* 312 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	exports.default = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -32279,7 +32583,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Header = __webpack_require__(310);
+	var _Header = __webpack_require__(313);
 	
 	var _Header2 = _interopRequireDefault(_Header);
 	
@@ -32318,7 +32622,7 @@
 	exports.default = Template;
 
 /***/ },
-/* 310 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32352,7 +32656,8 @@
 	
 	var Header = (_dec = (0, _reactRedux.connect)(function (store) {
 	    return {
-	        client: store.reducer.client
+	        client: store.reducer.client,
+	        employee: store.reducer.employee
 	    };
 	}), _dec(_class = function (_React$Component) {
 	    _inherits(Header, _React$Component);
@@ -32376,39 +32681,50 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var header_auth = null;
-	            var auth = this.props.client;
-	            if (!auth.isAuthenticated) {
+	
+	            var admin_link = _react2.default.createElement('span', null);
+	            if (this.props.employee.isAuthenticated) {
+	                admin_link = _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    '| ',
+	                    _react2.default.createElement(
+	                        _reactRouter.Link,
+	                        { to: 'admin/dashboard', className: 'navbar-link' },
+	                        'Admin'
+	                    )
+	                );
+	            }
+	
+	            var header_auth = _react2.default.createElement('span', null);
+	            var client = this.props.client;
+	            if (!client.isAuthenticated) {
 	                header_auth = _react2.default.createElement(
 	                    _reactRouter.Link,
-	                    { to: 'login', className: 'btn btn-default navbar-btn navbar-right' },
+	                    { to: 'login', className: 'navbar-link' },
 	                    'Sign in'
 	                );
 	            } else {
 	                header_auth = _react2.default.createElement(
-	                    'div',
-	                    { className: 'navbar-right' },
+	                    'span',
+	                    null,
 	                    _react2.default.createElement(
-	                        'p',
-	                        { className: 'navbar-text' },
-	                        _react2.default.createElement(
-	                            'b',
-	                            null,
-	                            _react2.default.createElement(
-	                                _reactRouter.Link,
-	                                { to: 'profile', className: 'navbar-link' },
-	                                auth.profile['last_name'],
-	                                ' ',
-	                                auth.profile['first_name']
-	                            ),
-	                            ' '
-	                        ),
-	                        ' | ',
+	                        'b',
+	                        null,
 	                        _react2.default.createElement(
 	                            _reactRouter.Link,
-	                            { className: 'navbar-link', onClick: this.onLogoutClick },
-	                            'Log out'
-	                        )
+	                            { to: 'profile', className: 'navbar-link' },
+	                            client.profile['last_name'],
+	                            ' ',
+	                            client.profile['first_name']
+	                        ),
+	                        ' '
+	                    ),
+	                    ' | ',
+	                    _react2.default.createElement(
+	                        _reactRouter.Link,
+	                        { className: 'navbar-link', onClick: this.onLogoutClick },
+	                        'Log out'
 	                    )
 	                );
 	            }
@@ -32434,7 +32750,17 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'collapse navbar-collapse' },
-	                        header_auth
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'navbar-right' },
+	                            _react2.default.createElement(
+	                                'p',
+	                                { className: 'navbar-text' },
+	                                header_auth,
+	                                ' ',
+	                                admin_link
+	                            )
+	                        )
 	                    )
 	                )
 	            );
@@ -32446,7 +32772,7 @@
 	exports.default = Header;
 
 /***/ },
-/* 311 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32492,14 +32818,76 @@
 	        value: function render() {
 	            return _react2.default.createElement(
 	                'div',
-	                null,
-	                'Just page',
-	                _react2.default.createElement('br', null),
-	                'If you first time here, welcome to ',
+	                { className: 'row' },
 	                _react2.default.createElement(
-	                    _reactRouter.Link,
-	                    { to: 'signup' },
-	                    'sign up form'
+	                    'div',
+	                    { className: 'col-sm-12 col-md-3 col-md-offset-3' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel panel-default' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'panel-heading' },
+	                            _react2.default.createElement(
+	                                'h3',
+	                                { className: 'panel-title' },
+	                                'For clients'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'ul',
+	                            { className: 'list-group' },
+	                            _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item' },
+	                                _react2.default.createElement(
+	                                    _reactRouter.Link,
+	                                    { to: 'signup', className: 'btn btn-success btn-block' },
+	                                    'Sign up'
+	                                ),
+	                                _react2.default.createElement(
+	                                    _reactRouter.Link,
+	                                    { to: 'login', className: 'btn btn-primary btn-block' },
+	                                    'Log in'
+	                                )
+	                            )
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-sm-12 col-md-3' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel panel-default' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'panel-heading' },
+	                            _react2.default.createElement(
+	                                'h3',
+	                                { className: 'panel-title' },
+	                                'For emplyoee'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'ul',
+	                            { className: 'list-group' },
+	                            _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item' },
+	                                _react2.default.createElement(
+	                                    _reactRouter.Link,
+	                                    { to: 'admin/signup', className: 'btn btn-success btn-block' },
+	                                    'Sign up'
+	                                ),
+	                                _react2.default.createElement(
+	                                    _reactRouter.Link,
+	                                    { to: 'admin/login', className: 'btn btn-primary btn-block' },
+	                                    'Log in'
+	                                )
+	                            )
+	                        )
+	                    )
 	                )
 	            );
 	        }
@@ -32511,7 +32899,7 @@
 	exports.default = Main;
 
 /***/ },
-/* 312 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32564,7 +32952,7 @@
 	exports.default = About;
 
 /***/ },
-/* 313 */
+/* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32730,7 +33118,7 @@
 	exports.default = SignUp;
 
 /***/ },
-/* 314 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32845,7 +33233,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 315 */
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32865,11 +33253,11 @@
 	
 	var _reactRedux = __webpack_require__(233);
 	
-	var _MainInfo = __webpack_require__(316);
+	var _MainInfo = __webpack_require__(319);
 	
 	var _MainInfo2 = _interopRequireDefault(_MainInfo);
 	
-	var _Cards = __webpack_require__(317);
+	var _Cards = __webpack_require__(320);
 	
 	var _Cards2 = _interopRequireDefault(_Cards);
 	
@@ -32924,7 +33312,7 @@
 	exports.default = Profile;
 
 /***/ },
-/* 316 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33014,7 +33402,7 @@
 	exports.default = MainInfo;
 
 /***/ },
-/* 317 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33073,7 +33461,7 @@
 	        value: function render() {
 	            var _this2 = this;
 	
-	            var card_error = this.props.errors.cards;
+	            var card_error = this.props.errors.card;
 	            var client_data = this.props.data;
 	            console.log(client_data);
 	
@@ -33200,7 +33588,7 @@
 	exports.default = Cards;
 
 /***/ },
-/* 318 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33208,7 +33596,278 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.ONLY_AUTHENTICATED = exports.PUBLIC = undefined;
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _employee = __webpack_require__(310);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Login = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        employee: store.reducer.employee
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(Login, _React$Component);
+	
+	    function Login(props) {
+	        _classCallCheck(this, Login);
+	
+	        var _this = _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this, props));
+	
+	        _this.state = {
+	            login: '',
+	            password: ''
+	        };
+	
+	        _this.onChange = _this.onChange.bind(_this);
+	        _this.onSubmit = _this.onSubmit.bind(_this);
+	        return _this;
+	    }
+	
+	    _createClass(Login, [{
+	        key: 'onChange',
+	        value: function onChange(e) {
+	            // console.log(e.target.name + ' == ' + e.target.value);
+	            this.setState(_defineProperty({}, e.target.name, e.target.value));
+	        }
+	    }, {
+	        key: 'onSubmit',
+	        value: function onSubmit(e) {
+	            e.preventDefault();
+	            // console.info('Login: ' + this.state.login);
+	            // console.info('Password: ' + this.state.password);
+	            this.props.dispatch((0, _employee.authenticate_employee)(this.state.login, this.state.password));
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            // console.log(this);
+	            if (this.props.employee.isAuthenticated) {
+	                this.props.router.push('admin/dashboard');
+	            }
+	            var alert = _react2.default.createElement('div', { className: '' });
+	            if (this.props.employee.errors['auth']) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    this.props.employee.errors['auth']
+	                );
+	            }
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'col-sm-12 col-md-6 col-md-offset-3' },
+	                _react2.default.createElement(
+	                    'form',
+	                    { onSubmit: this.onSubmit },
+	                    alert,
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'login', onChange: this.onChange, placeholder: 'Employee Login' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement('input', { type: 'password', className: 'form-control', name: 'password', onChange: this.onChange, placeholder: 'Employee Password' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { type: 'submit', className: 'btn btn-primary' },
+	                        'Log in as Employee'
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Login;
+	}(_react2.default.Component)) || _class);
+	exports.default = Login;
+
+/***/ },
+/* 322 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _employee_signup = __webpack_require__(311);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var SignUp = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        employee: store.reducer.employee
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(SignUp, _React$Component);
+	
+	    function SignUp(props) {
+	        _classCallCheck(this, SignUp);
+	
+	        var _this = _possibleConstructorReturn(this, (SignUp.__proto__ || Object.getPrototypeOf(SignUp)).call(this, props));
+	
+	        _this.state = {
+	            employee: {
+	                username: '',
+	                password: '',
+	                password_confirmation: ''
+	            },
+	            input_validation_errors: {}
+	        };
+	
+	        _this.onChange = _this.onChange.bind(_this);
+	        _this.onSubmit = _this.onSubmit.bind(_this);
+	        _this.renderInput = _this.renderInput.bind(_this);
+	        return _this;
+	    }
+	
+	    _createClass(SignUp, [{
+	        key: 'onChange',
+	        value: function onChange(e) {
+	            var new_state = Object.assign({}, this.state);
+	            new_state.employee[e.target.name] = e.target.value;
+	            this.setState(new_state);
+	        }
+	    }, {
+	        key: 'onSubmit',
+	        value: function onSubmit(e) {
+	            e.preventDefault();
+	            // console.info('Login: ' + this.state.login);
+	            // console.info('Password: ' + this.state.password);
+	            this.props.dispatch((0, _employee_signup.sign_up)({ employee: this.state.employee }));
+	        }
+	    }, {
+	        key: 'renderInput',
+	        value: function renderInput(name) {
+	            var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
+	            var placeholder = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
+	            var type = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "text";
+	            var required = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
+	
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'form-group' },
+	                _react2.default.createElement('input', { className: 'form-control', onChange: this.onChange, type: type, name: name, defaultValue: value, placeholder: placeholder, required: required }),
+	                this.state.input_validation_errors && this.state.input_validation_errors[name] ? _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    this.state.input_validation_errors[name].join(',')
+	                ) : _react2.default.createElement('span', null)
+	            );
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            // console.log(this);
+	            if (this.props.employee.isAuthenticated) {
+	                this.props.router.push('profile');
+	            }
+	            var alert = _react2.default.createElement('div', null);
+	            if (this.props.employee.newbie['error']) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    this.props.employee.newbie['error']
+	                );
+	            }
+	            if (this.props.employee.newbie.created === true) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-success' },
+	                    'Successful registered. Please wait for approving by our security staff.'
+	                );
+	            }
+	            this.state.input_validation_errors = this.props.employee.newbie.errors;
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'col-sm-12 col-md-6 col-md-offset-3' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            { className: 'panel-title' },
+	                            'Join us'
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        _react2.default.createElement(
+	                            'form',
+	                            { onSubmit: this.onSubmit },
+	                            alert,
+	                            this.renderInput("username", '', 'Login'),
+	                            this.renderInput("password", '', 'Password', 'password'),
+	                            this.renderInput("password_confirmation", '', 'Password confirmation', 'password'),
+	                            _react2.default.createElement(
+	                                'button',
+	                                { type: 'submit', className: 'btn btn-primary' },
+	                                'Sign up as Employee'
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return SignUp;
+	}(_react2.default.Component)) || _class);
+	exports.default = SignUp;
+
+/***/ },
+/* 323 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.ONLY_EMPLOYEE_ALL = exports.ONLY_AUTHENTICATED = exports.PUBLIC = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -33236,6 +33895,16 @@
 	                        {
 	                            if (!this.props.client.isAuthenticated) {
 	                                this.props.dispatch((0, _client.auth_required)('Please, authorize first'));
+	                                this.props.router.push('login');
+	                                this.state.should_render = false;
+	                            }
+	                            break;
+	                        }
+	                    case ONLY_EMPLOYEE_ALL:
+	                        {
+	                            if (!this.props.client.isAuthenticated) {
+	                                // this.props.dispatch(auth_required('Only for employee'))
+	                                console.log('Access denied - Only for employee');
 	                                this.props.router.push('login');
 	                                this.state.should_render = false;
 	                            }
@@ -33298,6 +33967,7 @@
 	
 	var PUBLIC = exports.PUBLIC = 'PUBLIC';
 	var ONLY_AUTHENTICATED = exports.ONLY_AUTHENTICATED = 'ONLY_AUTHENTICATED';
+	var ONLY_EMPLOYEE_ALL = exports.ONLY_EMPLOYEE_ALL = 'ONLY_EMPLOYEE_ALL';
 
 /***/ }
 /******/ ]);

@@ -6,7 +6,8 @@ import {log_out} from '../../actions/client'
 
 @connect((store) => {
     return {
-        client: store.reducer.client
+        client: store.reducer.client,
+        employee: store.reducer.employee
     };
 })
 
@@ -24,17 +25,25 @@ export default class Header extends React.Component {
     }
 
     render() {
-        let header_auth = null;
-        let auth = this.props.client;
-        if (!(auth.isAuthenticated)) {
-            header_auth = <Link to="login" className="btn btn-default navbar-btn navbar-right">Sign in</Link>
+
+        let admin_link = <span></span>
+        if (this.props.employee.isAuthenticated) {
+            admin_link = (
+                <span>
+                    | <Link to="admin/dashboard" className="navbar-link">Admin</Link>
+                </span>
+            )
+        }
+
+        let header_auth = <span></span>;
+        let client = this.props.client;
+        if (!(client.isAuthenticated)) {
+            header_auth = <Link to="login" className="navbar-link">Sign in</Link>
         } else {
             header_auth = (
-                <div className="navbar-right">
-                    <p className="navbar-text">
-                       <b><Link to="profile" className="navbar-link">{auth.profile['last_name']} {auth.profile['first_name']}</Link> </b> | <Link className="navbar-link" onClick={this.onLogoutClick}>Log out</Link>
-                    </p>
-                </div>
+                <span>
+                    <b><Link to="profile" className="navbar-link">{client.profile['last_name']} {client.profile['first_name']}</Link> </b> | <Link className="navbar-link" onClick={this.onLogoutClick}>Log out</Link>
+                </span>
             )
         }
 
@@ -48,7 +57,11 @@ export default class Header extends React.Component {
                         <Link to="/" className="navbar-brand">eBank</Link>
                     </div>
                     <div className="collapse navbar-collapse">
-                        {header_auth}
+                        <div className="navbar-right">
+                            <p className="navbar-text">
+                                {header_auth} {admin_link}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </nav>
