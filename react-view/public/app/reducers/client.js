@@ -5,29 +5,40 @@ import {
     LOG_OUT,
     ACCESS_DENIED
 } from '../actions/client'
+
 import {
     GET_MY_CARDS_OK,
     GET_MY_CARDS_FAILED,
     ISSUE_CARD_OK,
     ISSUE_CARD_FAILED
 } from '../actions/client_cards'
+
 import {
     SIGN_UP_OK,
     SIGN_UP_FAILED
 } from '../actions/client_signup'
+
 import {
     GET_TRANSACTIONS_OK,
     GET_TRANSACTIONS_FAILED,
     SWITCH_TRANSACTIONS_PAGE
 } from '../actions/client_transactions'
 
+import {
+    GET_ANALYSIS_FOR_PERIOD_OK,
+    GET_ANALYSIS_FOR_PERIOD_FAILED,
+    SWITCH_ANALYSIS_FOR_PERIOD
+} from '../actions/client_analysis'
+
 import cookie from 'react-cookie'
 
+const date_now = new Date()
 const initialState = {
     errors: {
         auth: null,
         cards: null,
-        transactions: null
+        transactions: null,
+        analysis: null
     },
     isAuthenticated: false,
     profile: null,
@@ -40,6 +51,14 @@ const initialState = {
             last_loaded_page: 0,
             more_available: true,
             per_page: 1
+        },
+        analysis: {
+            data: {},
+            current_period: date_now,
+            allowed_periods: {
+                from: date_now,
+                to: date_now
+            }
         }
     },
 
@@ -212,6 +231,45 @@ export default function client(state = initialState, action) {
             })
 
             new_state.data.transactions.current_page = action.data // update per_page amount
+
+
+            return new_state
+        }
+        case GET_ANALYSIS_FOR_PERIOD_OK: {
+            console.log('new analysis', action.data)
+            let new_state = Object.assign({}, state, {
+                errors: Object.assign({}, state.errors, {
+                    analysis: initialState.errors.analysis
+                })
+            })
+            new_state.data.analysis.data[action.data.choosed_period] = action.data.info
+            new_state.data.analysis.allowed_periods = {
+                from: new Date(action.data.allowed_range.from),
+                to: new Date(action.data.allowed_range.to),
+            }
+
+            return new_state
+        }
+        case GET_ANALYSIS_FOR_PERIOD_FAILED: {
+            console.log(action)
+            let unknown_msg = 'Internal script error'
+            if (action.data['available'] === false) {
+                unknown_msg = 'Not available for this period'
+            }
+            return Object.assign({}, state, {
+                errors: Object.assign({}, state.errors, {
+                    analysis: (action.data['message']) ? action.data['message'] : unknown_msg
+                })
+            })
+        }
+        case SWITCH_ANALYSIS_FOR_PERIOD: {
+            let new_state = Object.assign({}, state, {
+                errors: Object.assign({}, state.errors, {
+                    analysis: initialState.errors.analysis
+                })
+            })
+
+            new_state.data.analysis.current_period = new Date(action.data)
 
 
             return new_state

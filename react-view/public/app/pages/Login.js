@@ -31,10 +31,10 @@ export default class Login extends React.Component {
         this.props.dispatch(authenticate_user(this.state.login, this.state.password))
     }
     render() {
-        // console.log(this);
-        if (this.props.client.isAuthenticated) {
+        if (this.props.client.isAuthenticated == true) {
             this.props.router.push('profile');
         }
+
         let alert = <div className=""></div>;
         if (this.props.client.errors['auth']) {
             alert = <div className="alert alert-danger">{this.props.client.errors['auth']}</div>

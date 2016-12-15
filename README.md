@@ -1,4 +1,4 @@
-# LAL Bank
+# Virtual Bank
 
 Framework: **Ruby on Rails**
 

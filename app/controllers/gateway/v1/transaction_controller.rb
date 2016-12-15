@@ -48,7 +48,7 @@ module Gateway::V1
                   .where(month: dt.month)
                   .where(currency: t.currency)
                   .first_or_create
-          a[:amount] += (t.amount * -1)
+          a[:amount] += t.amount
           a[:total_transactions] += 1
           a.save!
 

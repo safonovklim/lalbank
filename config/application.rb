@@ -33,5 +33,6 @@ module Lalbank
         Rails.root.join("react-view/public").to_s,
         Rails.application.config.static_cache_control
     )
+
   end
 end

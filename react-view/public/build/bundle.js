@@ -64,45 +64,45 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _Template = __webpack_require__(313);
+	var _Template = __webpack_require__(314);
 	
 	var _Template2 = _interopRequireDefault(_Template);
 	
-	var _Main = __webpack_require__(315);
+	var _Main = __webpack_require__(316);
 	
 	var _Main2 = _interopRequireDefault(_Main);
 	
-	var _About = __webpack_require__(316);
+	var _About = __webpack_require__(317);
 	
 	var _About2 = _interopRequireDefault(_About);
 	
-	var _SignUp = __webpack_require__(317);
+	var _SignUp = __webpack_require__(318);
 	
 	var _SignUp2 = _interopRequireDefault(_SignUp);
 	
-	var _Login = __webpack_require__(318);
+	var _Login = __webpack_require__(319);
 	
 	var _Login2 = _interopRequireDefault(_Login);
 	
-	var _Profile = __webpack_require__(319);
+	var _Profile = __webpack_require__(320);
 	
 	var _Profile2 = _interopRequireDefault(_Profile);
 	
-	var _Login3 = __webpack_require__(323);
+	var _Login3 = __webpack_require__(325);
 	
 	var _Login4 = _interopRequireDefault(_Login3);
 	
-	var _SignUp3 = __webpack_require__(324);
+	var _SignUp3 = __webpack_require__(326);
 	
 	var _SignUp4 = _interopRequireDefault(_SignUp3);
 	
-	var _routeProtector = __webpack_require__(325);
+	var _routeProtector = __webpack_require__(327);
 	
 	var _routeProtector2 = _interopRequireDefault(_routeProtector);
 	
 	var _client = __webpack_require__(278);
 	
-	var _employee = __webpack_require__(311);
+	var _employee = __webpack_require__(312);
 	
 	var _axios = __webpack_require__(280);
 	
@@ -30068,7 +30068,7 @@
 	
 	var _client2 = _interopRequireDefault(_client);
 	
-	var _employee = __webpack_require__(310);
+	var _employee = __webpack_require__(311);
 	
 	var _employee2 = _interopRequireDefault(_employee);
 	
@@ -30101,17 +30101,21 @@
 	
 	var _client_transactions = __webpack_require__(309);
 	
+	var _client_analysis = __webpack_require__(310);
+	
 	var _reactCookie = __webpack_require__(305);
 	
 	var _reactCookie2 = _interopRequireDefault(_reactCookie);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	var date_now = new Date();
 	var initialState = {
 	    errors: {
 	        auth: null,
 	        cards: null,
-	        transactions: null
+	        transactions: null,
+	        analysis: null
 	    },
 	    isAuthenticated: false,
 	    profile: null,
@@ -30124,6 +30128,14 @@
 	            last_loaded_page: 0,
 	            more_available: true,
 	            per_page: 1
+	        },
+	        analysis: {
+	            data: {},
+	            current_period: date_now,
+	            allowed_periods: {
+	                from: date_now,
+	                to: date_now
+	            }
 	        }
 	    },
 	
@@ -30320,6 +30332,47 @@
 	
 	
 	                return _new_state;
+	            }
+	        case _client_analysis.GET_ANALYSIS_FOR_PERIOD_OK:
+	            {
+	                console.log('new analysis', action.data);
+	                var _new_state2 = Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        analysis: initialState.errors.analysis
+	                    })
+	                });
+	                _new_state2.data.analysis.data[action.data.choosed_period] = action.data.info;
+	                _new_state2.data.analysis.allowed_periods = {
+	                    from: new Date(action.data.allowed_range.from),
+	                    to: new Date(action.data.allowed_range.to)
+	                };
+	
+	                return _new_state2;
+	            }
+	        case _client_analysis.GET_ANALYSIS_FOR_PERIOD_FAILED:
+	            {
+	                console.log(action);
+	                var unknown_msg = 'Internal script error';
+	                if (action.data['available'] === false) {
+	                    unknown_msg = 'Not available for this period';
+	                }
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        analysis: action.data['message'] ? action.data['message'] : unknown_msg
+	                    })
+	                });
+	            }
+	        case _client_analysis.SWITCH_ANALYSIS_FOR_PERIOD:
+	            {
+	                var _new_state3 = Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        analysis: initialState.errors.analysis
+	                    })
+	                });
+	
+	                _new_state3.data.analysis.current_period = new Date(action.data);
+	
+	                return _new_state3;
 	            }
 	        default:
 	            {
@@ -32452,11 +32505,69 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.SWITCH_ANALYSIS_FOR_PERIOD = exports.GET_ANALYSIS_FOR_PERIOD_FAILED = exports.GET_ANALYSIS_FOR_PERIOD_OK = undefined;
+	exports.get_analysis_for_period = get_analysis_for_period;
+	exports.switch_period = switch_period;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var GET_ANALYSIS_FOR_PERIOD_OK = exports.GET_ANALYSIS_FOR_PERIOD_OK = 'GET_ANALYSIS_FOR_PERIOD_OK';
+	var GET_ANALYSIS_FOR_PERIOD_FAILED = exports.GET_ANALYSIS_FOR_PERIOD_FAILED = 'GET_ANALYSIS_FOR_PERIOD_FAILED';
+	
+	var SWITCH_ANALYSIS_FOR_PERIOD = exports.SWITCH_ANALYSIS_FOR_PERIOD = 'SWITCH_ANALYSIS_FOR_PERIOD';
+	
+	function get_analysis_for_period(period) {
+	    // period format is YYYY-MM
+	    var year = period.getUTCFullYear();
+	    var month = period.getUTCMonth() + 1;
+	
+	    return function (dispatch) {
+	        my_api.get("api/v1/analysis/" + year + '/' + month).then(function (response) {
+	            dispatch({
+	                type: GET_ANALYSIS_FOR_PERIOD_OK,
+	                data: response.data
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: GET_ANALYSIS_FOR_PERIOD_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+	function switch_period(period) {
+	    return function (dispatch) {
+	        dispatch({
+	            type: SWITCH_ANALYSIS_FOR_PERIOD,
+	            data: period
+	        });
+	    };
+	}
+
+/***/ },
+/* 311 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	exports.default = employee;
 	
-	var _employee = __webpack_require__(311);
+	var _employee = __webpack_require__(312);
 	
-	var _employee_signup = __webpack_require__(312);
+	var _employee_signup = __webpack_require__(313);
 	
 	var _reactCookie = __webpack_require__(305);
 	
@@ -32563,7 +32674,7 @@
 	}
 
 /***/ },
-/* 311 */
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32655,7 +32766,7 @@
 	}
 
 /***/ },
-/* 312 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32701,7 +32812,7 @@
 	}
 
 /***/ },
-/* 313 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32717,7 +32828,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Header = __webpack_require__(314);
+	var _Header = __webpack_require__(315);
 	
 	var _Header2 = _interopRequireDefault(_Header);
 	
@@ -32756,7 +32867,7 @@
 	exports.default = Template;
 
 /***/ },
-/* 314 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32878,7 +32989,7 @@
 	                        _react2.default.createElement(
 	                            _reactRouter.Link,
 	                            { to: '/', className: 'navbar-brand' },
-	                            'eBank'
+	                            'Virtual Bank'
 	                        )
 	                    ),
 	                    _react2.default.createElement(
@@ -32906,7 +33017,7 @@
 	exports.default = Header;
 
 /***/ },
-/* 315 */
+/* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32955,7 +33066,7 @@
 	                { className: 'row' },
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'col-sm-12 col-md-3 col-md-offset-3' },
+	                    { className: 'col-sm-12 col-md-4 col-md-offset-2' },
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'panel panel-default' },
@@ -32978,19 +33089,57 @@
 	                                    _reactRouter.Link,
 	                                    { to: 'signup', className: 'btn btn-success btn-block' },
 	                                    'Sign up'
-	                                ),
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item' },
 	                                _react2.default.createElement(
 	                                    _reactRouter.Link,
 	                                    { to: 'login', className: 'btn btn-primary btn-block' },
 	                                    'Log in'
 	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item' },
+	                                _react2.default.createElement(
+	                                    'b',
+	                                    null,
+	                                    'Features:'
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item' },
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                ' Sign up ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                ' Log in ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                ' Profile info ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                ' Watch own cards ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                ' Issue card ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                ' Watch own transactions ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                ' Watch analytics ',
+	                                _react2.default.createElement('br', null)
 	                            )
 	                        )
 	                    )
 	                ),
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'col-sm-12 col-md-3' },
+	                    { className: 'col-sm-12 col-md-4' },
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'panel panel-default' },
@@ -33013,12 +33162,41 @@
 	                                    _reactRouter.Link,
 	                                    { to: 'admin/signup', className: 'btn btn-success btn-block' },
 	                                    'Sign up'
-	                                ),
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item' },
 	                                _react2.default.createElement(
 	                                    _reactRouter.Link,
 	                                    { to: 'admin/login', className: 'btn btn-primary btn-block' },
 	                                    'Log in'
 	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item' },
+	                                _react2.default.createElement(
+	                                    'b',
+	                                    null,
+	                                    'Features:'
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item' },
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                ' Sign up ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                ' Log in ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-remove' }),
+	                                ' Manage client ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-remove' }),
+	                                ' Bank analytics ',
+	                                _react2.default.createElement('br', null)
 	                            )
 	                        )
 	                    )
@@ -33033,7 +33211,7 @@
 	exports.default = Main;
 
 /***/ },
-/* 316 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33086,7 +33264,7 @@
 	exports.default = About;
 
 /***/ },
-/* 317 */
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33252,7 +33430,7 @@
 	exports.default = SignUp;
 
 /***/ },
-/* 318 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33323,10 +33501,10 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            // console.log(this);
-	            if (this.props.client.isAuthenticated) {
+	            if (this.props.client.isAuthenticated == true) {
 	                this.props.router.push('profile');
 	            }
+	
 	            var alert = _react2.default.createElement('div', { className: '' });
 	            if (this.props.client.errors['auth']) {
 	                alert = _react2.default.createElement(
@@ -33367,7 +33545,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 319 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33387,17 +33565,21 @@
 	
 	var _reactRedux = __webpack_require__(233);
 	
-	var _MainInfo = __webpack_require__(320);
+	var _MainInfo = __webpack_require__(321);
 	
 	var _MainInfo2 = _interopRequireDefault(_MainInfo);
 	
-	var _Cards = __webpack_require__(321);
+	var _Cards = __webpack_require__(322);
 	
 	var _Cards2 = _interopRequireDefault(_Cards);
 	
-	var _Transactions = __webpack_require__(322);
+	var _Transactions = __webpack_require__(323);
 	
 	var _Transactions2 = _interopRequireDefault(_Transactions);
+	
+	var _Analysis = __webpack_require__(324);
+	
+	var _Analysis2 = _interopRequireDefault(_Analysis);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -33438,12 +33620,15 @@
 	                        'div',
 	                        { className: 'col-sm-12 col-md-6' },
 	                        _react2.default.createElement(_MainInfo2.default, { client: client }),
+	                        _react2.default.createElement('hr', null),
 	                        _react2.default.createElement(_Transactions2.default, { client: client })
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'col-sm-12 col-md-6' },
-	                        _react2.default.createElement(_Cards2.default, { client: client })
+	                        _react2.default.createElement(_Cards2.default, { client: client }),
+	                        _react2.default.createElement('hr', null),
+	                        _react2.default.createElement(_Analysis2.default, { client: client })
 	                    )
 	                )
 	            );
@@ -33455,7 +33640,7 @@
 	exports.default = Profile;
 
 /***/ },
-/* 320 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33545,7 +33730,7 @@
 	exports.default = MainInfo;
 
 /***/ },
-/* 321 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33729,7 +33914,7 @@
 	exports.default = Cards;
 
 /***/ },
-/* 322 */
+/* 323 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33776,6 +33961,11 @@
 	        _this.openPrevPage = _this.openPrevPage.bind(_this);
 	        _this.openPage = _this.openPage.bind(_this);
 	        _this.getTransactionsByPage = _this.getTransactionsByPage.bind(_this);
+	
+	        var t_data = _this.props.client.data.transactions; // transactions data
+	        if (t_data.last_loaded_page == 0) {
+	            _this.props.dispatch((0, _client_transactions.get_transactions)(t_data.last_loaded_page + 1));
+	        }
 	        return _this;
 	    }
 	
@@ -33821,10 +34011,6 @@
 	                    { className: 'alert alert-danger' },
 	                    t_error
 	                );
-	            }
-	
-	            if (t_data.last_loaded_page == 0) {
-	                this.props.dispatch((0, _client_transactions.get_transactions)(t_data.last_loaded_page + 1));
 	            }
 	
 	            var t_display_date_style = { opacity: '0.5' };
@@ -33892,7 +34078,7 @@
 	                                ) : _react2.default.createElement(
 	                                    'button',
 	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
-	                                    'first_page'
+	                                    'First page'
 	                                )
 	                            ),
 	                            _react2.default.createElement(
@@ -33905,7 +34091,7 @@
 	                                ) : _react2.default.createElement(
 	                                    'button',
 	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
-	                                    'last page'
+	                                    'Last page'
 	                                )
 	                            )
 	                        )
@@ -33920,7 +34106,206 @@
 	exports.default = Transactions;
 
 /***/ },
-/* 323 */
+/* 324 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _client_analysis = __webpack_require__(310);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// this.props.dispatch(authenticate_user(this.state.login, this.state.password))
+	var Analysis = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        client: store.reducer.client
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(Analysis, _React$Component);
+	
+	    function Analysis(props) {
+	        _classCallCheck(this, Analysis);
+	
+	        var _this = _possibleConstructorReturn(this, (Analysis.__proto__ || Object.getPrototypeOf(Analysis)).call(this, props));
+	
+	        _this.getNextPeriod = _this.getNextPeriod.bind(_this);
+	        _this.getPrevPeriod = _this.getPrevPeriod.bind(_this);
+	        _this.openPeriod = _this.openPeriod.bind(_this);
+	
+	        var a_data = _this.props.client.data.analysis; // analysis data
+	        var current_period_f = a_data.current_period.getUTCFullYear() + '-' + (a_data.current_period.getUTCMonth() + 1);
+	
+	        if (!(_typeof(a_data.data[current_period_f]) == "object")) {
+	            console.info('load analysis for ' + a_data.current_period);
+	            _this.props.dispatch((0, _client_analysis.get_analysis_for_period)(a_data.current_period));
+	        }
+	        return _this;
+	    }
+	
+	    _createClass(Analysis, [{
+	        key: 'getNextPeriod',
+	        value: function getNextPeriod() {
+	            var a_data = this.props.client.data.analysis;
+	            var new_p = a_data.current_period;
+	            new_p.setUTCMonth(new_p.getUTCMonth() + 1);
+	            return new_p;
+	        }
+	    }, {
+	        key: 'getPrevPeriod',
+	        value: function getPrevPeriod() {
+	            var a_data = this.props.client.data.analysis;
+	            var new_p = a_data.current_period;
+	            new_p.setUTCMonth(new_p.getUTCMonth() - 1);
+	            return new_p;
+	        }
+	    }, {
+	        key: 'openPeriod',
+	        value: function openPeriod(period) {
+	            var a_data = this.props.client.data.analysis;
+	
+	            var new_period_f = period.getUTCFullYear() + '-' + (period.getUTCMonth() + 1);
+	            if (!a_data.data[new_period_f]) {
+	                this.props.dispatch((0, _client_analysis.get_analysis_for_period)(period));
+	            }
+	            this.props.dispatch((0, _client_analysis.switch_period)(period));
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+	
+	            var a_error = this.props.client.errors.analysis;
+	            var client_data = this.props.client.data.profile;
+	            var a_data = this.props.client.data.analysis; // analysis data
+	
+	            var alert = _react2.default.createElement('div', null);
+	            if (a_error) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    a_error
+	                );
+	            }
+	
+	            var current_period_f = a_data.current_period.getUTCFullYear() + '-' + (a_data.current_period.getUTCMonth() + 1);
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                alert,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            { className: 'panel-title' },
+	                            'Expenses for ',
+	                            current_period_f
+	                        )
+	                    ),
+	                    _typeof(a_data.data[current_period_f]) == "object" ? _react2.default.createElement(
+	                        'ul',
+	                        { className: 'list-group' },
+	                        a_data.data[current_period_f].length > 0 ? a_data.data[current_period_f].map(function (t) {
+	                            return _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item' },
+	                                _react2.default.createElement(
+	                                    'b',
+	                                    null,
+	                                    t.amount,
+	                                    ' ',
+	                                    t.currency
+	                                ),
+	                                ' - ',
+	                                t.category,
+	                                ' ',
+	                                _react2.default.createElement('br', null)
+	                            );
+	                        }) : _react2.default.createElement(
+	                            'li',
+	                            { className: 'list-group-item' },
+	                            'No transactions found for this period'
+	                        )
+	                    ) : _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        'No info.'
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'row' },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-xs-6' },
+	                                a_data.current_period > a_data.allowed_periods.from ? _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', onClick: function onClick() {
+	                                            return _this2.openPeriod(_this2.getPrevPeriod());
+	                                        } },
+	                                    '< prev'
+	                                ) : _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
+	                                    'First page'
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-xs-6' },
+	                                a_data.current_period < a_data.allowed_periods.to ? _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', onClick: function onClick() {
+	                                            return _this2.openPeriod(_this2.getNextPeriod());
+	                                        } },
+	                                    'next >'
+	                                ) : _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
+	                                    'Last page'
+	                                )
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Analysis;
+	}(_react2.default.Component)) || _class);
+	exports.default = Analysis;
+
+/***/ },
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33940,7 +34325,7 @@
 	
 	var _reactRedux = __webpack_require__(233);
 	
-	var _employee = __webpack_require__(311);
+	var _employee = __webpack_require__(312);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -33971,6 +34356,7 @@
 	
 	        _this.onChange = _this.onChange.bind(_this);
 	        _this.onSubmit = _this.onSubmit.bind(_this);
+	
 	        return _this;
 	    }
 	
@@ -33991,10 +34377,11 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            // console.log(this);
 	            if (this.props.employee.isAuthenticated) {
 	                this.props.router.push('admin/dashboard');
 	            }
+	            // console.log(this);
+	
 	            var alert = _react2.default.createElement('div', { className: '' });
 	            if (this.props.employee.errors['auth']) {
 	                alert = _react2.default.createElement(
@@ -34035,7 +34422,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 324 */
+/* 326 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34055,7 +34442,7 @@
 	
 	var _reactRedux = __webpack_require__(233);
 	
-	var _employee_signup = __webpack_require__(312);
+	var _employee_signup = __webpack_require__(313);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -34191,7 +34578,7 @@
 	exports.default = SignUp;
 
 /***/ },
-/* 325 */
+/* 327 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

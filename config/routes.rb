@@ -5,7 +5,7 @@ Rails.application.routes.draw do
     scope module: 'api' do
       namespace :v1 do
         post '/sign_up' => 'client#create'
-        post '/log_in' => 'client_token#create'
+        post '/log_in' => 'client_token#create', via: :options
 
         scope '/me' do
           get '/' => 'client#index'
@@ -17,6 +17,10 @@ Rails.application.routes.draw do
 
         scope '/transactions' do
           get '/:page' => 'transaction#index'
+        end
+
+        scope '/analysis' do
+          get '/:year/:month' => 'analysis#index'
         end
       end
     end

@@ -54,7 +54,7 @@ export default class Header extends React.Component {
             <nav className="navbar navbar-inverse" style={nav_style}>
                 <div className="container-fluid">
                     <div className="navbar-header">
-                        <Link to="/" className="navbar-brand">eBank</Link>
+                        <Link to="/" className="navbar-brand">Virtual Bank</Link>
                     </div>
                     <div className="collapse navbar-collapse">
                         <div className="navbar-right">
