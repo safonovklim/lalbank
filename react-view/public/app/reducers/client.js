@@ -15,19 +15,32 @@ import {
     SIGN_UP_OK,
     SIGN_UP_FAILED
 } from '../actions/client_signup'
+import {
+    GET_TRANSACTIONS_OK,
+    GET_TRANSACTIONS_FAILED,
+    SWITCH_TRANSACTIONS_PAGE
+} from '../actions/client_transactions'
 
 import cookie from 'react-cookie'
 
 const initialState = {
     errors: {
         auth: null,
-        cards: null
+        cards: null,
+        transactions: null
     },
     isAuthenticated: false,
     profile: null,
     data: {
         cards: [],
-        issued_card: null
+        issued_card: null,
+        transactions: {
+            list: [],
+            current_page: 1,
+            last_loaded_page: 0,
+            more_available: true,
+            per_page: 1
+        }
     },
 
     newbie: {
@@ -40,6 +53,7 @@ const initialState = {
 export default function client(state = initialState, action) {
     switch (action.type) {
         case AUTHENTICATE_START: {
+            // reset all
             return Object.assign({}, state, initialState)
         }
         case AUTHENTICATE_OK: {
@@ -151,6 +165,56 @@ export default function client(state = initialState, action) {
                     cards: (action.data['message']) ? action.data['message'] : 'Internal error'
                 })
             })
+        }
+        case GET_TRANSACTIONS_OK: {
+            let new_state = Object.assign({}, state, {
+                errors: Object.assign({}, state.errors, {
+                    transactions: initialState.errors.transactions
+                })
+            })
+
+            new_state.data.transactions.per_page = action.data.response.per_page // update per_page amount
+
+            if (action.data.requested.page > new_state.data.transactions.last_loaded_page) {
+                new_state.data.transactions.last_loaded_page = action.data.requested.page
+                let new_t = action.data.response.transactions
+                if (new_t.length > 0) {
+                    new_t.forEach(t => {
+                        new_state.data.transactions.list.push(t)
+                    })
+
+
+                    if (new_t.length < action.data.response.per_page) {
+                        new_state.data.transactions.more_available = false
+                    }
+                } else {
+                    // no more available
+                    new_state.data.transactions.more_available = false
+                }
+            }
+
+
+            return new_state
+        }
+        case GET_TRANSACTIONS_FAILED: {
+            console.log(action)
+            return Object.assign({}, state, {
+                errors: Object.assign({}, state.errors, {
+                    transactions: (action.data['message']) ? action.data['message'] : 'Internal script error'
+                })
+            })
+        }
+        case SWITCH_TRANSACTIONS_PAGE: {
+            let new_state = Object.assign({}, state, {
+                errors: Object.assign({}, state.errors, {
+                    transactions: initialState.errors.transactions
+                })
+            })
+
+            new_state.data.transactions.current_page = action.data // update per_page amount
+
+
+            return new_state
         }
         default: {
             return state

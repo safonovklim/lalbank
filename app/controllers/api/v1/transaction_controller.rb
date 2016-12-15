@@ -4,7 +4,7 @@ module Api::V1
 
     def index
       list = BankAccount
-              .select('t.id, t.amount, t.currency, ts.name')
+              .select('t.id, t.amount, t.currency, ts.name as category, t.created_at')
               .where(client_id: @current_client[:id])
               .where('bank_accounts.transactions_success > 0')
               .where('t.status = 0')
@@ -14,7 +14,8 @@ module Api::V1
               .page(page_num)
               .per_page(10)
       render json: {
-          transctions: list
+          transactions: list,
+          per_page: 10
       }
     end
 

@@ -64,45 +64,45 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _Template = __webpack_require__(312);
+	var _Template = __webpack_require__(313);
 	
 	var _Template2 = _interopRequireDefault(_Template);
 	
-	var _Main = __webpack_require__(314);
+	var _Main = __webpack_require__(315);
 	
 	var _Main2 = _interopRequireDefault(_Main);
 	
-	var _About = __webpack_require__(315);
+	var _About = __webpack_require__(316);
 	
 	var _About2 = _interopRequireDefault(_About);
 	
-	var _SignUp = __webpack_require__(316);
+	var _SignUp = __webpack_require__(317);
 	
 	var _SignUp2 = _interopRequireDefault(_SignUp);
 	
-	var _Login = __webpack_require__(317);
+	var _Login = __webpack_require__(318);
 	
 	var _Login2 = _interopRequireDefault(_Login);
 	
-	var _Profile = __webpack_require__(318);
+	var _Profile = __webpack_require__(319);
 	
 	var _Profile2 = _interopRequireDefault(_Profile);
 	
-	var _Login3 = __webpack_require__(321);
+	var _Login3 = __webpack_require__(323);
 	
 	var _Login4 = _interopRequireDefault(_Login3);
 	
-	var _SignUp3 = __webpack_require__(322);
+	var _SignUp3 = __webpack_require__(324);
 	
 	var _SignUp4 = _interopRequireDefault(_SignUp3);
 	
-	var _routeProtector = __webpack_require__(323);
+	var _routeProtector = __webpack_require__(325);
 	
 	var _routeProtector2 = _interopRequireDefault(_routeProtector);
 	
 	var _client = __webpack_require__(278);
 	
-	var _employee = __webpack_require__(310);
+	var _employee = __webpack_require__(311);
 	
 	var _axios = __webpack_require__(280);
 	
@@ -30068,7 +30068,7 @@
 	
 	var _client2 = _interopRequireDefault(_client);
 	
-	var _employee = __webpack_require__(309);
+	var _employee = __webpack_require__(310);
 	
 	var _employee2 = _interopRequireDefault(_employee);
 	
@@ -30088,6 +30088,9 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
 	exports.default = client;
 	
 	var _client = __webpack_require__(278);
@@ -30095,6 +30098,8 @@
 	var _client_cards = __webpack_require__(307);
 	
 	var _client_signup = __webpack_require__(308);
+	
+	var _client_transactions = __webpack_require__(309);
 	
 	var _reactCookie = __webpack_require__(305);
 	
@@ -30105,13 +30110,21 @@
 	var initialState = {
 	    errors: {
 	        auth: null,
-	        cards: null
+	        cards: null,
+	        transactions: null
 	    },
 	    isAuthenticated: false,
 	    profile: null,
 	    data: {
 	        cards: [],
-	        issued_card: null
+	        issued_card: null,
+	        transactions: {
+	            list: [],
+	            current_page: 1,
+	            last_loaded_page: 0,
+	            more_available: true,
+	            per_page: 1
+	        }
 	    },
 	
 	    newbie: {
@@ -30128,6 +30141,7 @@
 	    switch (action.type) {
 	        case _client.AUTHENTICATE_START:
 	            {
+	                // reset all
 	                return Object.assign({}, state, initialState);
 	            }
 	        case _client.AUTHENTICATE_OK:
@@ -30249,6 +30263,63 @@
 	                        cards: action.data['message'] ? action.data['message'] : 'Internal error'
 	                    })
 	                });
+	            }
+	        case _client_transactions.GET_TRANSACTIONS_OK:
+	            {
+	                var _ret = function () {
+	                    var new_state = Object.assign({}, state, {
+	                        errors: Object.assign({}, state.errors, {
+	                            transactions: initialState.errors.transactions
+	                        })
+	                    });
+	
+	                    new_state.data.transactions.per_page = action.data.response.per_page; // update per_page amount
+	
+	                    if (action.data.requested.page > new_state.data.transactions.last_loaded_page) {
+	                        new_state.data.transactions.last_loaded_page = action.data.requested.page;
+	                        var new_t = action.data.response.transactions;
+	                        if (new_t.length > 0) {
+	                            new_t.forEach(function (t) {
+	                                new_state.data.transactions.list.push(t);
+	                            });
+	
+	                            if (new_t.length < action.data.response.per_page) {
+	                                new_state.data.transactions.more_available = false;
+	                            }
+	                        } else {
+	                            // no more available
+	                            new_state.data.transactions.more_available = false;
+	                        }
+	                    }
+	
+	                    return {
+	                        v: new_state
+	                    };
+	                }();
+	
+	                if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	            }
+	        case _client_transactions.GET_TRANSACTIONS_FAILED:
+	            {
+	                console.log(action);
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        transactions: action.data['message'] ? action.data['message'] : 'Internal script error'
+	                    })
+	                });
+	            }
+	        case _client_transactions.SWITCH_TRANSACTIONS_PAGE:
+	            {
+	                var _new_state = Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        transactions: initialState.errors.transactions
+	                    })
+	                });
+	
+	                _new_state.data.transactions.current_page = action.data; // update per_page amount
+	
+	
+	                return _new_state;
 	            }
 	        default:
 	            {
@@ -32318,11 +32389,74 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.SWITCH_TRANSACTIONS_PAGE = exports.GET_TRANSACTIONS_FAILED = exports.GET_TRANSACTIONS_OK = undefined;
+	exports.get_transactions = get_transactions;
+	exports.switch_page = switch_page;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var GET_TRANSACTIONS_OK = exports.GET_TRANSACTIONS_OK = 'GET_TRANSACTIONS_OK';
+	var GET_TRANSACTIONS_FAILED = exports.GET_TRANSACTIONS_FAILED = 'GET_TRANSACTIONS_FAILED';
+	
+	var SWITCH_TRANSACTIONS_PAGE = exports.SWITCH_TRANSACTIONS_PAGE = 'SWITCH_TRANSACTIONS_PAGE';
+	
+	function get_transactions() {
+	    var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+	
+	    return function (dispatch) {
+	        my_api.get("api/v1/transactions/" + page).then(function (response) {
+	            dispatch({
+	                type: GET_TRANSACTIONS_OK,
+	                data: {
+	                    response: response.data,
+	                    requested: {
+	                        page: page
+	                    }
+	                }
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: GET_TRANSACTIONS_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+	function switch_page() {
+	    var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+	
+	    return function (dispatch) {
+	        dispatch({
+	            type: SWITCH_TRANSACTIONS_PAGE,
+	            data: page
+	        });
+	    };
+	}
+
+/***/ },
+/* 310 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	exports.default = employee;
 	
-	var _employee = __webpack_require__(310);
+	var _employee = __webpack_require__(311);
 	
-	var _employee_signup = __webpack_require__(311);
+	var _employee_signup = __webpack_require__(312);
 	
 	var _reactCookie = __webpack_require__(305);
 	
@@ -32429,7 +32563,7 @@
 	}
 
 /***/ },
-/* 310 */
+/* 311 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32521,7 +32655,7 @@
 	}
 
 /***/ },
-/* 311 */
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32567,7 +32701,7 @@
 	}
 
 /***/ },
-/* 312 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32583,7 +32717,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Header = __webpack_require__(313);
+	var _Header = __webpack_require__(314);
 	
 	var _Header2 = _interopRequireDefault(_Header);
 	
@@ -32622,7 +32756,7 @@
 	exports.default = Template;
 
 /***/ },
-/* 313 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32772,7 +32906,7 @@
 	exports.default = Header;
 
 /***/ },
-/* 314 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32866,7 +33000,7 @@
 	                            _react2.default.createElement(
 	                                'h3',
 	                                { className: 'panel-title' },
-	                                'For emplyoee'
+	                                'For employee'
 	                            )
 	                        ),
 	                        _react2.default.createElement(
@@ -32899,7 +33033,7 @@
 	exports.default = Main;
 
 /***/ },
-/* 315 */
+/* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32952,7 +33086,7 @@
 	exports.default = About;
 
 /***/ },
-/* 316 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33118,7 +33252,7 @@
 	exports.default = SignUp;
 
 /***/ },
-/* 317 */
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33233,7 +33367,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 318 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33253,13 +33387,17 @@
 	
 	var _reactRedux = __webpack_require__(233);
 	
-	var _MainInfo = __webpack_require__(319);
+	var _MainInfo = __webpack_require__(320);
 	
 	var _MainInfo2 = _interopRequireDefault(_MainInfo);
 	
-	var _Cards = __webpack_require__(320);
+	var _Cards = __webpack_require__(321);
 	
 	var _Cards2 = _interopRequireDefault(_Cards);
+	
+	var _Transactions = __webpack_require__(322);
+	
+	var _Transactions2 = _interopRequireDefault(_Transactions);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -33292,16 +33430,21 @@
 	
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'row' },
+	                null,
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'col-sm-12 col-md-6' },
-	                    _react2.default.createElement(_MainInfo2.default, { client: client })
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'col-sm-12 col-md-6' },
-	                    _react2.default.createElement(_Cards2.default, { client: client })
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-sm-12 col-md-6' },
+	                        _react2.default.createElement(_MainInfo2.default, { client: client }),
+	                        _react2.default.createElement(_Transactions2.default, { client: client })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-sm-12 col-md-6' },
+	                        _react2.default.createElement(_Cards2.default, { client: client })
+	                    )
 	                )
 	            );
 	        }
@@ -33312,7 +33455,7 @@
 	exports.default = Profile;
 
 /***/ },
-/* 319 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33402,7 +33545,7 @@
 	exports.default = MainInfo;
 
 /***/ },
-/* 320 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33461,9 +33604,8 @@
 	        value: function render() {
 	            var _this2 = this;
 	
-	            var card_error = this.props.errors.card;
+	            var card_error = this.props.errors.cards;
 	            var client_data = this.props.data;
-	            console.log(client_data);
 	
 	            var alert = _react2.default.createElement('div', null);
 	            if (client_data['issued_card']) {
@@ -33523,8 +33665,7 @@
 	                        'div',
 	                        { className: 'panel-body' },
 	                        'An error occurred: ',
-	                        client_data['error'],
-	                        ','
+	                        client_data['error']
 	                    ) : client_data['cards'].length > 0 ? _react2.default.createElement(
 	                        'ul',
 	                        { className: 'list-group' },
@@ -33588,7 +33729,7 @@
 	exports.default = Cards;
 
 /***/ },
-/* 321 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33608,7 +33749,198 @@
 	
 	var _reactRedux = __webpack_require__(233);
 	
-	var _employee = __webpack_require__(310);
+	var _client_transactions = __webpack_require__(309);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// this.props.dispatch(authenticate_user(this.state.login, this.state.password))
+	var Transactions = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        client: store.reducer.client
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(Transactions, _React$Component);
+	
+	    function Transactions(props) {
+	        _classCallCheck(this, Transactions);
+	
+	        var _this = _possibleConstructorReturn(this, (Transactions.__proto__ || Object.getPrototypeOf(Transactions)).call(this, props));
+	
+	        _this.openNextPage = _this.openNextPage.bind(_this);
+	        _this.openPrevPage = _this.openPrevPage.bind(_this);
+	        _this.openPage = _this.openPage.bind(_this);
+	        _this.getTransactionsByPage = _this.getTransactionsByPage.bind(_this);
+	        return _this;
+	    }
+	
+	    _createClass(Transactions, [{
+	        key: 'openNextPage',
+	        value: function openNextPage() {
+	            var t_data = this.props.client.data.transactions;
+	            this.openPage(t_data.current_page + 1);
+	        }
+	    }, {
+	        key: 'openPrevPage',
+	        value: function openPrevPage() {
+	            var t_data = this.props.client.data.transactions;
+	            this.openPage(t_data.current_page - 1);
+	        }
+	    }, {
+	        key: 'openPage',
+	        value: function openPage(number) {
+	            var t_data = this.props.client.data.transactions;
+	
+	            if (!(number <= t_data.last_loaded_page) && t_data.last_loaded_page <= number) {
+	                this.props.dispatch((0, _client_transactions.get_transactions)(t_data.last_loaded_page + 1));
+	            }
+	            this.props.dispatch((0, _client_transactions.switch_page)(number));
+	        }
+	    }, {
+	        key: 'getTransactionsByPage',
+	        value: function getTransactionsByPage(number) {
+	            var t_data = this.props.client.data.transactions;
+	            return t_data.list.slice((number - 1) * t_data.per_page, number * t_data.per_page);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var t_error = this.props.client.errors.transactions;
+	            var client_data = this.props.client.data.profile;
+	            var t_data = this.props.client.data.transactions; // transactions data
+	
+	            var alert = _react2.default.createElement('div', null);
+	            if (t_error) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    t_error
+	                );
+	            }
+	
+	            if (t_data.last_loaded_page == 0) {
+	                this.props.dispatch((0, _client_transactions.get_transactions)(t_data.last_loaded_page + 1));
+	            }
+	
+	            var t_display_date_style = { opacity: '0.5' };
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                alert,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            { className: 'panel-title' },
+	                            'Your transactions'
+	                        )
+	                    ),
+	                    this.getTransactionsByPage(t_data.current_page).length > 0 ? _react2.default.createElement(
+	                        'ul',
+	                        { className: 'list-group' },
+	                        this.getTransactionsByPage(t_data.current_page).map(function (t) {
+	                            var dt = new Date(t.created_at);
+	                            return _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item', key: t.id },
+	                                _react2.default.createElement(
+	                                    'b',
+	                                    null,
+	                                    t.amount,
+	                                    ' ',
+	                                    t.currency
+	                                ),
+	                                ' - ',
+	                                t.category,
+	                                ' ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement(
+	                                    'span',
+	                                    { style: t_display_date_style },
+	                                    'at ',
+	                                    dt.getUTCFullYear() + '/' + (dt.getUTCMonth() + 1) + '/' + dt.getUTCDate() + ' ' + dt.getUTCHours() + ':' + dt.getUTCMinutes() + ' UTC'
+	                                )
+	                            );
+	                        })
+	                    ) : _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        'No transactions.'
+	                    ),
+	                    t_data.list.length > 0 ? _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'row' },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-xs-6' },
+	                                t_data.current_page > 1 ? _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', onClick: this.openPrevPage },
+	                                    '< prev'
+	                                ) : _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
+	                                    'first_page'
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-xs-6' },
+	                                t_data.more_available || t_data.more_available == false && t_data.current_page < t_data.last_loaded_page ? _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', onClick: this.openNextPage },
+	                                    'next >'
+	                                ) : _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
+	                                    'last page'
+	                                )
+	                            )
+	                        )
+	                    ) : _react2.default.createElement('div', null)
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Transactions;
+	}(_react2.default.Component)) || _class);
+	exports.default = Transactions;
+
+/***/ },
+/* 323 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _employee = __webpack_require__(311);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -33703,7 +34035,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 322 */
+/* 324 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33723,7 +34055,7 @@
 	
 	var _reactRedux = __webpack_require__(233);
 	
-	var _employee_signup = __webpack_require__(311);
+	var _employee_signup = __webpack_require__(312);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -33859,7 +34191,7 @@
 	exports.default = SignUp;
 
 /***/ },
-/* 323 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
