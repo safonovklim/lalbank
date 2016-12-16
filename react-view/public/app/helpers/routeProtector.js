@@ -24,10 +24,10 @@ export default function (ComponentToInclude, access_type = PUBLIC) {
                     break;
                 }
                 case ONLY_EMPLOYEE_ALL: {
-                    if (!(this.props.client.isAuthenticated)) {
+                    if (!(this.props.employee.isAuthenticated)) {
                         // this.props.dispatch(auth_required('Only for employee'))
                         console.log('Access denied - Only for employee')
-                        this.props.router.push('login');
+                        this.props.router.push('admin/login');
                         this.state.should_render = false;
                     }
                     break;
@@ -56,12 +56,14 @@ export default function (ComponentToInclude, access_type = PUBLIC) {
     }
 
     routeProtector.propTypes = {
-        client: React.PropTypes.object.isRequired
+        client: React.PropTypes.object.isRequired,
+        employee: React.PropTypes.object.isRequired
     }
 
     function mapStateToProps(state) {
         return {
-            client: state.reducer.client
+            client: state.reducer.client,
+            employee: state.reducer.employee
         }
     }
     return connect(mapStateToProps)(routeProtector);

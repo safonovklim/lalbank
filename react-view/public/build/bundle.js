@@ -32608,7 +32608,8 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var date_now = new Date();
-	var initialState = {
+	
+	var startState = {
 	    errors: {
 	        auth: null,
 	        clients: null,
@@ -32651,7 +32652,6 @@
 	                }
 	            }
 	        }
-	
 	    },
 	    newbie: {
 	        created: false,
@@ -32659,6 +32659,7 @@
 	        error: null // message
 	    }
 	};
+	var initialState = Object.assign({}, startState);
 	
 	function employee() {
 	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
@@ -32695,6 +32696,7 @@
 	                    data: initialState.data
 	                });
 	            }
+	
 	        case _employee.E_ACCESS_DENIED:
 	            {
 	                return Object.assign({}, state, {
@@ -32715,6 +32717,7 @@
 	                    data: initialState.data
 	                });
 	            }
+	
 	        case _employee_signup.E_SIGN_UP_OK:
 	            {
 	                return Object.assign({}, state, {
@@ -32741,31 +32744,38 @@
 	        case _employee_clients.E_GET_CLIENTS_OK:
 	            {
 	                var _ret = function () {
+	                    console.info(_employee_clients.E_GET_CLIENTS_OK, action, initialState);
+	
 	                    var new_state = Object.assign({}, state, {
 	                        errors: Object.assign({}, state.errors, {
 	                            clients: initialState.errors.clients
 	                        })
 	                    });
 	
-	                    new_state.data.clients.per_page = action.data.response.per_page; // update per_page amount
+	                    var new_clients = Object.assign({}, new_state.data.clients);
+	
+	                    new_clients.per_page = action.data.response.per_page; // update per_page amount
 	
 	                    if (action.data.requested.page > new_state.data.clients.last_loaded_page) {
-	                        new_state.data.clients.last_loaded_page = action.data.requested.page;
+	                        new_clients.last_loaded_page = action.data.requested.page;
 	
 	                        var new_t = action.data.response.clients;
+	
 	                        if (new_t.length > 0) {
 	                            new_t.forEach(function (t) {
-	                                new_state.data.clients.list.push(t);
+	                                new_clients.list.push(t);
 	                            });
 	
 	                            if (new_t.length < action.data.response.per_page) {
-	                                new_state.data.clients.more_available = false;
+	                                new_clients.more_available = false;
 	                            }
 	                        } else {
 	                            // no more available
-	                            new_state.data.clients.more_available = false;
+	                            new_clients.more_available = false;
 	                        }
 	                    }
+	
+	                    new_state.data.clients = new_clients;
 	
 	                    return {
 	                        v: new_state
@@ -32796,7 +32806,9 @@
 	
 	                return _new_state;
 	            }
+	
 	        case _employee_clients.E_OPEN_CLIENT_PAGE:
+	        case _employee_clients.E_CLOSE_CLIENT_PAGE:
 	            {
 	                var _ret2 = function () {
 	                    var new_state = Object.assign({}, state, {
@@ -32805,12 +32817,43 @@
 	                        })
 	                    });
 	
-	                    new_state.data.clients.list.forEach(function (client) {
+	                    var new_data_client = {
+	                        selected: false,
+	                        profile: null,
+	                        data: {
+	                            bank_accounts: [],
+	                            issued_card: null,
+	                            transactions: {
+	                                list: [],
+	                                current_page: 1,
+	                                last_loaded_page: 0,
+	                                more_available: true,
+	                                per_page: 1,
+	                                statuses: {}
+	                            },
+	                            analysis: {
+	                                data: {},
+	                                current_period: date_now,
+	                                allowed_periods: {
+	                                    from: date_now,
+	                                    to: date_now
+	                                }
+	                            }
+	                        }
+	                    };
+	
+	                    console.log('new data client', new_data_client);
+	
+	                    state.data.clients.list.forEach(function (client) {
 	                        if (client.id == action.data) {
-	                            new_state.data.client.selected = true;
-	                            new_state.data.client.profile = client;
+	                            new_data_client.selected = true;
+	                            new_data_client.profile = client;
 	                        }
 	                    });
+	
+	                    console.log('new selected client', action.data, new_data_client);
+	
+	                    new_state.data.client = new_data_client;
 	
 	                    return {
 	                        v: new_state
@@ -32827,7 +32870,6 @@
 	                        bank_accounts: initialState.errors.bank_accounts
 	                    })
 	                });
-	                console.log(action.data);
 	                _new_state2.data.client.data.bank_accounts = action.data.response;
 	
 	                return _new_state2;
@@ -32844,11 +32886,16 @@
 	
 	        case _employee_analysis.E_GET_ANALYSIS_FOR_PERIOD_OK:
 	            {
+	
 	                var _new_state3 = Object.assign({}, state, {
 	                    errors: Object.assign({}, state.errors, {
-	                        analysis: initialState.errors.analysis
+	                        analysis: initialState.errors.clients
+	                    }),
+	                    data: Object.assign({}, state.data, {
+	                        client: Object.assign({}, state.data.client)
 	                    })
 	                });
+	
 	                _new_state3.data.client.data.analysis.data[action.data.choosed_period] = action.data.info;
 	                _new_state3.data.client.data.analysis.allowed_periods = {
 	                    from: new Date(action.data.allowed_range.from),
@@ -33097,10 +33144,11 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.E_OPEN_CLIENT_PAGE = exports.E_SWITCH_CLIENTS_PAGE = exports.E_GET_CLIENTS_FAILED = exports.E_GET_CLIENTS_OK = undefined;
+	exports.E_CLOSE_CLIENT_PAGE = exports.E_OPEN_CLIENT_PAGE = exports.E_SWITCH_CLIENTS_PAGE = exports.E_GET_CLIENTS_FAILED = exports.E_GET_CLIENTS_OK = undefined;
 	exports.get_clients = get_clients;
 	exports.switch_page = switch_page;
 	exports.open_client = open_client;
+	exports.close_client = close_client;
 	
 	var _api = __webpack_require__(279);
 	
@@ -33116,6 +33164,7 @@
 	var E_SWITCH_CLIENTS_PAGE = exports.E_SWITCH_CLIENTS_PAGE = 'E_SWITCH_CLIENTS_PAGE';
 	
 	var E_OPEN_CLIENT_PAGE = exports.E_OPEN_CLIENT_PAGE = 'E_OPEN_CLIENT_PAGE';
+	var E_CLOSE_CLIENT_PAGE = exports.E_CLOSE_CLIENT_PAGE = 'E_CLOSE_CLIENT_PAGE';
 	
 	function get_clients() {
 	    var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
@@ -33158,6 +33207,14 @@
 	        dispatch({
 	            type: E_OPEN_CLIENT_PAGE,
 	            data: client_id
+	        });
+	    };
+	}
+	function close_client() {
+	    return function (dispatch) {
+	        dispatch({
+	            type: E_CLOSE_CLIENT_PAGE,
+	            data: null
 	        });
 	    };
 	}
@@ -35412,6 +35469,20 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-sm-12 col-md-3' },
+	                        _react2.default.createElement(
+	                            _reactRouter.Link,
+	                            { to: 'admin/dashboard', className: 'btn btn-danger' },
+	                            'back to dashboard'
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement('hr', null),
 	                alert,
 	                _react2.default.createElement(
 	                    'div',
@@ -36016,17 +36087,20 @@
 	        _this.getPrevPeriod = _this.getPrevPeriod.bind(_this);
 	        _this.openPeriod = _this.openPeriod.bind(_this);
 	
-	        var a_data = _this.props.employee_data.data.analysis; // analysis data
-	        var current_period_f = a_data.current_period.getUTCFullYear() + '-' + (a_data.current_period.getUTCMonth() + 1);
-	
-	        if (!(_typeof(a_data.data[current_period_f]) == "object")) {
-	            console.info('load analysis for ' + a_data.current_period);
-	            _this.props.dispatch((0, _employee_analysis.get_analysis_for_period)(_this.props.employee.data.client.profile.id, a_data.current_period));
-	        }
 	        return _this;
 	    }
 	
 	    _createClass(Analysis, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            var a_data = this.props.employee_data.data.analysis; // analysis data
+	            var current_period_f = a_data.current_period.getUTCFullYear() + '-' + (a_data.current_period.getUTCMonth() + 1);
+	
+	            if (!(_typeof(a_data.data[current_period_f]) == "object")) {
+	                this.props.dispatch((0, _employee_analysis.get_analysis_for_period)(this.props.employee.data.client.profile.id, a_data.current_period));
+	            }
+	        }
+	    }, {
 	        key: 'getNextPeriod',
 	        value: function getNextPeriod() {
 	            var a_data = this.props.employee_data.data.analysis;
@@ -36213,15 +36287,18 @@
 	        _this.openPrevPage = _this.openPrevPage.bind(_this);
 	        _this.openPage = _this.openPage.bind(_this);
 	        _this.getTransactionsByPage = _this.getTransactionsByPage.bind(_this);
-	
-	        var t_data = _this.props.client.data.transactions; // transactions data
-	        if (t_data.last_loaded_page == 0) {
-	            _this.props.dispatch((0, _employee_transactions.get_transactions)(_this.props.employee.data.client.profile.id, t_data.last_loaded_page + 1));
-	        }
 	        return _this;
 	    }
 	
 	    _createClass(Transactions, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            var t_data = this.props.client.data.transactions; // transactions data
+	            if (t_data.last_loaded_page == 0) {
+	                this.props.dispatch((0, _employee_transactions.get_transactions)(this.props.employee.data.client.profile.id, t_data.last_loaded_page + 1));
+	            }
+	        }
+	    }, {
 	        key: 'openNextPage',
 	        value: function openNextPage() {
 	            var t_data = this.props.client.data.transactions;
@@ -36252,8 +36329,7 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var t_error = this.props.errors.analysis;
-	            var client_data = this.props.client.data.profile;
+	            var t_error = this.props.errors.transactions;
 	            var t_data = this.props.client.data.transactions; // transactions data
 	
 	            var alert = _react2.default.createElement('div', null);
@@ -36456,10 +36532,10 @@
 	                        }
 	                    case ONLY_EMPLOYEE_ALL:
 	                        {
-	                            if (!this.props.client.isAuthenticated) {
+	                            if (!this.props.employee.isAuthenticated) {
 	                                // this.props.dispatch(auth_required('Only for employee'))
 	                                console.log('Access denied - Only for employee');
-	                                this.props.router.push('login');
+	                                this.props.router.push('admin/login');
 	                                this.state.should_render = false;
 	                            }
 	                            break;
@@ -36492,12 +36568,14 @@
 	    }(_react2.default.Component);
 	
 	    routeProtector.propTypes = {
-	        client: _react2.default.PropTypes.object.isRequired
+	        client: _react2.default.PropTypes.object.isRequired,
+	        employee: _react2.default.PropTypes.object.isRequired
 	    };
 	
 	    function mapStateToProps(state) {
 	        return {
-	            client: state.reducer.client
+	            client: state.reducer.client,
+	            employee: state.reducer.employee
 	        };
 	    }
 	    return (0, _reactRedux.connect)(mapStateToProps)(routeProtector);
