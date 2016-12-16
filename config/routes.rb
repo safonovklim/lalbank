@@ -5,7 +5,7 @@ Rails.application.routes.draw do
     scope module: 'api' do
       namespace :v1 do
         post '/sign_up' => 'client#create'
-        post '/log_in' => 'client_token#create', via: :options
+        post '/log_in' => 'client_token#create'
 
         scope '/me' do
           get '/' => 'client#index'
@@ -16,27 +16,32 @@ Rails.application.routes.draw do
         end
 
         scope '/transactions' do
-          get '/:page' => 'transaction#index'
+          get '/' => 'transaction#index'
         end
 
         scope '/analysis' do
-          get '/:year/:month' => 'analysis#index'
+          get '/' => 'analysis#index'
         end
       end
     end
     scope module: 'admin_api' do
       namespace :v1 do
         scope '/clients' do
-          get '/:user_id/cards' => 'card#index'
-          post '/:user_id/cards' => 'card#create'
-
-
-          get '/:id' => 'client#show'
           get '/' => 'client#index'
-          put '/' => 'client#update'
-          post '/:id/approve' => 'client#approve'
-          post '/:id/ban' => 'client#ban'
-          post '/:id/unban' => 'client#unban'
+          get '/:client_id' => 'client#show'
+          put '/:client_id' => 'client#update'
+
+          post '/:client_id/approve' => 'client#approve'
+          post '/:client_id/ban' => 'client#ban'
+          post '/:client_id/unban' => 'client#unban'
+
+          get '/:client_id/cards' => 'card#index'
+          post '/:client_id/cards' => 'card#create'
+          get '/:client_id/bank_accounts' => 'bank_account#index'
+          get '/:client_id/transactions' => 'transaction#index'
+          get '/:client_id/analysis' => 'analysis#index'
+
+
         end
         scope '/employee' do
           post '/sign_up' => 'employee#create'

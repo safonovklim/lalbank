@@ -64,39 +64,51 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _Template = __webpack_require__(314);
+	var _Template = __webpack_require__(318);
 	
 	var _Template2 = _interopRequireDefault(_Template);
 	
-	var _Main = __webpack_require__(316);
+	var _Main = __webpack_require__(320);
 	
 	var _Main2 = _interopRequireDefault(_Main);
 	
-	var _About = __webpack_require__(317);
+	var _About = __webpack_require__(321);
 	
 	var _About2 = _interopRequireDefault(_About);
 	
-	var _SignUp = __webpack_require__(318);
+	var _SignUp = __webpack_require__(322);
 	
 	var _SignUp2 = _interopRequireDefault(_SignUp);
 	
-	var _Login = __webpack_require__(319);
+	var _Login = __webpack_require__(323);
 	
 	var _Login2 = _interopRequireDefault(_Login);
 	
-	var _Profile = __webpack_require__(320);
+	var _Profile = __webpack_require__(324);
 	
 	var _Profile2 = _interopRequireDefault(_Profile);
 	
-	var _Login3 = __webpack_require__(325);
+	var _Login3 = __webpack_require__(329);
 	
 	var _Login4 = _interopRequireDefault(_Login3);
 	
-	var _SignUp3 = __webpack_require__(326);
+	var _SignUp3 = __webpack_require__(330);
 	
 	var _SignUp4 = _interopRequireDefault(_SignUp3);
 	
-	var _routeProtector = __webpack_require__(327);
+	var _Dashboard = __webpack_require__(331);
+	
+	var _Dashboard2 = _interopRequireDefault(_Dashboard);
+	
+	var _Clients = __webpack_require__(333);
+	
+	var _Clients2 = _interopRequireDefault(_Clients);
+	
+	var _Client = __webpack_require__(334);
+	
+	var _Client2 = _interopRequireDefault(_Client);
+	
+	var _routeProtector = __webpack_require__(339);
 	
 	var _routeProtector2 = _interopRequireDefault(_routeProtector);
 	
@@ -149,7 +161,9 @@
 	                    { path: 'admin/' },
 	                    _react2.default.createElement(_reactRouter.Route, { path: 'signup', component: _SignUp4.default }),
 	                    _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _Login4.default }),
-	                    _react2.default.createElement(_reactRouter.Route, { path: 'dashboard', component: (0, _routeProtector2.default)(_About2.default, _routeProtector.ONLY_EMPLOYEE_ALL) })
+	                    _react2.default.createElement(_reactRouter.Route, { path: 'dashboard', component: (0, _routeProtector2.default)(_Dashboard2.default, _routeProtector.ONLY_EMPLOYEE_ALL) }),
+	                    _react2.default.createElement(_reactRouter.Route, { path: 'clients', component: (0, _routeProtector2.default)(_Clients2.default, _routeProtector.ONLY_EMPLOYEE_ALL) }),
+	                    _react2.default.createElement(_reactRouter.Route, { path: 'clients/:client_id', component: (0, _routeProtector2.default)(_Client2.default, _routeProtector.ONLY_EMPLOYEE_ALL) })
 	                )
 	            )
 	        )
@@ -30182,6 +30196,7 @@
 	                    data: initialState.data
 	                });
 	            }
+	
 	        case _client.ACCESS_DENIED:
 	            {
 	                return Object.assign({}, state, {
@@ -30202,6 +30217,7 @@
 	                    data: initialState.data
 	                });
 	            }
+	
 	        case _client_cards.GET_MY_CARDS_OK:
 	            {
 	                return Object.assign({}, state, {
@@ -30225,6 +30241,7 @@
 	                    })
 	                });
 	            }
+	
 	        case _client_signup.SIGN_UP_OK:
 	            {
 	                return Object.assign({}, state, {
@@ -30247,6 +30264,7 @@
 	                    }
 	                });
 	            }
+	
 	        case _client_cards.ISSUE_CARD_OK:
 	            {
 	                var new_card = action.data.card;
@@ -30276,6 +30294,7 @@
 	                    })
 	                });
 	            }
+	
 	        case _client_transactions.GET_TRANSACTIONS_OK:
 	            {
 	                var _ret = function () {
@@ -30333,6 +30352,7 @@
 	
 	                return _new_state;
 	            }
+	
 	        case _client_analysis.GET_ANALYSIS_FOR_PERIOD_OK:
 	            {
 	                console.log('new analysis', action.data);
@@ -30352,7 +30372,7 @@
 	        case _client_analysis.GET_ANALYSIS_FOR_PERIOD_FAILED:
 	            {
 	                console.log(action);
-	                var unknown_msg = 'Internal script error';
+	                var unknown_msg = 'Not available for this period';
 	                if (action.data['available'] === false) {
 	                    unknown_msg = 'Not available for this period';
 	                }
@@ -30374,6 +30394,7 @@
 	
 	                return _new_state3;
 	            }
+	
 	        default:
 	            {
 	                return state;
@@ -32463,7 +32484,7 @@
 	    var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 	
 	    return function (dispatch) {
-	        my_api.get("api/v1/transactions/" + page).then(function (response) {
+	        my_api.get("api/v1/transactions/?page=" + page).then(function (response) {
 	            dispatch({
 	                type: GET_TRANSACTIONS_OK,
 	                data: {
@@ -32528,7 +32549,7 @@
 	    var month = period.getUTCMonth() + 1;
 	
 	    return function (dispatch) {
-	        my_api.get("api/v1/analysis/" + year + '/' + month).then(function (response) {
+	        my_api.get("api/v1/analysis/?year=" + year + '&month=' + month).then(function (response) {
 	            dispatch({
 	                type: GET_ANALYSIS_FOR_PERIOD_OK,
 	                data: response.data
@@ -32563,11 +32584,22 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
 	exports.default = employee;
 	
 	var _employee = __webpack_require__(312);
 	
 	var _employee_signup = __webpack_require__(313);
+	
+	var _employee_clients = __webpack_require__(314);
+	
+	var _employee_bank_accounts = __webpack_require__(315);
+	
+	var _employee_analysis = __webpack_require__(316);
+	
+	var _employee_transactions = __webpack_require__(317);
 	
 	var _reactCookie = __webpack_require__(305);
 	
@@ -32575,13 +32607,52 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	var date_now = new Date();
 	var initialState = {
 	    errors: {
-	        auth: null
+	        auth: null,
+	        clients: null,
+	        bank_accounts: null,
+	        transactions: null,
+	        analysis: null
 	    },
 	    isAuthenticated: false,
 	    profile: null,
-	    data: {},
+	    data: {
+	        clients: {
+	            list: [],
+	
+	            current_page: 1,
+	            last_loaded_page: 0,
+	            more_available: true,
+	            per_page: 1
+	        },
+	        client: {
+	            selected: false,
+	            profile: null,
+	            data: {
+	                bank_accounts: [],
+	                issued_card: null,
+	                transactions: {
+	                    list: [],
+	                    current_page: 1,
+	                    last_loaded_page: 0,
+	                    more_available: true,
+	                    per_page: 1,
+	                    statuses: {}
+	                },
+	                analysis: {
+	                    data: {},
+	                    current_period: date_now,
+	                    allowed_periods: {
+	                        from: date_now,
+	                        to: date_now
+	                    }
+	                }
+	            }
+	        }
+	
+	    },
 	    newbie: {
 	        created: false,
 	        errors: null, // fields
@@ -32666,6 +32737,212 @@
 	                    }
 	                });
 	            }
+	
+	        case _employee_clients.E_GET_CLIENTS_OK:
+	            {
+	                var _ret = function () {
+	                    var new_state = Object.assign({}, state, {
+	                        errors: Object.assign({}, state.errors, {
+	                            clients: initialState.errors.clients
+	                        })
+	                    });
+	
+	                    new_state.data.clients.per_page = action.data.response.per_page; // update per_page amount
+	
+	                    if (action.data.requested.page > new_state.data.clients.last_loaded_page) {
+	                        new_state.data.clients.last_loaded_page = action.data.requested.page;
+	
+	                        var new_t = action.data.response.clients;
+	                        if (new_t.length > 0) {
+	                            new_t.forEach(function (t) {
+	                                new_state.data.clients.list.push(t);
+	                            });
+	
+	                            if (new_t.length < action.data.response.per_page) {
+	                                new_state.data.clients.more_available = false;
+	                            }
+	                        } else {
+	                            // no more available
+	                            new_state.data.clients.more_available = false;
+	                        }
+	                    }
+	
+	                    return {
+	                        v: new_state
+	                    };
+	                }();
+	
+	                if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	            }
+	        case _employee_clients.E_GET_CLIENTS_FAILED:
+	            {
+	                console.log(action);
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        clients: action.data['message'] ? action.data['message'] : 'Ah error occurred'
+	                    })
+	                });
+	            }
+	        case _employee_clients.E_SWITCH_CLIENTS_PAGE:
+	            {
+	                var _new_state = Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        clients: initialState.errors.clients
+	                    })
+	                });
+	
+	                _new_state.data.clients.current_page = action.data; // update per_page amount
+	
+	
+	                return _new_state;
+	            }
+	        case _employee_clients.E_OPEN_CLIENT_PAGE:
+	            {
+	                var _ret2 = function () {
+	                    var new_state = Object.assign({}, state, {
+	                        errors: Object.assign({}, state.errors, {
+	                            clients: initialState.errors.clients
+	                        })
+	                    });
+	
+	                    new_state.data.clients.list.forEach(function (client) {
+	                        if (client.id == action.data) {
+	                            new_state.data.client.selected = true;
+	                            new_state.data.client.profile = client;
+	                        }
+	                    });
+	
+	                    return {
+	                        v: new_state
+	                    };
+	                }();
+	
+	                if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+	            }
+	
+	        case _employee_bank_accounts.E_GET_BANK_ACCOUNTS_OK:
+	            {
+	                var _new_state2 = Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        bank_accounts: initialState.errors.bank_accounts
+	                    })
+	                });
+	                console.log(action.data);
+	                _new_state2.data.client.data.bank_accounts = action.data.response;
+	
+	                return _new_state2;
+	            }
+	        case _employee_bank_accounts.E_GET_BANK_ACCOUNTS_FAILED:
+	            {
+	                console.log(action);
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        bank_accounts: action.data['message'] ? action.data['message'] : 'Internal script error'
+	                    })
+	                });
+	            }
+	
+	        case _employee_analysis.E_GET_ANALYSIS_FOR_PERIOD_OK:
+	            {
+	                var _new_state3 = Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        analysis: initialState.errors.analysis
+	                    })
+	                });
+	                _new_state3.data.client.data.analysis.data[action.data.choosed_period] = action.data.info;
+	                _new_state3.data.client.data.analysis.allowed_periods = {
+	                    from: new Date(action.data.allowed_range.from),
+	                    to: new Date(action.data.allowed_range.to)
+	                };
+	
+	                return _new_state3;
+	            }
+	        case _employee_analysis.E_GET_ANALYSIS_FOR_PERIOD_FAILED:
+	            {
+	                var unknown_msg = 'Not available for this period';
+	                if (action.data['available'] === false) {
+	                    unknown_msg = 'Not available for this period';
+	                }
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        analysis: action.data['message'] ? action.data['message'] : unknown_msg
+	                    })
+	                });
+	            }
+	        case _employee_analysis.E_SWITCH_ANALYSIS_FOR_PERIOD:
+	            {
+	                var _new_state4 = Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        analysis: initialState.errors.analysis
+	                    })
+	                });
+	
+	                _new_state4.data.client.data.analysis.current_period = new Date(action.data);
+	
+	                return _new_state4;
+	            }
+	
+	        case _employee_transactions.E_GET_TRANSACTIONS_OK:
+	            {
+	                var _ret3 = function () {
+	                    var new_state = Object.assign({}, state, {
+	                        errors: Object.assign({}, state.errors, {
+	                            transactions: initialState.errors.transactions
+	                        })
+	                    });
+	
+	                    new_state.data.client.data.transactions.per_page = action.data.response.per_page; // update per_page amount
+	                    new_state.data.client.data.transactions.statuses = action.data.response.statuses;
+	
+	                    if (action.data.requested.page > new_state.data.client.data.transactions.last_loaded_page) {
+	
+	                        new_state.data.client.data.transactions.last_loaded_page = action.data.requested.page;
+	
+	                        var new_t = action.data.response.transactions;
+	                        if (new_t.length > 0) {
+	                            new_t.forEach(function (t) {
+	                                new_state.data.client.data.transactions.list.push(t);
+	                            });
+	
+	                            if (new_t.length < action.data.response.per_page) {
+	                                new_state.data.client.data.transactions.more_available = false;
+	                            }
+	                        } else {
+	                            // no more available
+	                            new_state.data.client.data.transactions.more_available = false;
+	                        }
+	                    }
+	
+	                    return {
+	                        v: new_state
+	                    };
+	                }();
+	
+	                if ((typeof _ret3 === 'undefined' ? 'undefined' : _typeof(_ret3)) === "object") return _ret3.v;
+	            }
+	        case _employee_transactions.E_GET_TRANSACTIONS_FAILED:
+	            {
+	                console.log(action);
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        transactions: action.data['message'] ? action.data['message'] : 'Internal script error'
+	                    })
+	                });
+	            }
+	        case _employee_transactions.E_SWITCH_TRANSACTIONS_PAGE:
+	            {
+	                var _new_state5 = Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        transactions: initialState.errors.transactions
+	                    })
+	                });
+	
+	                _new_state5.data.client.data.transactions.current_page = action.data; // update per_page amount
+	
+	
+	                return _new_state5;
+	            }
+	
 	        default:
 	            {
 	                return state;
@@ -32820,6 +33097,266 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.E_OPEN_CLIENT_PAGE = exports.E_SWITCH_CLIENTS_PAGE = exports.E_GET_CLIENTS_FAILED = exports.E_GET_CLIENTS_OK = undefined;
+	exports.get_clients = get_clients;
+	exports.switch_page = switch_page;
+	exports.open_client = open_client;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var E_GET_CLIENTS_OK = exports.E_GET_CLIENTS_OK = 'E_GET_CLIENTS_OK';
+	var E_GET_CLIENTS_FAILED = exports.E_GET_CLIENTS_FAILED = 'E_GET_CLIENTS_FAILED';
+	
+	var E_SWITCH_CLIENTS_PAGE = exports.E_SWITCH_CLIENTS_PAGE = 'E_SWITCH_CLIENTS_PAGE';
+	
+	var E_OPEN_CLIENT_PAGE = exports.E_OPEN_CLIENT_PAGE = 'E_OPEN_CLIENT_PAGE';
+	
+	function get_clients() {
+	    var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+	
+	    return function (dispatch) {
+	        my_api.get("api/v1/clients/?page=" + page).then(function (response) {
+	            dispatch({
+	                type: E_GET_CLIENTS_OK,
+	                data: {
+	                    response: response.data,
+	                    requested: {
+	                        page: page
+	                    }
+	                }
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: E_GET_CLIENTS_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+	function switch_page() {
+	    var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+	
+	    return function (dispatch) {
+	        dispatch({
+	            type: E_SWITCH_CLIENTS_PAGE,
+	            data: page
+	        });
+	    };
+	}
+	function open_client(client_id) {
+	    return function (dispatch) {
+	        dispatch({
+	            type: E_OPEN_CLIENT_PAGE,
+	            data: client_id
+	        });
+	    };
+	}
+
+/***/ },
+/* 315 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.E_GET_BANK_ACCOUNTS_FAILED = exports.E_GET_BANK_ACCOUNTS_OK = undefined;
+	exports.get_bank_accounts = get_bank_accounts;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var E_GET_BANK_ACCOUNTS_OK = exports.E_GET_BANK_ACCOUNTS_OK = 'E_GET_BANK_ACCOUNTS_OK';
+	var E_GET_BANK_ACCOUNTS_FAILED = exports.E_GET_BANK_ACCOUNTS_FAILED = 'E_GET_BANK_ACCOUNTS_FAILED';
+	
+	function get_bank_accounts(client_id) {
+	    return function (dispatch) {
+	        Promise.all([my_api.get("api/v1/clients/" + client_id + '/bank_accounts'), my_api.get("api/v1/clients/" + client_id + '/cards')]).then(function (response) {
+	            console.log(response);
+	            var ba = response[0].data.bank_accounts; // bank accounts
+	            var bc = response[1].data.cards; // cards
+	
+	            var result = [];
+	
+	            ba.forEach(function (account) {
+	                var linked_cards = [];
+	                bc.forEach(function (card) {
+	                    if (card.bank_account_id == account.id) {
+	                        linked_cards.push(card);
+	                    }
+	                });
+	                account['cards'] = linked_cards;
+	                result.push(account);
+	            });
+	
+	            console.log(result);
+	
+	            dispatch({
+	                type: E_GET_BANK_ACCOUNTS_OK,
+	                data: {
+	                    response: result,
+	                    requested: {
+	                        client_id: client_id
+	                    }
+	                }
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: E_GET_BANK_ACCOUNTS_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+
+/***/ },
+/* 316 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.E_SWITCH_ANALYSIS_FOR_PERIOD = exports.E_GET_ANALYSIS_FOR_PERIOD_FAILED = exports.E_GET_ANALYSIS_FOR_PERIOD_OK = undefined;
+	exports.get_analysis_for_period = get_analysis_for_period;
+	exports.switch_period = switch_period;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var E_GET_ANALYSIS_FOR_PERIOD_OK = exports.E_GET_ANALYSIS_FOR_PERIOD_OK = 'E_GET_ANALYSIS_FOR_PERIOD_OK';
+	var E_GET_ANALYSIS_FOR_PERIOD_FAILED = exports.E_GET_ANALYSIS_FOR_PERIOD_FAILED = 'E_GET_ANALYSIS_FOR_PERIOD_FAILED';
+	var E_SWITCH_ANALYSIS_FOR_PERIOD = exports.E_SWITCH_ANALYSIS_FOR_PERIOD = 'E_SWITCH_ANALYSIS_FOR_PERIOD';
+	
+	function get_analysis_for_period(client_id, period) {
+	    var year = period.getUTCFullYear();
+	    var month = period.getUTCMonth() + 1;
+	    return function (dispatch) {
+	        my_api.get("api/v1/clients/" + client_id + '/analysis?year=' + year + '&month=' + month).then(function (response) {
+	
+	            dispatch({
+	                type: E_GET_ANALYSIS_FOR_PERIOD_OK,
+	                data: response.data
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: E_GET_ANALYSIS_FOR_PERIOD_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+	function switch_period(period) {
+	    return function (dispatch) {
+	        dispatch({
+	            type: E_SWITCH_ANALYSIS_FOR_PERIOD,
+	            data: period
+	        });
+	    };
+	}
+
+/***/ },
+/* 317 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.E_SWITCH_TRANSACTIONS_PAGE = exports.E_GET_TRANSACTIONS_FAILED = exports.E_GET_TRANSACTIONS_OK = undefined;
+	exports.get_transactions = get_transactions;
+	exports.switch_page = switch_page;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var E_GET_TRANSACTIONS_OK = exports.E_GET_TRANSACTIONS_OK = 'E_GET_TRANSACTIONS_OK';
+	var E_GET_TRANSACTIONS_FAILED = exports.E_GET_TRANSACTIONS_FAILED = 'E_GET_TRANSACTIONS_FAILED';
+	
+	var E_SWITCH_TRANSACTIONS_PAGE = exports.E_SWITCH_TRANSACTIONS_PAGE = 'E_SWITCH_TRANSACTIONS_PAGE';
+	
+	function get_transactions(client_id) {
+	    var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+	
+	    return function (dispatch) {
+	        my_api.get("api/v1/clients/" + client_id + "/transactions/?page=" + page).then(function (response) {
+	            dispatch({
+	                type: E_GET_TRANSACTIONS_OK,
+	                data: {
+	                    response: response.data,
+	                    requested: {
+	                        page: page
+	                    }
+	                }
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: E_GET_TRANSACTIONS_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+	function switch_page() {
+	    var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+	
+	    return function (dispatch) {
+	        dispatch({
+	            type: E_SWITCH_TRANSACTIONS_PAGE,
+	            data: page
+	        });
+	    };
+	}
+
+/***/ },
+/* 318 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	exports.default = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -32828,7 +33365,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Header = __webpack_require__(315);
+	var _Header = __webpack_require__(319);
 	
 	var _Header2 = _interopRequireDefault(_Header);
 	
@@ -32867,7 +33404,7 @@
 	exports.default = Template;
 
 /***/ },
-/* 315 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33017,7 +33554,7 @@
 	exports.default = Header;
 
 /***/ },
-/* 316 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33191,7 +33728,10 @@
 	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
 	                                ' Log in ',
 	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-remove' }),
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                ' Employee profile info ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
 	                                ' Manage client ',
 	                                _react2.default.createElement('br', null),
 	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-remove' }),
@@ -33211,7 +33751,7 @@
 	exports.default = Main;
 
 /***/ },
-/* 317 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33264,7 +33804,7 @@
 	exports.default = About;
 
 /***/ },
-/* 318 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33430,7 +33970,7 @@
 	exports.default = SignUp;
 
 /***/ },
-/* 319 */
+/* 323 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33545,7 +34085,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 320 */
+/* 324 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33565,19 +34105,19 @@
 	
 	var _reactRedux = __webpack_require__(233);
 	
-	var _MainInfo = __webpack_require__(321);
+	var _MainInfo = __webpack_require__(325);
 	
 	var _MainInfo2 = _interopRequireDefault(_MainInfo);
 	
-	var _Cards = __webpack_require__(322);
+	var _Cards = __webpack_require__(326);
 	
 	var _Cards2 = _interopRequireDefault(_Cards);
 	
-	var _Transactions = __webpack_require__(323);
+	var _Transactions = __webpack_require__(327);
 	
 	var _Transactions2 = _interopRequireDefault(_Transactions);
 	
-	var _Analysis = __webpack_require__(324);
+	var _Analysis = __webpack_require__(328);
 	
 	var _Analysis2 = _interopRequireDefault(_Analysis);
 	
@@ -33640,7 +34180,7 @@
 	exports.default = Profile;
 
 /***/ },
-/* 321 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33730,7 +34270,7 @@
 	exports.default = MainInfo;
 
 /***/ },
-/* 322 */
+/* 326 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33914,7 +34454,7 @@
 	exports.default = Cards;
 
 /***/ },
-/* 323 */
+/* 327 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34106,7 +34646,7 @@
 	exports.default = Transactions;
 
 /***/ },
-/* 324 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34305,7 +34845,7 @@
 	exports.default = Analysis;
 
 /***/ },
-/* 325 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34422,7 +34962,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 326 */
+/* 330 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34578,7 +35118,1302 @@
 	exports.default = SignUp;
 
 /***/ },
-/* 327 */
+/* 331 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _reactRouter = __webpack_require__(178);
+	
+	var _EmployeeInfo = __webpack_require__(332);
+	
+	var _EmployeeInfo2 = _interopRequireDefault(_EmployeeInfo);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Dashboard = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        employee: store.reducer.employee
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(Dashboard, _React$Component);
+	
+	    function Dashboard(props) {
+	        _classCallCheck(this, Dashboard);
+	
+	        return _possibleConstructorReturn(this, (Dashboard.__proto__ || Object.getPrototypeOf(Dashboard)).call(this, props));
+	    }
+	
+	    _createClass(Dashboard, [{
+	        key: 'render',
+	        value: function render() {
+	            var employee = this.props.employee;
+	            if (employee.isAuthenticated === false) {
+	                return _react2.default.createElement('div', null);
+	            }
+	
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-sm-12 col-md-6' },
+	                        _react2.default.createElement(_EmployeeInfo2.default, { employee: employee })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-sm-12 col-md-6' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'panel panel-default' },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'panel-heading' },
+	                                _react2.default.createElement(
+	                                    'h3',
+	                                    { className: 'panel-title' },
+	                                    'Actions'
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'ul',
+	                                { className: 'list-group' },
+	                                _react2.default.createElement(
+	                                    'li',
+	                                    { className: 'list-group-item' },
+	                                    _react2.default.createElement(
+	                                        _reactRouter.Link,
+	                                        { to: 'admin/clients', className: 'btn btn-block btn-primary' },
+	                                        'Watch clients'
+	                                    )
+	                                )
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Dashboard;
+	}(_react2.default.Component)) || _class);
+	exports.default = Dashboard;
+
+/***/ },
+/* 332 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var EmployeeInfo = function (_React$Component) {
+	    _inherits(EmployeeInfo, _React$Component);
+	
+	    function EmployeeInfo(props) {
+	        _classCallCheck(this, EmployeeInfo);
+	
+	        return _possibleConstructorReturn(this, (EmployeeInfo.__proto__ || Object.getPrototypeOf(EmployeeInfo)).call(this, props));
+	    }
+	
+	    _createClass(EmployeeInfo, [{
+	        key: 'render',
+	        value: function render() {
+	            var employee = this.props.employee;
+	            var employee_info = employee['profile'];
+	
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'panel panel-default' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel-heading' },
+	                    _react2.default.createElement(
+	                        'h3',
+	                        { className: 'panel-title' },
+	                        'Employee Info'
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'ul',
+	                    { className: 'list-group' },
+	                    _react2.default.createElement(
+	                        'li',
+	                        { className: 'list-group-item' },
+	                        'Login: ',
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            employee_info['username']
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'li',
+	                        { className: 'list-group-item' },
+	                        'Role: ',
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            employee_info['role']
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return EmployeeInfo;
+	}(_react2.default.Component);
+	
+	exports.default = EmployeeInfo;
+
+/***/ },
+/* 333 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _reactRouter = __webpack_require__(178);
+	
+	var _employee_clients = __webpack_require__(314);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// this.props.dispatch(authenticate_user(this.state.login, this.state.password))
+	var Clients = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        employee: store.reducer.employee
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(Clients, _React$Component);
+	
+	    function Clients(props) {
+	        _classCallCheck(this, Clients);
+	
+	        var _this = _possibleConstructorReturn(this, (Clients.__proto__ || Object.getPrototypeOf(Clients)).call(this, props));
+	
+	        _this.openNextPage = _this.openNextPage.bind(_this);
+	        _this.openPrevPage = _this.openPrevPage.bind(_this);
+	        _this.openPage = _this.openPage.bind(_this);
+	        _this.getClientsByPage = _this.getClientsByPage.bind(_this);
+	
+	        var t_data = _this.props.employee.data.clients; // transactions data
+	        if (t_data.last_loaded_page == 0) {
+	            _this.props.dispatch((0, _employee_clients.get_clients)(t_data.last_loaded_page + 1));
+	        }
+	        return _this;
+	    }
+	
+	    _createClass(Clients, [{
+	        key: 'openNextPage',
+	        value: function openNextPage() {
+	            var t_data = this.props.employee.data.clients;
+	            this.openPage(t_data.current_page + 1);
+	        }
+	    }, {
+	        key: 'openPrevPage',
+	        value: function openPrevPage() {
+	            var t_data = this.props.employee.data.clients;
+	            this.openPage(t_data.current_page - 1);
+	        }
+	    }, {
+	        key: 'openPage',
+	        value: function openPage(number) {
+	            var t_data = this.props.employee.data.clients;
+	
+	            if (!(number <= t_data.last_loaded_page) && t_data.last_loaded_page <= number) {
+	                this.props.dispatch((0, _employee_clients.get_clients)(t_data.last_loaded_page + 1));
+	            }
+	            this.props.dispatch((0, _employee_clients.switch_page)(number));
+	        }
+	    }, {
+	        key: 'getClientsByPage',
+	        value: function getClientsByPage(number) {
+	            var t_data = this.props.employee.data.clients;
+	            return t_data.list.slice((number - 1) * t_data.per_page, number * t_data.per_page);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var t_error = this.props.employee.errors.clients;
+	            var t_data = this.props.employee.data.clients;
+	
+	            var alert = _react2.default.createElement('div', null);
+	            if (t_error) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    t_error
+	                );
+	            }
+	
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                alert,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            { className: 'panel-title' },
+	                            'Clients'
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        this.getClientsByPage(t_data.current_page).length > 0 ? _react2.default.createElement(
+	                            'table',
+	                            { className: 'table table-hover' },
+	                            _react2.default.createElement(
+	                                'thead',
+	                                null,
+	                                _react2.default.createElement(
+	                                    'tr',
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        'th',
+	                                        null,
+	                                        'Full name'
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'th',
+	                                        null,
+	                                        'Birth date (YYYY-MM-DD)'
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'th',
+	                                        null,
+	                                        'Status'
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'th',
+	                                        null,
+	                                        'Manage'
+	                                    )
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'tbody',
+	                                null,
+	                                this.getClientsByPage(t_data.current_page).map(function (t) {
+	                                    return _react2.default.createElement(
+	                                        'tr',
+	                                        { key: t.id },
+	                                        _react2.default.createElement(
+	                                            'td',
+	                                            null,
+	                                            t.last_name + ' ' + t.first_name + ' ' + t.middle_name
+	                                        ),
+	                                        _react2.default.createElement(
+	                                            'td',
+	                                            null,
+	                                            t.birth_at
+	                                        ),
+	                                        _react2.default.createElement(
+	                                            'td',
+	                                            null,
+	                                            t.status
+	                                        ),
+	                                        _react2.default.createElement(
+	                                            'td',
+	                                            null,
+	                                            _react2.default.createElement(
+	                                                _reactRouter.Link,
+	                                                { to: 'admin/clients/' + t.id, className: 'btn btn-info' },
+	                                                'OPEN'
+	                                            )
+	                                        )
+	                                    );
+	                                })
+	                            )
+	                        ) : _react2.default.createElement(
+	                            'span',
+	                            null,
+	                            'No clients.'
+	                        )
+	                    ),
+	                    t_data.list.length > 0 ? _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'row' },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-xs-6' },
+	                                t_data.current_page > 1 ? _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', onClick: this.openPrevPage },
+	                                    '< prev'
+	                                ) : _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
+	                                    'First page'
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-xs-6' },
+	                                t_data.more_available || t_data.more_available == false && t_data.current_page < t_data.last_loaded_page ? _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', onClick: this.openNextPage },
+	                                    'next >'
+	                                ) : _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
+	                                    'Last page'
+	                                )
+	                            )
+	                        )
+	                    ) : _react2.default.createElement('div', null)
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Clients;
+	}(_react2.default.Component)) || _class);
+	exports.default = Clients;
+
+/***/ },
+/* 334 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _reactRouter = __webpack_require__(178);
+	
+	var _MainInfo = __webpack_require__(335);
+	
+	var _MainInfo2 = _interopRequireDefault(_MainInfo);
+	
+	var _BankAccounts = __webpack_require__(336);
+	
+	var _BankAccounts2 = _interopRequireDefault(_BankAccounts);
+	
+	var _Analysis = __webpack_require__(337);
+	
+	var _Analysis2 = _interopRequireDefault(_Analysis);
+	
+	var _Transactions = __webpack_require__(338);
+	
+	var _Transactions2 = _interopRequireDefault(_Transactions);
+	
+	var _employee_clients = __webpack_require__(314);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Client = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        employee: store.reducer.employee,
+	        client: store.reducer.employee.data.client
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(Client, _React$Component);
+	
+	    function Client(props) {
+	        _classCallCheck(this, Client);
+	
+	        return _possibleConstructorReturn(this, (Client.__proto__ || Object.getPrototypeOf(Client)).call(this, props));
+	    }
+	
+	    _createClass(Client, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.props.dispatch((0, _employee_clients.open_client)(this.props.routeParams.client_id));
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var client = this.props.client;
+	            var employee = this.props.employee;
+	
+	            if (client.selected === false) {
+	                return _react2.default.createElement('div', null);
+	            }
+	
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-sm-12 col-md-3' },
+	                        _react2.default.createElement(
+	                            _reactRouter.Link,
+	                            { to: 'admin/clients', className: 'btn btn-danger' },
+	                            'back to all clients'
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement('hr', null),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-sm-12 col-md-6' },
+	                        _react2.default.createElement(_MainInfo2.default, { employee: employee })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-sm-12 col-md-6' },
+	                        _react2.default.createElement(_Analysis2.default, { employee: employee })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-sm-12' },
+	                        _react2.default.createElement(_BankAccounts2.default, { employee: employee })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'row' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-sm-12' },
+	                        _react2.default.createElement(_Transactions2.default, { employee: employee })
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Client;
+	}(_react2.default.Component)) || _class);
+	exports.default = Client;
+
+/***/ },
+/* 335 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var MainInfo = function (_React$Component) {
+	    _inherits(MainInfo, _React$Component);
+	
+	    function MainInfo(props) {
+	        _classCallCheck(this, MainInfo);
+	
+	        return _possibleConstructorReturn(this, (MainInfo.__proto__ || Object.getPrototypeOf(MainInfo)).call(this, props));
+	    }
+	
+	    _createClass(MainInfo, [{
+	        key: 'render',
+	        value: function render() {
+	            var user = this.props.employee.data.client;
+	            var user_info = user['profile'];
+	
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'panel panel-default' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel-heading' },
+	                    _react2.default.createElement(
+	                        'h3',
+	                        { className: 'panel-title' },
+	                        'Client information'
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'ul',
+	                    { className: 'list-group' },
+	                    _react2.default.createElement(
+	                        'li',
+	                        { className: 'list-group-item' },
+	                        user_info['last_name'] + ' ' + user_info['first_name'] + ' ' + user_info['middle_name']
+	                    ),
+	                    _react2.default.createElement(
+	                        'li',
+	                        { className: 'list-group-item' },
+	                        'Birth date ',
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            user_info['birth_at']
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'li',
+	                        { className: 'list-group-item' },
+	                        'Login ',
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            user_info['username']
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return MainInfo;
+	}(_react2.default.Component);
+	
+	exports.default = MainInfo;
+
+/***/ },
+/* 336 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _employee_bank_accounts = __webpack_require__(315);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var BankAccounts = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        errors: store.reducer.employee.errors,
+	        employee_data: store.reducer.employee.data
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(BankAccounts, _React$Component);
+	
+	    function BankAccounts(props) {
+	        _classCallCheck(this, BankAccounts);
+	
+	        return _possibleConstructorReturn(this, (BankAccounts.__proto__ || Object.getPrototypeOf(BankAccounts)).call(this, props));
+	    }
+	
+	    _createClass(BankAccounts, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.props.dispatch((0, _employee_bank_accounts.get_bank_accounts)(this.props.employee.data.client.profile.id));
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var error = this.props.errors.bank_accounts;
+	            var client_data = this.props.employee_data.client.data;
+	
+	            var alert = _react2.default.createElement('div', null);
+	
+	            if (error) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    error
+	                );
+	            }
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                alert,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            { className: 'panel-title' },
+	                            'Bank accounts (total: ',
+	                            client_data['bank_accounts'].length,
+	                            ')'
+	                        )
+	                    ),
+	                    client_data['bank_accounts'].length > 0 ? _react2.default.createElement(
+	                        'table',
+	                        { className: 'table table-hover' },
+	                        _react2.default.createElement(
+	                            'thead',
+	                            null,
+	                            _react2.default.createElement(
+	                                'tr',
+	                                null,
+	                                _react2.default.createElement(
+	                                    'th',
+	                                    null,
+	                                    'Balance'
+	                                ),
+	                                _react2.default.createElement(
+	                                    'th',
+	                                    null,
+	                                    'Issue reason'
+	                                ),
+	                                _react2.default.createElement(
+	                                    'th',
+	                                    null,
+	                                    'Linked cards'
+	                                ),
+	                                _react2.default.createElement(
+	                                    'th',
+	                                    { className: 'success' },
+	                                    'Transactions success'
+	                                ),
+	                                _react2.default.createElement(
+	                                    'th',
+	                                    { className: 'danger' },
+	                                    'Transactions failed'
+	                                ),
+	                                _react2.default.createElement(
+	                                    'th',
+	                                    null,
+	                                    'Issued at'
+	                                ),
+	                                _react2.default.createElement(
+	                                    'th',
+	                                    null,
+	                                    'Blocked?'
+	                                )
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'tbody',
+	                            null,
+	                            client_data['bank_accounts'].map(function (account) {
+	                                var dt = new Date(account.created_at);
+	                                return _react2.default.createElement(
+	                                    'tr',
+	                                    { key: account.id },
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        account.amount + ' ' + account.currency
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        account.reason
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        account.cards.map(function (card) {
+	                                            return _react2.default.createElement(
+	                                                'span',
+	                                                null,
+	                                                card.card_number,
+	                                                _react2.default.createElement('br', null)
+	                                            );
+	                                        })
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        { className: 'success' },
+	                                        account.transactions_success
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        { className: 'danger' },
+	                                        account.transactions_failed
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        dt.getUTCFullYear() + '-' + (dt.getUTCMonth() + 1) + '-' + dt.getUTCDate(),
+	                                        _react2.default.createElement('br', null),
+	                                        dt.getUTCHours() + ':' + dt.getUTCMinutes(),
+	                                        ' UTC'
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        account.is_blocked == true ? _react2.default.createElement('span', { className: 'glyphicon glyphicon-ok' }) : _react2.default.createElement('span', { className: 'glyphicon glyphicon-remove' })
+	                                    )
+	                                );
+	                            })
+	                        )
+	                    ) : _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        'No bank accounts opened.'
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return BankAccounts;
+	}(_react2.default.Component)) || _class);
+	exports.default = BankAccounts;
+
+/***/ },
+/* 337 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _employee_analysis = __webpack_require__(316);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Analysis = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        errors: store.reducer.employee.errors,
+	        employee_data: store.reducer.employee.data.client
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(Analysis, _React$Component);
+	
+	    function Analysis(props) {
+	        _classCallCheck(this, Analysis);
+	
+	        var _this = _possibleConstructorReturn(this, (Analysis.__proto__ || Object.getPrototypeOf(Analysis)).call(this, props));
+	
+	        _this.getNextPeriod = _this.getNextPeriod.bind(_this);
+	        _this.getPrevPeriod = _this.getPrevPeriod.bind(_this);
+	        _this.openPeriod = _this.openPeriod.bind(_this);
+	
+	        var a_data = _this.props.employee_data.data.analysis; // analysis data
+	        var current_period_f = a_data.current_period.getUTCFullYear() + '-' + (a_data.current_period.getUTCMonth() + 1);
+	
+	        if (!(_typeof(a_data.data[current_period_f]) == "object")) {
+	            console.info('load analysis for ' + a_data.current_period);
+	            _this.props.dispatch((0, _employee_analysis.get_analysis_for_period)(_this.props.employee.data.client.profile.id, a_data.current_period));
+	        }
+	        return _this;
+	    }
+	
+	    _createClass(Analysis, [{
+	        key: 'getNextPeriod',
+	        value: function getNextPeriod() {
+	            var a_data = this.props.employee_data.data.analysis;
+	            var new_p = a_data.current_period;
+	            new_p.setUTCMonth(new_p.getUTCMonth() + 1);
+	            return new_p;
+	        }
+	    }, {
+	        key: 'getPrevPeriod',
+	        value: function getPrevPeriod() {
+	            var a_data = this.props.employee_data.data.analysis;
+	            var new_p = a_data.current_period;
+	            new_p.setUTCMonth(new_p.getUTCMonth() - 1);
+	            return new_p;
+	        }
+	    }, {
+	        key: 'openPeriod',
+	        value: function openPeriod(period) {
+	            var a_data = this.props.employee_data.data.analysis;
+	
+	            var new_period_f = period.getUTCFullYear() + '-' + (period.getUTCMonth() + 1);
+	            if (!a_data.data[new_period_f]) {
+	                this.props.dispatch((0, _employee_analysis.get_analysis_for_period)(this.props.employee.data.client.profile.id, period));
+	            }
+	            this.props.dispatch((0, _employee_analysis.switch_period)(period));
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+	
+	            var a_error = this.props.errors.analysis;
+	            var a_data = this.props.employee_data.data.analysis; // analysis data
+	
+	            var alert = _react2.default.createElement('div', null);
+	            if (a_error) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    a_error
+	                );
+	            }
+	
+	            var current_period_f = a_data.current_period.getUTCFullYear() + '-' + (a_data.current_period.getUTCMonth() + 1);
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                alert,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            { className: 'panel-title' },
+	                            'Expenses for ',
+	                            current_period_f
+	                        )
+	                    ),
+	                    _typeof(a_data.data[current_period_f]) == "object" ? _react2.default.createElement(
+	                        'ul',
+	                        { className: 'list-group' },
+	                        a_data.data[current_period_f].length > 0 ? a_data.data[current_period_f].map(function (t) {
+	                            return _react2.default.createElement(
+	                                'li',
+	                                { className: 'list-group-item' },
+	                                _react2.default.createElement(
+	                                    'b',
+	                                    null,
+	                                    t.amount,
+	                                    ' ',
+	                                    t.currency
+	                                ),
+	                                ' - ',
+	                                t.category,
+	                                ' ',
+	                                _react2.default.createElement('br', null)
+	                            );
+	                        }) : _react2.default.createElement(
+	                            'li',
+	                            { className: 'list-group-item' },
+	                            'No transactions found for this period'
+	                        )
+	                    ) : _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        'No info.'
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'row' },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-xs-6' },
+	                                a_data.current_period > a_data.allowed_periods.from ? _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', onClick: function onClick() {
+	                                            return _this2.openPeriod(_this2.getPrevPeriod());
+	                                        } },
+	                                    '< prev'
+	                                ) : _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
+	                                    'First page'
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-xs-6' },
+	                                a_data.current_period < a_data.allowed_periods.to ? _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', onClick: function onClick() {
+	                                            return _this2.openPeriod(_this2.getNextPeriod());
+	                                        } },
+	                                    'next >'
+	                                ) : _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
+	                                    'Last page'
+	                                )
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Analysis;
+	}(_react2.default.Component)) || _class);
+	exports.default = Analysis;
+
+/***/ },
+/* 338 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _employee_transactions = __webpack_require__(317);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// this.props.dispatch(authenticate_user(this.state.login, this.state.password))
+	var Transactions = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        client: store.reducer.employee.data.client,
+	        errors: store.reducer.employee.errors
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(Transactions, _React$Component);
+	
+	    function Transactions(props) {
+	        _classCallCheck(this, Transactions);
+	
+	        var _this = _possibleConstructorReturn(this, (Transactions.__proto__ || Object.getPrototypeOf(Transactions)).call(this, props));
+	
+	        _this.openNextPage = _this.openNextPage.bind(_this);
+	        _this.openPrevPage = _this.openPrevPage.bind(_this);
+	        _this.openPage = _this.openPage.bind(_this);
+	        _this.getTransactionsByPage = _this.getTransactionsByPage.bind(_this);
+	
+	        var t_data = _this.props.client.data.transactions; // transactions data
+	        if (t_data.last_loaded_page == 0) {
+	            _this.props.dispatch((0, _employee_transactions.get_transactions)(_this.props.employee.data.client.profile.id, t_data.last_loaded_page + 1));
+	        }
+	        return _this;
+	    }
+	
+	    _createClass(Transactions, [{
+	        key: 'openNextPage',
+	        value: function openNextPage() {
+	            var t_data = this.props.client.data.transactions;
+	            this.openPage(t_data.current_page + 1);
+	        }
+	    }, {
+	        key: 'openPrevPage',
+	        value: function openPrevPage() {
+	            var t_data = this.props.client.data.transactions;
+	            this.openPage(t_data.current_page - 1);
+	        }
+	    }, {
+	        key: 'openPage',
+	        value: function openPage(number) {
+	            var t_data = this.props.client.data.transactions;
+	
+	            if (!(number <= t_data.last_loaded_page) && t_data.last_loaded_page <= number) {
+	                this.props.dispatch((0, _employee_transactions.get_transactions)(this.props.employee.data.client.profile.id, t_data.last_loaded_page + 1));
+	            }
+	            this.props.dispatch((0, _employee_transactions.switch_page)(number));
+	        }
+	    }, {
+	        key: 'getTransactionsByPage',
+	        value: function getTransactionsByPage(number) {
+	            var t_data = this.props.client.data.transactions;
+	            return t_data.list.slice((number - 1) * t_data.per_page, number * t_data.per_page);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var t_error = this.props.errors.analysis;
+	            var client_data = this.props.client.data.profile;
+	            var t_data = this.props.client.data.transactions; // transactions data
+	
+	            var alert = _react2.default.createElement('div', null);
+	            if (t_error) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    t_error
+	                );
+	            }
+	
+	            var t_display_date_style = { opacity: '0.5' };
+	            var statuses = t_data.statuses;
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                alert,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            { className: 'panel-title' },
+	                            'Your transactions'
+	                        )
+	                    ),
+	                    this.getTransactionsByPage(t_data.current_page).length > 0 ? _react2.default.createElement(
+	                        'table',
+	                        { className: 'table table-hover' },
+	                        _react2.default.createElement(
+	                            'thead',
+	                            null,
+	                            _react2.default.createElement(
+	                                'tr',
+	                                null,
+	                                _react2.default.createElement(
+	                                    'th',
+	                                    null,
+	                                    'Amount'
+	                                ),
+	                                _react2.default.createElement(
+	                                    'th',
+	                                    null,
+	                                    'Category'
+	                                ),
+	                                _react2.default.createElement(
+	                                    'th',
+	                                    null,
+	                                    'Status'
+	                                ),
+	                                _react2.default.createElement(
+	                                    'th',
+	                                    null,
+	                                    'Date (YYYY-MM-DD HH:MM)'
+	                                )
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'tbody',
+	                            null,
+	                            this.getTransactionsByPage(t_data.current_page).map(function (t) {
+	                                var dt = new Date(t.created_at);
+	                                return _react2.default.createElement(
+	                                    'tr',
+	                                    { key: t.id },
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        _react2.default.createElement(
+	                                            'b',
+	                                            null,
+	                                            t.amount,
+	                                            ' ',
+	                                            t.currency
+	                                        )
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        _react2.default.createElement(
+	                                            'b',
+	                                            null,
+	                                            t.category
+	                                        )
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        _react2.default.createElement(
+	                                            'b',
+	                                            null,
+	                                            statuses[t.status]
+	                                        )
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        null,
+	                                        _react2.default.createElement(
+	                                            'span',
+	                                            { style: t_display_date_style },
+	                                            'at ',
+	                                            dt.getUTCFullYear() + '/' + (dt.getUTCMonth() + 1) + '/' + dt.getUTCDate() + ' ' + dt.getUTCHours() + ':' + dt.getUTCMinutes() + ' UTC'
+	                                        )
+	                                    )
+	                                );
+	                            })
+	                        )
+	                    ) : _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        'No transactions.'
+	                    ),
+	                    t_data.list.length > 0 ? _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'row' },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-xs-6' },
+	                                t_data.current_page > 1 ? _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', onClick: this.openPrevPage },
+	                                    '< prev'
+	                                ) : _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
+	                                    'First page'
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-xs-6' },
+	                                t_data.more_available || t_data.more_available == false && t_data.current_page < t_data.last_loaded_page ? _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', onClick: this.openNextPage },
+	                                    'next >'
+	                                ) : _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-block btn-warning', disabled: 'disabled' },
+	                                    'Last page'
+	                                )
+	                            )
+	                        )
+	                    ) : _react2.default.createElement('div', null)
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Transactions;
+	}(_react2.default.Component)) || _class);
+	exports.default = Transactions;
+
+/***/ },
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

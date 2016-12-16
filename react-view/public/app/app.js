@@ -32,6 +32,9 @@ import VProfile from './pages/Profile'
 
 import VAdminLogin from './pages/admin/Login'
 import VAdminSignUp from './pages/admin/SignUp'
+import VAdminDashboard from './pages/admin/Dashboard'
+import VAdminClients from './pages/admin/Clients'
+import VAdminClient from './pages/admin/Client'
 
 
 import routeProtector, {ONLY_AUTHENTICATED, ONLY_EMPLOYEE_ALL} from './helpers/routeProtector'
@@ -59,7 +62,9 @@ let init_app = () => {
                     <Route path="admin/">
                         <Route path="signup" component={VAdminSignUp}></Route>
                         <Route path="login" component={VAdminLogin}></Route>
-                        <Route path="dashboard" component={routeProtector(VAbout, ONLY_EMPLOYEE_ALL)}></Route>
+                        <Route path="dashboard" component={routeProtector(VAdminDashboard, ONLY_EMPLOYEE_ALL)}></Route>
+                        <Route path="clients" component={routeProtector(VAdminClients, ONLY_EMPLOYEE_ALL)}></Route>
+                        <Route path="clients/:client_id" component={routeProtector(VAdminClient, ONLY_EMPLOYEE_ALL)}></Route>
                     </Route>
                 </Route>
             </Router>

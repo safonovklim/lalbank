@@ -39,5 +39,9 @@ module AdminApi::V1
             message: 'Unauthorized'
         }, status: :unauthorized
       end
+
+      def set_client
+        @client = Client.find(params[:client_id])
+      end
   end
 end

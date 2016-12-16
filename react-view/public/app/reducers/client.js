@@ -99,6 +99,7 @@ export default function client(state = initialState, action) {
                 data: initialState.data
             })
         }
+
         case ACCESS_DENIED: {
             return Object.assign({}, state, {
                 errors: Object.assign({}, state.errors, {
@@ -117,6 +118,7 @@ export default function client(state = initialState, action) {
                 data: initialState.data
             })
         }
+
         case GET_MY_CARDS_OK: {
             return Object.assign({}, state, {
                 data: Object.assign({}, state.data, {
@@ -138,6 +140,7 @@ export default function client(state = initialState, action) {
                 })
             })
         }
+
         case SIGN_UP_OK: {
             return Object.assign({}, state, {
                 newbie: {
@@ -158,6 +161,7 @@ export default function client(state = initialState, action) {
                 }
             })
         }
+
         case ISSUE_CARD_OK: {
             let new_card = action.data.card
             let new_state = Object.assign({}, state, {
@@ -185,6 +189,7 @@ export default function client(state = initialState, action) {
                 })
             })
         }
+
         case GET_TRANSACTIONS_OK: {
             let new_state = Object.assign({}, state, {
                 errors: Object.assign({}, state.errors, {
@@ -235,6 +240,7 @@ export default function client(state = initialState, action) {
 
             return new_state
         }
+
         case GET_ANALYSIS_FOR_PERIOD_OK: {
             console.log('new analysis', action.data)
             let new_state = Object.assign({}, state, {
@@ -252,7 +258,7 @@ export default function client(state = initialState, action) {
         }
         case GET_ANALYSIS_FOR_PERIOD_FAILED: {
             console.log(action)
-            let unknown_msg = 'Internal script error'
+            let unknown_msg = 'Not available for this period'
             if (action.data['available'] === false) {
                 unknown_msg = 'Not available for this period'
             }
@@ -274,6 +280,7 @@ export default function client(state = initialState, action) {
 
             return new_state
         }
+
         default: {
             return state
         }

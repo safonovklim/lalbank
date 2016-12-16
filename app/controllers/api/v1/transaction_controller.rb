@@ -23,5 +23,6 @@ module Api::V1
       def page_num
         params.require(:page)
       end
+
   end
 end

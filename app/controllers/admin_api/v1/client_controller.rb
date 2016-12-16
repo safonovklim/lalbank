@@ -7,12 +7,20 @@ module AdminApi::V1
     before_action :set_client, only: [:show, :update, :approve, :ban, :unban]
 
     def index
-      @clients = Client.all
-      render json: @clients
+      list = Client
+                 .order('created_at DESC')
+                 .page(page_num)
+                 .per_page(20)
+      render json: {
+          clients: list,
+          per_page: 20
+      }
     end
 
     def show
-      render json: @client
+      render json: {
+          client: @client
+      }
     end
 
     def update
@@ -40,15 +48,17 @@ module AdminApi::V1
         @client.status = to
         @client.save!
       end
-      render json: @client
+      render json: {
+          client: @client
+      }
     end
 
     private
       def client_params
         params.require(:client).permit(:last_name, :first_name, :middle_name, :birth_at, :username, :password, :password_confirmation)
       end
-      def set_client
-        @client = Client.find(params[:id])
+      def page_num
+        params.require(:page)
       end
   end
 end

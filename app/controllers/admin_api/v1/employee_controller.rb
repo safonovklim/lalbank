@@ -1,5 +1,7 @@
 module AdminApi::V1
   class EmployeeController < ApiController
+    before_action :authenticate_employee, only: [:index]
+
     def create
       @employee = Employee.new(employee_params)
       if @employee.valid?
@@ -14,6 +16,8 @@ module AdminApi::V1
         }, :status => 400
       end
     end
+
+
     def index
       render json: {
           employee: @current_employee

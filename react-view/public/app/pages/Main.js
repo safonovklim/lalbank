@@ -54,7 +54,8 @@ export default class Main extends React.Component {
                             <li className="list-group-item">
                                 <i className="glyphicon glyphicon-ok"></i> Sign up <br/>
                                 <i className="glyphicon glyphicon-ok"></i> Log in <br/>
-                                <i className="glyphicon glyphicon-remove"></i> Manage client <br/>
+                                <i className="glyphicon glyphicon-ok"></i> Employee profile info <br/>
+                                <i className="glyphicon glyphicon-ok"></i> Manage client <br/>
                                 <i className="glyphicon glyphicon-remove"></i> Bank analytics <br/>
                             </li>
                         </ul>
