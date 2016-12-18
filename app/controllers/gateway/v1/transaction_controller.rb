@@ -72,8 +72,8 @@ module Gateway::V1
     def render_transaction_fail(reason = '')
       render json: {
           transaction_completed: false,
-          reason: reason
-      }
+          message: reason
+      }, status: :bad_request
     end
 
 

@@ -64,51 +64,51 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _Template = __webpack_require__(318);
+	var _Template = __webpack_require__(327);
 	
 	var _Template2 = _interopRequireDefault(_Template);
 	
-	var _Main = __webpack_require__(320);
+	var _Main = __webpack_require__(329);
 	
 	var _Main2 = _interopRequireDefault(_Main);
 	
-	var _About = __webpack_require__(321);
+	var _DemoPaywall = __webpack_require__(330);
 	
-	var _About2 = _interopRequireDefault(_About);
+	var _DemoPaywall2 = _interopRequireDefault(_DemoPaywall);
 	
-	var _SignUp = __webpack_require__(322);
+	var _SignUp = __webpack_require__(331);
 	
 	var _SignUp2 = _interopRequireDefault(_SignUp);
 	
-	var _Login = __webpack_require__(323);
+	var _Login = __webpack_require__(332);
 	
 	var _Login2 = _interopRequireDefault(_Login);
 	
-	var _Profile = __webpack_require__(324);
+	var _Profile = __webpack_require__(333);
 	
 	var _Profile2 = _interopRequireDefault(_Profile);
 	
-	var _Login3 = __webpack_require__(329);
+	var _Login3 = __webpack_require__(338);
 	
 	var _Login4 = _interopRequireDefault(_Login3);
 	
-	var _SignUp3 = __webpack_require__(330);
+	var _SignUp3 = __webpack_require__(339);
 	
 	var _SignUp4 = _interopRequireDefault(_SignUp3);
 	
-	var _Dashboard = __webpack_require__(331);
+	var _Dashboard = __webpack_require__(340);
 	
 	var _Dashboard2 = _interopRequireDefault(_Dashboard);
 	
-	var _Clients = __webpack_require__(333);
+	var _Clients = __webpack_require__(342);
 	
 	var _Clients2 = _interopRequireDefault(_Clients);
 	
-	var _Client = __webpack_require__(334);
+	var _Client = __webpack_require__(343);
 	
 	var _Client2 = _interopRequireDefault(_Client);
 	
-	var _routeProtector = __webpack_require__(339);
+	var _routeProtector = __webpack_require__(348);
 	
 	var _routeProtector2 = _interopRequireDefault(_routeProtector);
 	
@@ -127,18 +127,6 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var history = (0, _reactRouterRedux.syncHistoryWithStore)(_reactRouter.hashHistory, _store2.default);
-	/*
-	import {INCREMENT} from './actions/counter'
-	import {ADD_TODO} from './actions/todos'
-	store.dispatch({
-	    type: INCREMENT
-	});
-	
-	store.dispatch({
-	    type: ADD_TODO,
-	    text: 'HELLO WORLD BLEAT'
-	})
-	*/
 	
 	var app = document.getElementById('app');
 	var init_app = function init_app() {
@@ -152,10 +140,10 @@
 	                _reactRouter.Route,
 	                { path: '/', component: _Template2.default },
 	                _react2.default.createElement(_reactRouter.IndexRoute, { component: _Main2.default }),
-	                _react2.default.createElement(_reactRouter.Route, { path: 'about', component: _About2.default }),
 	                _react2.default.createElement(_reactRouter.Route, { path: 'signup', component: _SignUp2.default }),
 	                _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _Login2.default }),
 	                _react2.default.createElement(_reactRouter.Route, { path: 'profile', component: (0, _routeProtector2.default)(_Profile2.default, _routeProtector.ONLY_AUTHENTICATED) }),
+	                _react2.default.createElement(_reactRouter.Route, { path: 'demo_paywall', component: _DemoPaywall2.default }),
 	                _react2.default.createElement(
 	                    _reactRouter.Route,
 	                    { path: 'admin/' },
@@ -30086,11 +30074,16 @@
 	
 	var _employee2 = _interopRequireDefault(_employee);
 	
+	var _demo_transaction = __webpack_require__(318);
+	
+	var _demo_transaction2 = _interopRequireDefault(_demo_transaction);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = (0, _redux.combineReducers)({
 	    client: _client2.default,
-	    employee: _employee2.default
+	    employee: _employee2.default,
+	    demo_transaction: _demo_transaction2.default
 	});
 
 /***/ },
@@ -32686,7 +32679,6 @@
 	            }
 	        case _employee.E_AUTHENTICATE_FAILED:
 	            {
-	                console.log(action);
 	                return Object.assign({}, state, {
 	                    errors: Object.assign({}, state.errors, {
 	                        auth: action.data['message'] ? action.data.message : 'Internal script error'
@@ -32842,16 +32834,12 @@
 	                        }
 	                    };
 	
-	                    console.log('new data client', new_data_client);
-	
 	                    state.data.clients.list.forEach(function (client) {
 	                        if (client.id == action.data) {
 	                            new_data_client.selected = true;
 	                            new_data_client.profile = client;
 	                        }
 	                    });
-	
-	                    console.log('new selected client', action.data, new_data_client);
 	
 	                    new_state.data.client = new_data_client;
 	
@@ -33414,6 +33402,2295 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.default = demo_transaction;
+	
+	var _demo_payment = __webpack_require__(319);
+	
+	var _reactCookie = __webpack_require__(305);
+	
+	var _reactCookie2 = _interopRequireDefault(_reactCookie);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var initialState = {
+	    error: null,
+	    transaction_completed: false
+	};
+	
+	function demo_transaction() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+	    var action = arguments[1];
+	
+	    switch (action.type) {
+	        case _demo_payment.DEMO_PAYMENT_OK:
+	            {
+	                return Object.assign({}, state, {
+	                    error: initialState.error,
+	                    transaction_completed: action.data.transaction_completed
+	                });
+	            }
+	        case _demo_payment.DEMO_PAYMENT_FAILED:
+	            {
+	                return Object.assign({}, state, {
+	                    error: action.data['message'] ? action.data.message : 'Unknown error',
+	                    transaction_completed: false
+	                });
+	            }
+	
+	        default:
+	            {
+	                return state;
+	            }
+	    }
+	}
+
+/***/ },
+/* 319 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.DEMO_PAYMENT_FAILED = exports.DEMO_PAYMENT_OK = undefined;
+	exports.make_payment = make_payment;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	var _sha = __webpack_require__(320);
+	
+	var _sha2 = _interopRequireDefault(_sha);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var DEMO_PAYMENT_OK = exports.DEMO_PAYMENT_OK = 'DEMO_PAYMENT_OK';
+	var DEMO_PAYMENT_FAILED = exports.DEMO_PAYMENT_FAILED = 'DEMO_PAYMENT_FAILED';
+	
+	function make_payment(payment_params) {
+	    var toSend = {
+	        transaction: payment_params
+	    };
+	    // key for dev stage, ONLY FOR DEMO, NOT FOR PRODUCTION
+	    var secret_key = '9d9618e3b573b08303134d469fcc88e51c1db1cdf2565cba53a673ccb1127b6d5c064d11a765745ce614b7b8f1d29fd3b83b5ff38c4ac36341bada5baea857c7';
+	    var signature = (0, _sha2.default)(JSON.stringify(toSend) + '|' + secret_key);
+	
+	    return function (dispatch) {
+	        my_api.post("gateway/v1/sexycard", toSend, {
+	            headers: {
+	                'X-SexyCard-Signature': signature
+	            }
+	        }).then(function (response) {
+	            dispatch({
+	                type: DEMO_PAYMENT_OK,
+	                data: response.data
+	            });
+	        }).catch(function (err) {
+	            console.error(err);
+	            dispatch({
+	                type: DEMO_PAYMENT_FAILED,
+	                data: {
+	                    handle: err,
+	                    message: err.response.data.message
+	                }
+	            });
+	        });
+	    };
+	}
+
+/***/ },
+/* 320 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(Buffer) {'use strict';
+	
+	(function () {
+	  var crypt = __webpack_require__(325),
+	      utf8 = __webpack_require__(326).utf8,
+	      bin = __webpack_require__(326).bin,
+	
+	
+	  // The core
+	  sha1 = function sha1(message) {
+	    // Convert to byte array
+	    if (message.constructor == String) message = utf8.stringToBytes(message);else if (typeof Buffer !== 'undefined' && typeof Buffer.isBuffer == 'function' && Buffer.isBuffer(message)) message = Array.prototype.slice.call(message, 0);else if (!Array.isArray(message)) message = message.toString();
+	
+	    // otherwise assume byte array
+	
+	    var m = crypt.bytesToWords(message),
+	        l = message.length * 8,
+	        w = [],
+	        H0 = 1732584193,
+	        H1 = -271733879,
+	        H2 = -1732584194,
+	        H3 = 271733878,
+	        H4 = -1009589776;
+	
+	    // Padding
+	    m[l >> 5] |= 0x80 << 24 - l % 32;
+	    m[(l + 64 >>> 9 << 4) + 15] = l;
+	
+	    for (var i = 0; i < m.length; i += 16) {
+	      var a = H0,
+	          b = H1,
+	          c = H2,
+	          d = H3,
+	          e = H4;
+	
+	      for (var j = 0; j < 80; j++) {
+	
+	        if (j < 16) w[j] = m[i + j];else {
+	          var n = w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16];
+	          w[j] = n << 1 | n >>> 31;
+	        }
+	
+	        var t = (H0 << 5 | H0 >>> 27) + H4 + (w[j] >>> 0) + (j < 20 ? (H1 & H2 | ~H1 & H3) + 1518500249 : j < 40 ? (H1 ^ H2 ^ H3) + 1859775393 : j < 60 ? (H1 & H2 | H1 & H3 | H2 & H3) - 1894007588 : (H1 ^ H2 ^ H3) - 899497514);
+	
+	        H4 = H3;
+	        H3 = H2;
+	        H2 = H1 << 30 | H1 >>> 2;
+	        H1 = H0;
+	        H0 = t;
+	      }
+	
+	      H0 += a;
+	      H1 += b;
+	      H2 += c;
+	      H3 += d;
+	      H4 += e;
+	    }
+	
+	    return [H0, H1, H2, H3, H4];
+	  },
+	
+	
+	  // Public API
+	  api = function api(message, options) {
+	    var digestbytes = crypt.wordsToBytes(sha1(message));
+	    return options && options.asBytes ? digestbytes : options && options.asString ? bin.bytesToString(digestbytes) : crypt.bytesToHex(digestbytes);
+	  };
+	
+	  api._blocksize = 16;
+	  api._digestsize = 20;
+	
+	  module.exports = api;
+	})();
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(321).Buffer))
+
+/***/ },
+/* 321 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {/*!
+	 * The buffer module from node.js, for the browser.
+	 *
+	 * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+	 * @license  MIT
+	 */
+	/* eslint-disable no-proto */
+	
+	'use strict';
+	
+	var base64 = __webpack_require__(322);
+	var ieee754 = __webpack_require__(323);
+	var isArray = __webpack_require__(324);
+	
+	exports.Buffer = Buffer;
+	exports.SlowBuffer = SlowBuffer;
+	exports.INSPECT_MAX_BYTES = 50;
+	
+	/**
+	 * If `Buffer.TYPED_ARRAY_SUPPORT`:
+	 *   === true    Use Uint8Array implementation (fastest)
+	 *   === false   Use Object implementation (most compatible, even IE6)
+	 *
+	 * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+	 * Opera 11.6+, iOS 4.2+.
+	 *
+	 * Due to various browser bugs, sometimes the Object implementation will be used even
+	 * when the browser supports typed arrays.
+	 *
+	 * Note:
+	 *
+	 *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+	 *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+	 *
+	 *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+	 *
+	 *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+	 *     incorrect length in some situations.
+	
+	 * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+	 * get the Object implementation, which is slower but behaves correctly.
+	 */
+	Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined ? global.TYPED_ARRAY_SUPPORT : typedArraySupport();
+	
+	/*
+	 * Export kMaxLength after typed array support is determined.
+	 */
+	exports.kMaxLength = kMaxLength();
+	
+	function typedArraySupport() {
+	  try {
+	    var arr = new Uint8Array(1);
+	    arr.__proto__ = { __proto__: Uint8Array.prototype, foo: function foo() {
+	        return 42;
+	      } };
+	    return arr.foo() === 42 && // typed array instances can be augmented
+	    typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+	    arr.subarray(1, 1).byteLength === 0; // ie10 has broken `subarray`
+	  } catch (e) {
+	    return false;
+	  }
+	}
+	
+	function kMaxLength() {
+	  return Buffer.TYPED_ARRAY_SUPPORT ? 0x7fffffff : 0x3fffffff;
+	}
+	
+	function createBuffer(that, length) {
+	  if (kMaxLength() < length) {
+	    throw new RangeError('Invalid typed array length');
+	  }
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    // Return an augmented `Uint8Array` instance, for best performance
+	    that = new Uint8Array(length);
+	    that.__proto__ = Buffer.prototype;
+	  } else {
+	    // Fallback: Return an object instance of the Buffer class
+	    if (that === null) {
+	      that = new Buffer(length);
+	    }
+	    that.length = length;
+	  }
+	
+	  return that;
+	}
+	
+	/**
+	 * The Buffer constructor returns instances of `Uint8Array` that have their
+	 * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
+	 * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+	 * and the `Uint8Array` methods. Square bracket notation works as expected -- it
+	 * returns a single octet.
+	 *
+	 * The `Uint8Array` prototype remains unmodified.
+	 */
+	
+	function Buffer(arg, encodingOrOffset, length) {
+	  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
+	    return new Buffer(arg, encodingOrOffset, length);
+	  }
+	
+	  // Common case.
+	  if (typeof arg === 'number') {
+	    if (typeof encodingOrOffset === 'string') {
+	      throw new Error('If encoding is specified then the first argument must be a string');
+	    }
+	    return allocUnsafe(this, arg);
+	  }
+	  return from(this, arg, encodingOrOffset, length);
+	}
+	
+	Buffer.poolSize = 8192; // not used by this implementation
+	
+	// TODO: Legacy, not needed anymore. Remove in next major version.
+	Buffer._augment = function (arr) {
+	  arr.__proto__ = Buffer.prototype;
+	  return arr;
+	};
+	
+	function from(that, value, encodingOrOffset, length) {
+	  if (typeof value === 'number') {
+	    throw new TypeError('"value" argument must not be a number');
+	  }
+	
+	  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
+	    return fromArrayBuffer(that, value, encodingOrOffset, length);
+	  }
+	
+	  if (typeof value === 'string') {
+	    return fromString(that, value, encodingOrOffset);
+	  }
+	
+	  return fromObject(that, value);
+	}
+	
+	/**
+	 * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+	 * if value is a number.
+	 * Buffer.from(str[, encoding])
+	 * Buffer.from(array)
+	 * Buffer.from(buffer)
+	 * Buffer.from(arrayBuffer[, byteOffset[, length]])
+	 **/
+	Buffer.from = function (value, encodingOrOffset, length) {
+	  return from(null, value, encodingOrOffset, length);
+	};
+	
+	if (Buffer.TYPED_ARRAY_SUPPORT) {
+	  Buffer.prototype.__proto__ = Uint8Array.prototype;
+	  Buffer.__proto__ = Uint8Array;
+	  if (typeof Symbol !== 'undefined' && Symbol.species && Buffer[Symbol.species] === Buffer) {
+	    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
+	    Object.defineProperty(Buffer, Symbol.species, {
+	      value: null,
+	      configurable: true
+	    });
+	  }
+	}
+	
+	function assertSize(size) {
+	  if (typeof size !== 'number') {
+	    throw new TypeError('"size" argument must be a number');
+	  } else if (size < 0) {
+	    throw new RangeError('"size" argument must not be negative');
+	  }
+	}
+	
+	function alloc(that, size, fill, encoding) {
+	  assertSize(size);
+	  if (size <= 0) {
+	    return createBuffer(that, size);
+	  }
+	  if (fill !== undefined) {
+	    // Only pay attention to encoding if it's a string. This
+	    // prevents accidentally sending in a number that would
+	    // be interpretted as a start offset.
+	    return typeof encoding === 'string' ? createBuffer(that, size).fill(fill, encoding) : createBuffer(that, size).fill(fill);
+	  }
+	  return createBuffer(that, size);
+	}
+	
+	/**
+	 * Creates a new filled Buffer instance.
+	 * alloc(size[, fill[, encoding]])
+	 **/
+	Buffer.alloc = function (size, fill, encoding) {
+	  return alloc(null, size, fill, encoding);
+	};
+	
+	function allocUnsafe(that, size) {
+	  assertSize(size);
+	  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0);
+	  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+	    for (var i = 0; i < size; ++i) {
+	      that[i] = 0;
+	    }
+	  }
+	  return that;
+	}
+	
+	/**
+	 * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+	 * */
+	Buffer.allocUnsafe = function (size) {
+	  return allocUnsafe(null, size);
+	};
+	/**
+	 * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+	 */
+	Buffer.allocUnsafeSlow = function (size) {
+	  return allocUnsafe(null, size);
+	};
+	
+	function fromString(that, string, encoding) {
+	  if (typeof encoding !== 'string' || encoding === '') {
+	    encoding = 'utf8';
+	  }
+	
+	  if (!Buffer.isEncoding(encoding)) {
+	    throw new TypeError('"encoding" must be a valid string encoding');
+	  }
+	
+	  var length = byteLength(string, encoding) | 0;
+	  that = createBuffer(that, length);
+	
+	  var actual = that.write(string, encoding);
+	
+	  if (actual !== length) {
+	    // Writing a hex string, for example, that contains invalid characters will
+	    // cause everything after the first invalid character to be ignored. (e.g.
+	    // 'abxxcd' will be treated as 'ab')
+	    that = that.slice(0, actual);
+	  }
+	
+	  return that;
+	}
+	
+	function fromArrayLike(that, array) {
+	  var length = array.length < 0 ? 0 : checked(array.length) | 0;
+	  that = createBuffer(that, length);
+	  for (var i = 0; i < length; i += 1) {
+	    that[i] = array[i] & 255;
+	  }
+	  return that;
+	}
+	
+	function fromArrayBuffer(that, array, byteOffset, length) {
+	  array.byteLength; // this throws if `array` is not a valid ArrayBuffer
+	
+	  if (byteOffset < 0 || array.byteLength < byteOffset) {
+	    throw new RangeError('\'offset\' is out of bounds');
+	  }
+	
+	  if (array.byteLength < byteOffset + (length || 0)) {
+	    throw new RangeError('\'length\' is out of bounds');
+	  }
+	
+	  if (byteOffset === undefined && length === undefined) {
+	    array = new Uint8Array(array);
+	  } else if (length === undefined) {
+	    array = new Uint8Array(array, byteOffset);
+	  } else {
+	    array = new Uint8Array(array, byteOffset, length);
+	  }
+	
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    // Return an augmented `Uint8Array` instance, for best performance
+	    that = array;
+	    that.__proto__ = Buffer.prototype;
+	  } else {
+	    // Fallback: Return an object instance of the Buffer class
+	    that = fromArrayLike(that, array);
+	  }
+	  return that;
+	}
+	
+	function fromObject(that, obj) {
+	  if (Buffer.isBuffer(obj)) {
+	    var len = checked(obj.length) | 0;
+	    that = createBuffer(that, len);
+	
+	    if (that.length === 0) {
+	      return that;
+	    }
+	
+	    obj.copy(that, 0, 0, len);
+	    return that;
+	  }
+	
+	  if (obj) {
+	    if (typeof ArrayBuffer !== 'undefined' && obj.buffer instanceof ArrayBuffer || 'length' in obj) {
+	      if (typeof obj.length !== 'number' || isnan(obj.length)) {
+	        return createBuffer(that, 0);
+	      }
+	      return fromArrayLike(that, obj);
+	    }
+	
+	    if (obj.type === 'Buffer' && isArray(obj.data)) {
+	      return fromArrayLike(that, obj.data);
+	    }
+	  }
+	
+	  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.');
+	}
+	
+	function checked(length) {
+	  // Note: cannot use `length < kMaxLength()` here because that fails when
+	  // length is NaN (which is otherwise coerced to zero.)
+	  if (length >= kMaxLength()) {
+	    throw new RangeError('Attempt to allocate Buffer larger than maximum ' + 'size: 0x' + kMaxLength().toString(16) + ' bytes');
+	  }
+	  return length | 0;
+	}
+	
+	function SlowBuffer(length) {
+	  if (+length != length) {
+	    // eslint-disable-line eqeqeq
+	    length = 0;
+	  }
+	  return Buffer.alloc(+length);
+	}
+	
+	Buffer.isBuffer = function isBuffer(b) {
+	  return !!(b != null && b._isBuffer);
+	};
+	
+	Buffer.compare = function compare(a, b) {
+	  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+	    throw new TypeError('Arguments must be Buffers');
+	  }
+	
+	  if (a === b) return 0;
+	
+	  var x = a.length;
+	  var y = b.length;
+	
+	  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+	    if (a[i] !== b[i]) {
+	      x = a[i];
+	      y = b[i];
+	      break;
+	    }
+	  }
+	
+	  if (x < y) return -1;
+	  if (y < x) return 1;
+	  return 0;
+	};
+	
+	Buffer.isEncoding = function isEncoding(encoding) {
+	  switch (String(encoding).toLowerCase()) {
+	    case 'hex':
+	    case 'utf8':
+	    case 'utf-8':
+	    case 'ascii':
+	    case 'latin1':
+	    case 'binary':
+	    case 'base64':
+	    case 'ucs2':
+	    case 'ucs-2':
+	    case 'utf16le':
+	    case 'utf-16le':
+	      return true;
+	    default:
+	      return false;
+	  }
+	};
+	
+	Buffer.concat = function concat(list, length) {
+	  if (!isArray(list)) {
+	    throw new TypeError('"list" argument must be an Array of Buffers');
+	  }
+	
+	  if (list.length === 0) {
+	    return Buffer.alloc(0);
+	  }
+	
+	  var i;
+	  if (length === undefined) {
+	    length = 0;
+	    for (i = 0; i < list.length; ++i) {
+	      length += list[i].length;
+	    }
+	  }
+	
+	  var buffer = Buffer.allocUnsafe(length);
+	  var pos = 0;
+	  for (i = 0; i < list.length; ++i) {
+	    var buf = list[i];
+	    if (!Buffer.isBuffer(buf)) {
+	      throw new TypeError('"list" argument must be an Array of Buffers');
+	    }
+	    buf.copy(buffer, pos);
+	    pos += buf.length;
+	  }
+	  return buffer;
+	};
+	
+	function byteLength(string, encoding) {
+	  if (Buffer.isBuffer(string)) {
+	    return string.length;
+	  }
+	  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' && (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
+	    return string.byteLength;
+	  }
+	  if (typeof string !== 'string') {
+	    string = '' + string;
+	  }
+	
+	  var len = string.length;
+	  if (len === 0) return 0;
+	
+	  // Use a for loop to avoid recursion
+	  var loweredCase = false;
+	  for (;;) {
+	    switch (encoding) {
+	      case 'ascii':
+	      case 'latin1':
+	      case 'binary':
+	        return len;
+	      case 'utf8':
+	      case 'utf-8':
+	      case undefined:
+	        return utf8ToBytes(string).length;
+	      case 'ucs2':
+	      case 'ucs-2':
+	      case 'utf16le':
+	      case 'utf-16le':
+	        return len * 2;
+	      case 'hex':
+	        return len >>> 1;
+	      case 'base64':
+	        return base64ToBytes(string).length;
+	      default:
+	        if (loweredCase) return utf8ToBytes(string).length; // assume utf8
+	        encoding = ('' + encoding).toLowerCase();
+	        loweredCase = true;
+	    }
+	  }
+	}
+	Buffer.byteLength = byteLength;
+	
+	function slowToString(encoding, start, end) {
+	  var loweredCase = false;
+	
+	  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
+	  // property of a typed array.
+	
+	  // This behaves neither like String nor Uint8Array in that we set start/end
+	  // to their upper/lower bounds if the value passed is out of range.
+	  // undefined is handled specially as per ECMA-262 6th Edition,
+	  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
+	  if (start === undefined || start < 0) {
+	    start = 0;
+	  }
+	  // Return early if start > this.length. Done here to prevent potential uint32
+	  // coercion fail below.
+	  if (start > this.length) {
+	    return '';
+	  }
+	
+	  if (end === undefined || end > this.length) {
+	    end = this.length;
+	  }
+	
+	  if (end <= 0) {
+	    return '';
+	  }
+	
+	  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
+	  end >>>= 0;
+	  start >>>= 0;
+	
+	  if (end <= start) {
+	    return '';
+	  }
+	
+	  if (!encoding) encoding = 'utf8';
+	
+	  while (true) {
+	    switch (encoding) {
+	      case 'hex':
+	        return hexSlice(this, start, end);
+	
+	      case 'utf8':
+	      case 'utf-8':
+	        return utf8Slice(this, start, end);
+	
+	      case 'ascii':
+	        return asciiSlice(this, start, end);
+	
+	      case 'latin1':
+	      case 'binary':
+	        return latin1Slice(this, start, end);
+	
+	      case 'base64':
+	        return base64Slice(this, start, end);
+	
+	      case 'ucs2':
+	      case 'ucs-2':
+	      case 'utf16le':
+	      case 'utf-16le':
+	        return utf16leSlice(this, start, end);
+	
+	      default:
+	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding);
+	        encoding = (encoding + '').toLowerCase();
+	        loweredCase = true;
+	    }
+	  }
+	}
+	
+	// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
+	// Buffer instances.
+	Buffer.prototype._isBuffer = true;
+	
+	function swap(b, n, m) {
+	  var i = b[n];
+	  b[n] = b[m];
+	  b[m] = i;
+	}
+	
+	Buffer.prototype.swap16 = function swap16() {
+	  var len = this.length;
+	  if (len % 2 !== 0) {
+	    throw new RangeError('Buffer size must be a multiple of 16-bits');
+	  }
+	  for (var i = 0; i < len; i += 2) {
+	    swap(this, i, i + 1);
+	  }
+	  return this;
+	};
+	
+	Buffer.prototype.swap32 = function swap32() {
+	  var len = this.length;
+	  if (len % 4 !== 0) {
+	    throw new RangeError('Buffer size must be a multiple of 32-bits');
+	  }
+	  for (var i = 0; i < len; i += 4) {
+	    swap(this, i, i + 3);
+	    swap(this, i + 1, i + 2);
+	  }
+	  return this;
+	};
+	
+	Buffer.prototype.swap64 = function swap64() {
+	  var len = this.length;
+	  if (len % 8 !== 0) {
+	    throw new RangeError('Buffer size must be a multiple of 64-bits');
+	  }
+	  for (var i = 0; i < len; i += 8) {
+	    swap(this, i, i + 7);
+	    swap(this, i + 1, i + 6);
+	    swap(this, i + 2, i + 5);
+	    swap(this, i + 3, i + 4);
+	  }
+	  return this;
+	};
+	
+	Buffer.prototype.toString = function toString() {
+	  var length = this.length | 0;
+	  if (length === 0) return '';
+	  if (arguments.length === 0) return utf8Slice(this, 0, length);
+	  return slowToString.apply(this, arguments);
+	};
+	
+	Buffer.prototype.equals = function equals(b) {
+	  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer');
+	  if (this === b) return true;
+	  return Buffer.compare(this, b) === 0;
+	};
+	
+	Buffer.prototype.inspect = function inspect() {
+	  var str = '';
+	  var max = exports.INSPECT_MAX_BYTES;
+	  if (this.length > 0) {
+	    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ');
+	    if (this.length > max) str += ' ... ';
+	  }
+	  return '<Buffer ' + str + '>';
+	};
+	
+	Buffer.prototype.compare = function compare(target, start, end, thisStart, thisEnd) {
+	  if (!Buffer.isBuffer(target)) {
+	    throw new TypeError('Argument must be a Buffer');
+	  }
+	
+	  if (start === undefined) {
+	    start = 0;
+	  }
+	  if (end === undefined) {
+	    end = target ? target.length : 0;
+	  }
+	  if (thisStart === undefined) {
+	    thisStart = 0;
+	  }
+	  if (thisEnd === undefined) {
+	    thisEnd = this.length;
+	  }
+	
+	  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
+	    throw new RangeError('out of range index');
+	  }
+	
+	  if (thisStart >= thisEnd && start >= end) {
+	    return 0;
+	  }
+	  if (thisStart >= thisEnd) {
+	    return -1;
+	  }
+	  if (start >= end) {
+	    return 1;
+	  }
+	
+	  start >>>= 0;
+	  end >>>= 0;
+	  thisStart >>>= 0;
+	  thisEnd >>>= 0;
+	
+	  if (this === target) return 0;
+	
+	  var x = thisEnd - thisStart;
+	  var y = end - start;
+	  var len = Math.min(x, y);
+	
+	  var thisCopy = this.slice(thisStart, thisEnd);
+	  var targetCopy = target.slice(start, end);
+	
+	  for (var i = 0; i < len; ++i) {
+	    if (thisCopy[i] !== targetCopy[i]) {
+	      x = thisCopy[i];
+	      y = targetCopy[i];
+	      break;
+	    }
+	  }
+	
+	  if (x < y) return -1;
+	  if (y < x) return 1;
+	  return 0;
+	};
+	
+	// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+	// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+	//
+	// Arguments:
+	// - buffer - a Buffer to search
+	// - val - a string, Buffer, or number
+	// - byteOffset - an index into `buffer`; will be clamped to an int32
+	// - encoding - an optional encoding, relevant is val is a string
+	// - dir - true for indexOf, false for lastIndexOf
+	function bidirectionalIndexOf(buffer, val, byteOffset, encoding, dir) {
+	  // Empty buffer means no match
+	  if (buffer.length === 0) return -1;
+	
+	  // Normalize byteOffset
+	  if (typeof byteOffset === 'string') {
+	    encoding = byteOffset;
+	    byteOffset = 0;
+	  } else if (byteOffset > 0x7fffffff) {
+	    byteOffset = 0x7fffffff;
+	  } else if (byteOffset < -0x80000000) {
+	    byteOffset = -0x80000000;
+	  }
+	  byteOffset = +byteOffset; // Coerce to Number.
+	  if (isNaN(byteOffset)) {
+	    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+	    byteOffset = dir ? 0 : buffer.length - 1;
+	  }
+	
+	  // Normalize byteOffset: negative offsets start from the end of the buffer
+	  if (byteOffset < 0) byteOffset = buffer.length + byteOffset;
+	  if (byteOffset >= buffer.length) {
+	    if (dir) return -1;else byteOffset = buffer.length - 1;
+	  } else if (byteOffset < 0) {
+	    if (dir) byteOffset = 0;else return -1;
+	  }
+	
+	  // Normalize val
+	  if (typeof val === 'string') {
+	    val = Buffer.from(val, encoding);
+	  }
+	
+	  // Finally, search either indexOf (if dir is true) or lastIndexOf
+	  if (Buffer.isBuffer(val)) {
+	    // Special case: looking for empty string/buffer always fails
+	    if (val.length === 0) {
+	      return -1;
+	    }
+	    return arrayIndexOf(buffer, val, byteOffset, encoding, dir);
+	  } else if (typeof val === 'number') {
+	    val = val & 0xFF; // Search for a byte value [0-255]
+	    if (Buffer.TYPED_ARRAY_SUPPORT && typeof Uint8Array.prototype.indexOf === 'function') {
+	      if (dir) {
+	        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset);
+	      } else {
+	        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset);
+	      }
+	    }
+	    return arrayIndexOf(buffer, [val], byteOffset, encoding, dir);
+	  }
+	
+	  throw new TypeError('val must be string, number or Buffer');
+	}
+	
+	function arrayIndexOf(arr, val, byteOffset, encoding, dir) {
+	  var indexSize = 1;
+	  var arrLength = arr.length;
+	  var valLength = val.length;
+	
+	  if (encoding !== undefined) {
+	    encoding = String(encoding).toLowerCase();
+	    if (encoding === 'ucs2' || encoding === 'ucs-2' || encoding === 'utf16le' || encoding === 'utf-16le') {
+	      if (arr.length < 2 || val.length < 2) {
+	        return -1;
+	      }
+	      indexSize = 2;
+	      arrLength /= 2;
+	      valLength /= 2;
+	      byteOffset /= 2;
+	    }
+	  }
+	
+	  function read(buf, i) {
+	    if (indexSize === 1) {
+	      return buf[i];
+	    } else {
+	      return buf.readUInt16BE(i * indexSize);
+	    }
+	  }
+	
+	  var i;
+	  if (dir) {
+	    var foundIndex = -1;
+	    for (i = byteOffset; i < arrLength; i++) {
+	      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+	        if (foundIndex === -1) foundIndex = i;
+	        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize;
+	      } else {
+	        if (foundIndex !== -1) i -= i - foundIndex;
+	        foundIndex = -1;
+	      }
+	    }
+	  } else {
+	    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength;
+	    for (i = byteOffset; i >= 0; i--) {
+	      var found = true;
+	      for (var j = 0; j < valLength; j++) {
+	        if (read(arr, i + j) !== read(val, j)) {
+	          found = false;
+	          break;
+	        }
+	      }
+	      if (found) return i;
+	    }
+	  }
+	
+	  return -1;
+	}
+	
+	Buffer.prototype.includes = function includes(val, byteOffset, encoding) {
+	  return this.indexOf(val, byteOffset, encoding) !== -1;
+	};
+	
+	Buffer.prototype.indexOf = function indexOf(val, byteOffset, encoding) {
+	  return bidirectionalIndexOf(this, val, byteOffset, encoding, true);
+	};
+	
+	Buffer.prototype.lastIndexOf = function lastIndexOf(val, byteOffset, encoding) {
+	  return bidirectionalIndexOf(this, val, byteOffset, encoding, false);
+	};
+	
+	function hexWrite(buf, string, offset, length) {
+	  offset = Number(offset) || 0;
+	  var remaining = buf.length - offset;
+	  if (!length) {
+	    length = remaining;
+	  } else {
+	    length = Number(length);
+	    if (length > remaining) {
+	      length = remaining;
+	    }
+	  }
+	
+	  // must be an even number of digits
+	  var strLen = string.length;
+	  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string');
+	
+	  if (length > strLen / 2) {
+	    length = strLen / 2;
+	  }
+	  for (var i = 0; i < length; ++i) {
+	    var parsed = parseInt(string.substr(i * 2, 2), 16);
+	    if (isNaN(parsed)) return i;
+	    buf[offset + i] = parsed;
+	  }
+	  return i;
+	}
+	
+	function utf8Write(buf, string, offset, length) {
+	  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length);
+	}
+	
+	function asciiWrite(buf, string, offset, length) {
+	  return blitBuffer(asciiToBytes(string), buf, offset, length);
+	}
+	
+	function latin1Write(buf, string, offset, length) {
+	  return asciiWrite(buf, string, offset, length);
+	}
+	
+	function base64Write(buf, string, offset, length) {
+	  return blitBuffer(base64ToBytes(string), buf, offset, length);
+	}
+	
+	function ucs2Write(buf, string, offset, length) {
+	  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length);
+	}
+	
+	Buffer.prototype.write = function write(string, offset, length, encoding) {
+	  // Buffer#write(string)
+	  if (offset === undefined) {
+	    encoding = 'utf8';
+	    length = this.length;
+	    offset = 0;
+	    // Buffer#write(string, encoding)
+	  } else if (length === undefined && typeof offset === 'string') {
+	    encoding = offset;
+	    length = this.length;
+	    offset = 0;
+	    // Buffer#write(string, offset[, length][, encoding])
+	  } else if (isFinite(offset)) {
+	    offset = offset | 0;
+	    if (isFinite(length)) {
+	      length = length | 0;
+	      if (encoding === undefined) encoding = 'utf8';
+	    } else {
+	      encoding = length;
+	      length = undefined;
+	    }
+	    // legacy write(string, encoding, offset, length) - remove in v0.13
+	  } else {
+	    throw new Error('Buffer.write(string, encoding, offset[, length]) is no longer supported');
+	  }
+	
+	  var remaining = this.length - offset;
+	  if (length === undefined || length > remaining) length = remaining;
+	
+	  if (string.length > 0 && (length < 0 || offset < 0) || offset > this.length) {
+	    throw new RangeError('Attempt to write outside buffer bounds');
+	  }
+	
+	  if (!encoding) encoding = 'utf8';
+	
+	  var loweredCase = false;
+	  for (;;) {
+	    switch (encoding) {
+	      case 'hex':
+	        return hexWrite(this, string, offset, length);
+	
+	      case 'utf8':
+	      case 'utf-8':
+	        return utf8Write(this, string, offset, length);
+	
+	      case 'ascii':
+	        return asciiWrite(this, string, offset, length);
+	
+	      case 'latin1':
+	      case 'binary':
+	        return latin1Write(this, string, offset, length);
+	
+	      case 'base64':
+	        // Warning: maxLength not taken into account in base64Write
+	        return base64Write(this, string, offset, length);
+	
+	      case 'ucs2':
+	      case 'ucs-2':
+	      case 'utf16le':
+	      case 'utf-16le':
+	        return ucs2Write(this, string, offset, length);
+	
+	      default:
+	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding);
+	        encoding = ('' + encoding).toLowerCase();
+	        loweredCase = true;
+	    }
+	  }
+	};
+	
+	Buffer.prototype.toJSON = function toJSON() {
+	  return {
+	    type: 'Buffer',
+	    data: Array.prototype.slice.call(this._arr || this, 0)
+	  };
+	};
+	
+	function base64Slice(buf, start, end) {
+	  if (start === 0 && end === buf.length) {
+	    return base64.fromByteArray(buf);
+	  } else {
+	    return base64.fromByteArray(buf.slice(start, end));
+	  }
+	}
+	
+	function utf8Slice(buf, start, end) {
+	  end = Math.min(buf.length, end);
+	  var res = [];
+	
+	  var i = start;
+	  while (i < end) {
+	    var firstByte = buf[i];
+	    var codePoint = null;
+	    var bytesPerSequence = firstByte > 0xEF ? 4 : firstByte > 0xDF ? 3 : firstByte > 0xBF ? 2 : 1;
+	
+	    if (i + bytesPerSequence <= end) {
+	      var secondByte, thirdByte, fourthByte, tempCodePoint;
+	
+	      switch (bytesPerSequence) {
+	        case 1:
+	          if (firstByte < 0x80) {
+	            codePoint = firstByte;
+	          }
+	          break;
+	        case 2:
+	          secondByte = buf[i + 1];
+	          if ((secondByte & 0xC0) === 0x80) {
+	            tempCodePoint = (firstByte & 0x1F) << 0x6 | secondByte & 0x3F;
+	            if (tempCodePoint > 0x7F) {
+	              codePoint = tempCodePoint;
+	            }
+	          }
+	          break;
+	        case 3:
+	          secondByte = buf[i + 1];
+	          thirdByte = buf[i + 2];
+	          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+	            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | thirdByte & 0x3F;
+	            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+	              codePoint = tempCodePoint;
+	            }
+	          }
+	          break;
+	        case 4:
+	          secondByte = buf[i + 1];
+	          thirdByte = buf[i + 2];
+	          fourthByte = buf[i + 3];
+	          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+	            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | fourthByte & 0x3F;
+	            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+	              codePoint = tempCodePoint;
+	            }
+	          }
+	      }
+	    }
+	
+	    if (codePoint === null) {
+	      // we did not generate a valid codePoint so insert a
+	      // replacement char (U+FFFD) and advance only 1 byte
+	      codePoint = 0xFFFD;
+	      bytesPerSequence = 1;
+	    } else if (codePoint > 0xFFFF) {
+	      // encode to utf16 (surrogate pair dance)
+	      codePoint -= 0x10000;
+	      res.push(codePoint >>> 10 & 0x3FF | 0xD800);
+	      codePoint = 0xDC00 | codePoint & 0x3FF;
+	    }
+	
+	    res.push(codePoint);
+	    i += bytesPerSequence;
+	  }
+	
+	  return decodeCodePointsArray(res);
+	}
+	
+	// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+	// the lowest limit is Chrome, with 0x10000 args.
+	// We go 1 magnitude less, for safety
+	var MAX_ARGUMENTS_LENGTH = 0x1000;
+	
+	function decodeCodePointsArray(codePoints) {
+	  var len = codePoints.length;
+	  if (len <= MAX_ARGUMENTS_LENGTH) {
+	    return String.fromCharCode.apply(String, codePoints); // avoid extra slice()
+	  }
+	
+	  // Decode in chunks to avoid "call stack size exceeded".
+	  var res = '';
+	  var i = 0;
+	  while (i < len) {
+	    res += String.fromCharCode.apply(String, codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH));
+	  }
+	  return res;
+	}
+	
+	function asciiSlice(buf, start, end) {
+	  var ret = '';
+	  end = Math.min(buf.length, end);
+	
+	  for (var i = start; i < end; ++i) {
+	    ret += String.fromCharCode(buf[i] & 0x7F);
+	  }
+	  return ret;
+	}
+	
+	function latin1Slice(buf, start, end) {
+	  var ret = '';
+	  end = Math.min(buf.length, end);
+	
+	  for (var i = start; i < end; ++i) {
+	    ret += String.fromCharCode(buf[i]);
+	  }
+	  return ret;
+	}
+	
+	function hexSlice(buf, start, end) {
+	  var len = buf.length;
+	
+	  if (!start || start < 0) start = 0;
+	  if (!end || end < 0 || end > len) end = len;
+	
+	  var out = '';
+	  for (var i = start; i < end; ++i) {
+	    out += toHex(buf[i]);
+	  }
+	  return out;
+	}
+	
+	function utf16leSlice(buf, start, end) {
+	  var bytes = buf.slice(start, end);
+	  var res = '';
+	  for (var i = 0; i < bytes.length; i += 2) {
+	    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256);
+	  }
+	  return res;
+	}
+	
+	Buffer.prototype.slice = function slice(start, end) {
+	  var len = this.length;
+	  start = ~~start;
+	  end = end === undefined ? len : ~~end;
+	
+	  if (start < 0) {
+	    start += len;
+	    if (start < 0) start = 0;
+	  } else if (start > len) {
+	    start = len;
+	  }
+	
+	  if (end < 0) {
+	    end += len;
+	    if (end < 0) end = 0;
+	  } else if (end > len) {
+	    end = len;
+	  }
+	
+	  if (end < start) end = start;
+	
+	  var newBuf;
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    newBuf = this.subarray(start, end);
+	    newBuf.__proto__ = Buffer.prototype;
+	  } else {
+	    var sliceLen = end - start;
+	    newBuf = new Buffer(sliceLen, undefined);
+	    for (var i = 0; i < sliceLen; ++i) {
+	      newBuf[i] = this[i + start];
+	    }
+	  }
+	
+	  return newBuf;
+	};
+	
+	/*
+	 * Need to make sure that buffer isn't trying to write out of bounds.
+	 */
+	function checkOffset(offset, ext, length) {
+	  if (offset % 1 !== 0 || offset < 0) throw new RangeError('offset is not uint');
+	  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length');
+	}
+	
+	Buffer.prototype.readUIntLE = function readUIntLE(offset, byteLength, noAssert) {
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) checkOffset(offset, byteLength, this.length);
+	
+	  var val = this[offset];
+	  var mul = 1;
+	  var i = 0;
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    val += this[offset + i] * mul;
+	  }
+	
+	  return val;
+	};
+	
+	Buffer.prototype.readUIntBE = function readUIntBE(offset, byteLength, noAssert) {
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) {
+	    checkOffset(offset, byteLength, this.length);
+	  }
+	
+	  var val = this[offset + --byteLength];
+	  var mul = 1;
+	  while (byteLength > 0 && (mul *= 0x100)) {
+	    val += this[offset + --byteLength] * mul;
+	  }
+	
+	  return val;
+	};
+	
+	Buffer.prototype.readUInt8 = function readUInt8(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 1, this.length);
+	  return this[offset];
+	};
+	
+	Buffer.prototype.readUInt16LE = function readUInt16LE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length);
+	  return this[offset] | this[offset + 1] << 8;
+	};
+	
+	Buffer.prototype.readUInt16BE = function readUInt16BE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length);
+	  return this[offset] << 8 | this[offset + 1];
+	};
+	
+	Buffer.prototype.readUInt32LE = function readUInt32LE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+	
+	  return (this[offset] | this[offset + 1] << 8 | this[offset + 2] << 16) + this[offset + 3] * 0x1000000;
+	};
+	
+	Buffer.prototype.readUInt32BE = function readUInt32BE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+	
+	  return this[offset] * 0x1000000 + (this[offset + 1] << 16 | this[offset + 2] << 8 | this[offset + 3]);
+	};
+	
+	Buffer.prototype.readIntLE = function readIntLE(offset, byteLength, noAssert) {
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) checkOffset(offset, byteLength, this.length);
+	
+	  var val = this[offset];
+	  var mul = 1;
+	  var i = 0;
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    val += this[offset + i] * mul;
+	  }
+	  mul *= 0x80;
+	
+	  if (val >= mul) val -= Math.pow(2, 8 * byteLength);
+	
+	  return val;
+	};
+	
+	Buffer.prototype.readIntBE = function readIntBE(offset, byteLength, noAssert) {
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) checkOffset(offset, byteLength, this.length);
+	
+	  var i = byteLength;
+	  var mul = 1;
+	  var val = this[offset + --i];
+	  while (i > 0 && (mul *= 0x100)) {
+	    val += this[offset + --i] * mul;
+	  }
+	  mul *= 0x80;
+	
+	  if (val >= mul) val -= Math.pow(2, 8 * byteLength);
+	
+	  return val;
+	};
+	
+	Buffer.prototype.readInt8 = function readInt8(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 1, this.length);
+	  if (!(this[offset] & 0x80)) return this[offset];
+	  return (0xff - this[offset] + 1) * -1;
+	};
+	
+	Buffer.prototype.readInt16LE = function readInt16LE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length);
+	  var val = this[offset] | this[offset + 1] << 8;
+	  return val & 0x8000 ? val | 0xFFFF0000 : val;
+	};
+	
+	Buffer.prototype.readInt16BE = function readInt16BE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 2, this.length);
+	  var val = this[offset + 1] | this[offset] << 8;
+	  return val & 0x8000 ? val | 0xFFFF0000 : val;
+	};
+	
+	Buffer.prototype.readInt32LE = function readInt32LE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+	
+	  return this[offset] | this[offset + 1] << 8 | this[offset + 2] << 16 | this[offset + 3] << 24;
+	};
+	
+	Buffer.prototype.readInt32BE = function readInt32BE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+	
+	  return this[offset] << 24 | this[offset + 1] << 16 | this[offset + 2] << 8 | this[offset + 3];
+	};
+	
+	Buffer.prototype.readFloatLE = function readFloatLE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+	  return ieee754.read(this, offset, true, 23, 4);
+	};
+	
+	Buffer.prototype.readFloatBE = function readFloatBE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 4, this.length);
+	  return ieee754.read(this, offset, false, 23, 4);
+	};
+	
+	Buffer.prototype.readDoubleLE = function readDoubleLE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 8, this.length);
+	  return ieee754.read(this, offset, true, 52, 8);
+	};
+	
+	Buffer.prototype.readDoubleBE = function readDoubleBE(offset, noAssert) {
+	  if (!noAssert) checkOffset(offset, 8, this.length);
+	  return ieee754.read(this, offset, false, 52, 8);
+	};
+	
+	function checkInt(buf, value, offset, ext, max, min) {
+	  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance');
+	  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds');
+	  if (offset + ext > buf.length) throw new RangeError('Index out of range');
+	}
+	
+	Buffer.prototype.writeUIntLE = function writeUIntLE(value, offset, byteLength, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) {
+	    var maxBytes = Math.pow(2, 8 * byteLength) - 1;
+	    checkInt(this, value, offset, byteLength, maxBytes, 0);
+	  }
+	
+	  var mul = 1;
+	  var i = 0;
+	  this[offset] = value & 0xFF;
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    this[offset + i] = value / mul & 0xFF;
+	  }
+	
+	  return offset + byteLength;
+	};
+	
+	Buffer.prototype.writeUIntBE = function writeUIntBE(value, offset, byteLength, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  byteLength = byteLength | 0;
+	  if (!noAssert) {
+	    var maxBytes = Math.pow(2, 8 * byteLength) - 1;
+	    checkInt(this, value, offset, byteLength, maxBytes, 0);
+	  }
+	
+	  var i = byteLength - 1;
+	  var mul = 1;
+	  this[offset + i] = value & 0xFF;
+	  while (--i >= 0 && (mul *= 0x100)) {
+	    this[offset + i] = value / mul & 0xFF;
+	  }
+	
+	  return offset + byteLength;
+	};
+	
+	Buffer.prototype.writeUInt8 = function writeUInt8(value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0);
+	  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value);
+	  this[offset] = value & 0xff;
+	  return offset + 1;
+	};
+	
+	function objectWriteUInt16(buf, value, offset, littleEndian) {
+	  if (value < 0) value = 0xffff + value + 1;
+	  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
+	    buf[offset + i] = (value & 0xff << 8 * (littleEndian ? i : 1 - i)) >>> (littleEndian ? i : 1 - i) * 8;
+	  }
+	}
+	
+	Buffer.prototype.writeUInt16LE = function writeUInt16LE(value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = value & 0xff;
+	    this[offset + 1] = value >>> 8;
+	  } else {
+	    objectWriteUInt16(this, value, offset, true);
+	  }
+	  return offset + 2;
+	};
+	
+	Buffer.prototype.writeUInt16BE = function writeUInt16BE(value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = value >>> 8;
+	    this[offset + 1] = value & 0xff;
+	  } else {
+	    objectWriteUInt16(this, value, offset, false);
+	  }
+	  return offset + 2;
+	};
+	
+	function objectWriteUInt32(buf, value, offset, littleEndian) {
+	  if (value < 0) value = 0xffffffff + value + 1;
+	  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
+	    buf[offset + i] = value >>> (littleEndian ? i : 3 - i) * 8 & 0xff;
+	  }
+	}
+	
+	Buffer.prototype.writeUInt32LE = function writeUInt32LE(value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset + 3] = value >>> 24;
+	    this[offset + 2] = value >>> 16;
+	    this[offset + 1] = value >>> 8;
+	    this[offset] = value & 0xff;
+	  } else {
+	    objectWriteUInt32(this, value, offset, true);
+	  }
+	  return offset + 4;
+	};
+	
+	Buffer.prototype.writeUInt32BE = function writeUInt32BE(value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = value >>> 24;
+	    this[offset + 1] = value >>> 16;
+	    this[offset + 2] = value >>> 8;
+	    this[offset + 3] = value & 0xff;
+	  } else {
+	    objectWriteUInt32(this, value, offset, false);
+	  }
+	  return offset + 4;
+	};
+	
+	Buffer.prototype.writeIntLE = function writeIntLE(value, offset, byteLength, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) {
+	    var limit = Math.pow(2, 8 * byteLength - 1);
+	
+	    checkInt(this, value, offset, byteLength, limit - 1, -limit);
+	  }
+	
+	  var i = 0;
+	  var mul = 1;
+	  var sub = 0;
+	  this[offset] = value & 0xFF;
+	  while (++i < byteLength && (mul *= 0x100)) {
+	    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
+	      sub = 1;
+	    }
+	    this[offset + i] = (value / mul >> 0) - sub & 0xFF;
+	  }
+	
+	  return offset + byteLength;
+	};
+	
+	Buffer.prototype.writeIntBE = function writeIntBE(value, offset, byteLength, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) {
+	    var limit = Math.pow(2, 8 * byteLength - 1);
+	
+	    checkInt(this, value, offset, byteLength, limit - 1, -limit);
+	  }
+	
+	  var i = byteLength - 1;
+	  var mul = 1;
+	  var sub = 0;
+	  this[offset + i] = value & 0xFF;
+	  while (--i >= 0 && (mul *= 0x100)) {
+	    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
+	      sub = 1;
+	    }
+	    this[offset + i] = (value / mul >> 0) - sub & 0xFF;
+	  }
+	
+	  return offset + byteLength;
+	};
+	
+	Buffer.prototype.writeInt8 = function writeInt8(value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80);
+	  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value);
+	  if (value < 0) value = 0xff + value + 1;
+	  this[offset] = value & 0xff;
+	  return offset + 1;
+	};
+	
+	Buffer.prototype.writeInt16LE = function writeInt16LE(value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = value & 0xff;
+	    this[offset + 1] = value >>> 8;
+	  } else {
+	    objectWriteUInt16(this, value, offset, true);
+	  }
+	  return offset + 2;
+	};
+	
+	Buffer.prototype.writeInt16BE = function writeInt16BE(value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = value >>> 8;
+	    this[offset + 1] = value & 0xff;
+	  } else {
+	    objectWriteUInt16(this, value, offset, false);
+	  }
+	  return offset + 2;
+	};
+	
+	Buffer.prototype.writeInt32LE = function writeInt32LE(value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000);
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = value & 0xff;
+	    this[offset + 1] = value >>> 8;
+	    this[offset + 2] = value >>> 16;
+	    this[offset + 3] = value >>> 24;
+	  } else {
+	    objectWriteUInt32(this, value, offset, true);
+	  }
+	  return offset + 4;
+	};
+	
+	Buffer.prototype.writeInt32BE = function writeInt32BE(value, offset, noAssert) {
+	  value = +value;
+	  offset = offset | 0;
+	  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000);
+	  if (value < 0) value = 0xffffffff + value + 1;
+	  if (Buffer.TYPED_ARRAY_SUPPORT) {
+	    this[offset] = value >>> 24;
+	    this[offset + 1] = value >>> 16;
+	    this[offset + 2] = value >>> 8;
+	    this[offset + 3] = value & 0xff;
+	  } else {
+	    objectWriteUInt32(this, value, offset, false);
+	  }
+	  return offset + 4;
+	};
+	
+	function checkIEEE754(buf, value, offset, ext, max, min) {
+	  if (offset + ext > buf.length) throw new RangeError('Index out of range');
+	  if (offset < 0) throw new RangeError('Index out of range');
+	}
+	
+	function writeFloat(buf, value, offset, littleEndian, noAssert) {
+	  if (!noAssert) {
+	    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38);
+	  }
+	  ieee754.write(buf, value, offset, littleEndian, 23, 4);
+	  return offset + 4;
+	}
+	
+	Buffer.prototype.writeFloatLE = function writeFloatLE(value, offset, noAssert) {
+	  return writeFloat(this, value, offset, true, noAssert);
+	};
+	
+	Buffer.prototype.writeFloatBE = function writeFloatBE(value, offset, noAssert) {
+	  return writeFloat(this, value, offset, false, noAssert);
+	};
+	
+	function writeDouble(buf, value, offset, littleEndian, noAssert) {
+	  if (!noAssert) {
+	    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308);
+	  }
+	  ieee754.write(buf, value, offset, littleEndian, 52, 8);
+	  return offset + 8;
+	}
+	
+	Buffer.prototype.writeDoubleLE = function writeDoubleLE(value, offset, noAssert) {
+	  return writeDouble(this, value, offset, true, noAssert);
+	};
+	
+	Buffer.prototype.writeDoubleBE = function writeDoubleBE(value, offset, noAssert) {
+	  return writeDouble(this, value, offset, false, noAssert);
+	};
+	
+	// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+	Buffer.prototype.copy = function copy(target, targetStart, start, end) {
+	  if (!start) start = 0;
+	  if (!end && end !== 0) end = this.length;
+	  if (targetStart >= target.length) targetStart = target.length;
+	  if (!targetStart) targetStart = 0;
+	  if (end > 0 && end < start) end = start;
+	
+	  // Copy 0 bytes; we're done
+	  if (end === start) return 0;
+	  if (target.length === 0 || this.length === 0) return 0;
+	
+	  // Fatal error conditions
+	  if (targetStart < 0) {
+	    throw new RangeError('targetStart out of bounds');
+	  }
+	  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds');
+	  if (end < 0) throw new RangeError('sourceEnd out of bounds');
+	
+	  // Are we oob?
+	  if (end > this.length) end = this.length;
+	  if (target.length - targetStart < end - start) {
+	    end = target.length - targetStart + start;
+	  }
+	
+	  var len = end - start;
+	  var i;
+	
+	  if (this === target && start < targetStart && targetStart < end) {
+	    // descending copy from end
+	    for (i = len - 1; i >= 0; --i) {
+	      target[i + targetStart] = this[i + start];
+	    }
+	  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+	    // ascending copy from start
+	    for (i = 0; i < len; ++i) {
+	      target[i + targetStart] = this[i + start];
+	    }
+	  } else {
+	    Uint8Array.prototype.set.call(target, this.subarray(start, start + len), targetStart);
+	  }
+	
+	  return len;
+	};
+	
+	// Usage:
+	//    buffer.fill(number[, offset[, end]])
+	//    buffer.fill(buffer[, offset[, end]])
+	//    buffer.fill(string[, offset[, end]][, encoding])
+	Buffer.prototype.fill = function fill(val, start, end, encoding) {
+	  // Handle string cases:
+	  if (typeof val === 'string') {
+	    if (typeof start === 'string') {
+	      encoding = start;
+	      start = 0;
+	      end = this.length;
+	    } else if (typeof end === 'string') {
+	      encoding = end;
+	      end = this.length;
+	    }
+	    if (val.length === 1) {
+	      var code = val.charCodeAt(0);
+	      if (code < 256) {
+	        val = code;
+	      }
+	    }
+	    if (encoding !== undefined && typeof encoding !== 'string') {
+	      throw new TypeError('encoding must be a string');
+	    }
+	    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
+	      throw new TypeError('Unknown encoding: ' + encoding);
+	    }
+	  } else if (typeof val === 'number') {
+	    val = val & 255;
+	  }
+	
+	  // Invalid ranges are not set to a default, so can range check early.
+	  if (start < 0 || this.length < start || this.length < end) {
+	    throw new RangeError('Out of range index');
+	  }
+	
+	  if (end <= start) {
+	    return this;
+	  }
+	
+	  start = start >>> 0;
+	  end = end === undefined ? this.length : end >>> 0;
+	
+	  if (!val) val = 0;
+	
+	  var i;
+	  if (typeof val === 'number') {
+	    for (i = start; i < end; ++i) {
+	      this[i] = val;
+	    }
+	  } else {
+	    var bytes = Buffer.isBuffer(val) ? val : utf8ToBytes(new Buffer(val, encoding).toString());
+	    var len = bytes.length;
+	    for (i = 0; i < end - start; ++i) {
+	      this[i + start] = bytes[i % len];
+	    }
+	  }
+	
+	  return this;
+	};
+	
+	// HELPER FUNCTIONS
+	// ================
+	
+	var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g;
+	
+	function base64clean(str) {
+	  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+	  str = stringtrim(str).replace(INVALID_BASE64_RE, '');
+	  // Node converts strings with length < 2 to ''
+	  if (str.length < 2) return '';
+	  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+	  while (str.length % 4 !== 0) {
+	    str = str + '=';
+	  }
+	  return str;
+	}
+	
+	function stringtrim(str) {
+	  if (str.trim) return str.trim();
+	  return str.replace(/^\s+|\s+$/g, '');
+	}
+	
+	function toHex(n) {
+	  if (n < 16) return '0' + n.toString(16);
+	  return n.toString(16);
+	}
+	
+	function utf8ToBytes(string, units) {
+	  units = units || Infinity;
+	  var codePoint;
+	  var length = string.length;
+	  var leadSurrogate = null;
+	  var bytes = [];
+	
+	  for (var i = 0; i < length; ++i) {
+	    codePoint = string.charCodeAt(i);
+	
+	    // is surrogate component
+	    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+	      // last char was a lead
+	      if (!leadSurrogate) {
+	        // no lead yet
+	        if (codePoint > 0xDBFF) {
+	          // unexpected trail
+	          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+	          continue;
+	        } else if (i + 1 === length) {
+	          // unpaired lead
+	          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+	          continue;
+	        }
+	
+	        // valid lead
+	        leadSurrogate = codePoint;
+	
+	        continue;
+	      }
+	
+	      // 2 leads in a row
+	      if (codePoint < 0xDC00) {
+	        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+	        leadSurrogate = codePoint;
+	        continue;
+	      }
+	
+	      // valid surrogate pair
+	      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000;
+	    } else if (leadSurrogate) {
+	      // valid bmp char, but last char was a lead
+	      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD);
+	    }
+	
+	    leadSurrogate = null;
+	
+	    // encode utf8
+	    if (codePoint < 0x80) {
+	      if ((units -= 1) < 0) break;
+	      bytes.push(codePoint);
+	    } else if (codePoint < 0x800) {
+	      if ((units -= 2) < 0) break;
+	      bytes.push(codePoint >> 0x6 | 0xC0, codePoint & 0x3F | 0x80);
+	    } else if (codePoint < 0x10000) {
+	      if ((units -= 3) < 0) break;
+	      bytes.push(codePoint >> 0xC | 0xE0, codePoint >> 0x6 & 0x3F | 0x80, codePoint & 0x3F | 0x80);
+	    } else if (codePoint < 0x110000) {
+	      if ((units -= 4) < 0) break;
+	      bytes.push(codePoint >> 0x12 | 0xF0, codePoint >> 0xC & 0x3F | 0x80, codePoint >> 0x6 & 0x3F | 0x80, codePoint & 0x3F | 0x80);
+	    } else {
+	      throw new Error('Invalid code point');
+	    }
+	  }
+	
+	  return bytes;
+	}
+	
+	function asciiToBytes(str) {
+	  var byteArray = [];
+	  for (var i = 0; i < str.length; ++i) {
+	    // Node's code seems to be doing this and not & 0x7F..
+	    byteArray.push(str.charCodeAt(i) & 0xFF);
+	  }
+	  return byteArray;
+	}
+	
+	function utf16leToBytes(str, units) {
+	  var c, hi, lo;
+	  var byteArray = [];
+	  for (var i = 0; i < str.length; ++i) {
+	    if ((units -= 2) < 0) break;
+	
+	    c = str.charCodeAt(i);
+	    hi = c >> 8;
+	    lo = c % 256;
+	    byteArray.push(lo);
+	    byteArray.push(hi);
+	  }
+	
+	  return byteArray;
+	}
+	
+	function base64ToBytes(str) {
+	  return base64.toByteArray(base64clean(str));
+	}
+	
+	function blitBuffer(src, dst, offset, length) {
+	  for (var i = 0; i < length; ++i) {
+	    if (i + offset >= dst.length || i >= src.length) break;
+	    dst[i + offset] = src[i];
+	  }
+	  return i;
+	}
+	
+	function isnan(val) {
+	  return val !== val; // eslint-disable-line no-self-compare
+	}
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 322 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	exports.byteLength = byteLength;
+	exports.toByteArray = toByteArray;
+	exports.fromByteArray = fromByteArray;
+	
+	var lookup = [];
+	var revLookup = [];
+	var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array;
+	
+	var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+	for (var i = 0, len = code.length; i < len; ++i) {
+	  lookup[i] = code[i];
+	  revLookup[code.charCodeAt(i)] = i;
+	}
+	
+	revLookup['-'.charCodeAt(0)] = 62;
+	revLookup['_'.charCodeAt(0)] = 63;
+	
+	function placeHoldersCount(b64) {
+	  var len = b64.length;
+	  if (len % 4 > 0) {
+	    throw new Error('Invalid string. Length must be a multiple of 4');
+	  }
+	
+	  // the number of equal signs (place holders)
+	  // if there are two placeholders, than the two characters before it
+	  // represent one byte
+	  // if there is only one, then the three characters before it represent 2 bytes
+	  // this is just a cheap hack to not do indexOf twice
+	  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0;
+	}
+	
+	function byteLength(b64) {
+	  // base64 is 4/3 + up to two characters of the original data
+	  return b64.length * 3 / 4 - placeHoldersCount(b64);
+	}
+	
+	function toByteArray(b64) {
+	  var i, j, l, tmp, placeHolders, arr;
+	  var len = b64.length;
+	  placeHolders = placeHoldersCount(b64);
+	
+	  arr = new Arr(len * 3 / 4 - placeHolders);
+	
+	  // if there are placeholders, only get up to the last complete 4 chars
+	  l = placeHolders > 0 ? len - 4 : len;
+	
+	  var L = 0;
+	
+	  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+	    tmp = revLookup[b64.charCodeAt(i)] << 18 | revLookup[b64.charCodeAt(i + 1)] << 12 | revLookup[b64.charCodeAt(i + 2)] << 6 | revLookup[b64.charCodeAt(i + 3)];
+	    arr[L++] = tmp >> 16 & 0xFF;
+	    arr[L++] = tmp >> 8 & 0xFF;
+	    arr[L++] = tmp & 0xFF;
+	  }
+	
+	  if (placeHolders === 2) {
+	    tmp = revLookup[b64.charCodeAt(i)] << 2 | revLookup[b64.charCodeAt(i + 1)] >> 4;
+	    arr[L++] = tmp & 0xFF;
+	  } else if (placeHolders === 1) {
+	    tmp = revLookup[b64.charCodeAt(i)] << 10 | revLookup[b64.charCodeAt(i + 1)] << 4 | revLookup[b64.charCodeAt(i + 2)] >> 2;
+	    arr[L++] = tmp >> 8 & 0xFF;
+	    arr[L++] = tmp & 0xFF;
+	  }
+	
+	  return arr;
+	}
+	
+	function tripletToBase64(num) {
+	  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
+	}
+	
+	function encodeChunk(uint8, start, end) {
+	  var tmp;
+	  var output = [];
+	  for (var i = start; i < end; i += 3) {
+	    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + uint8[i + 2];
+	    output.push(tripletToBase64(tmp));
+	  }
+	  return output.join('');
+	}
+	
+	function fromByteArray(uint8) {
+	  var tmp;
+	  var len = uint8.length;
+	  var extraBytes = len % 3; // if we have 1 byte left, pad 2 bytes
+	  var output = '';
+	  var parts = [];
+	  var maxChunkLength = 16383; // must be multiple of 3
+	
+	  // go through the array every three bytes, we'll deal with trailing stuff later
+	  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+	    parts.push(encodeChunk(uint8, i, i + maxChunkLength > len2 ? len2 : i + maxChunkLength));
+	  }
+	
+	  // pad the end with zeros, but make sure to not forget the extra bytes
+	  if (extraBytes === 1) {
+	    tmp = uint8[len - 1];
+	    output += lookup[tmp >> 2];
+	    output += lookup[tmp << 4 & 0x3F];
+	    output += '==';
+	  } else if (extraBytes === 2) {
+	    tmp = (uint8[len - 2] << 8) + uint8[len - 1];
+	    output += lookup[tmp >> 10];
+	    output += lookup[tmp >> 4 & 0x3F];
+	    output += lookup[tmp << 2 & 0x3F];
+	    output += '=';
+	  }
+	
+	  parts.push(output);
+	
+	  return parts.join('');
+	}
+
+/***/ },
+/* 323 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+	  var e, m;
+	  var eLen = nBytes * 8 - mLen - 1;
+	  var eMax = (1 << eLen) - 1;
+	  var eBias = eMax >> 1;
+	  var nBits = -7;
+	  var i = isLE ? nBytes - 1 : 0;
+	  var d = isLE ? -1 : 1;
+	  var s = buffer[offset + i];
+	
+	  i += d;
+	
+	  e = s & (1 << -nBits) - 1;
+	  s >>= -nBits;
+	  nBits += eLen;
+	  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+	
+	  m = e & (1 << -nBits) - 1;
+	  e >>= -nBits;
+	  nBits += mLen;
+	  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+	
+	  if (e === 0) {
+	    e = 1 - eBias;
+	  } else if (e === eMax) {
+	    return m ? NaN : (s ? -1 : 1) * Infinity;
+	  } else {
+	    m = m + Math.pow(2, mLen);
+	    e = e - eBias;
+	  }
+	  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
+	};
+	
+	exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+	  var e, m, c;
+	  var eLen = nBytes * 8 - mLen - 1;
+	  var eMax = (1 << eLen) - 1;
+	  var eBias = eMax >> 1;
+	  var rt = mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0;
+	  var i = isLE ? 0 : nBytes - 1;
+	  var d = isLE ? 1 : -1;
+	  var s = value < 0 || value === 0 && 1 / value < 0 ? 1 : 0;
+	
+	  value = Math.abs(value);
+	
+	  if (isNaN(value) || value === Infinity) {
+	    m = isNaN(value) ? 1 : 0;
+	    e = eMax;
+	  } else {
+	    e = Math.floor(Math.log(value) / Math.LN2);
+	    if (value * (c = Math.pow(2, -e)) < 1) {
+	      e--;
+	      c *= 2;
+	    }
+	    if (e + eBias >= 1) {
+	      value += rt / c;
+	    } else {
+	      value += rt * Math.pow(2, 1 - eBias);
+	    }
+	    if (value * c >= 2) {
+	      e++;
+	      c /= 2;
+	    }
+	
+	    if (e + eBias >= eMax) {
+	      m = 0;
+	      e = eMax;
+	    } else if (e + eBias >= 1) {
+	      m = (value * c - 1) * Math.pow(2, mLen);
+	      e = e + eBias;
+	    } else {
+	      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+	      e = 0;
+	    }
+	  }
+	
+	  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+	
+	  e = e << mLen | m;
+	  eLen += mLen;
+	  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+	
+	  buffer[offset + i - d] |= s * 128;
+	};
+
+/***/ },
+/* 324 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var toString = {}.toString;
+	
+	module.exports = Array.isArray || function (arr) {
+	  return toString.call(arr) == '[object Array]';
+	};
+
+/***/ },
+/* 325 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	(function () {
+	  var base64map = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+	      crypt = {
+	    // Bit-wise rotation left
+	    rotl: function rotl(n, b) {
+	      return n << b | n >>> 32 - b;
+	    },
+	
+	    // Bit-wise rotation right
+	    rotr: function rotr(n, b) {
+	      return n << 32 - b | n >>> b;
+	    },
+	
+	    // Swap big-endian to little-endian and vice versa
+	    endian: function endian(n) {
+	      // If number given, swap endian
+	      if (n.constructor == Number) {
+	        return crypt.rotl(n, 8) & 0x00FF00FF | crypt.rotl(n, 24) & 0xFF00FF00;
+	      }
+	
+	      // Else, assume array and swap all items
+	      for (var i = 0; i < n.length; i++) {
+	        n[i] = crypt.endian(n[i]);
+	      }return n;
+	    },
+	
+	    // Generate an array of any length of random bytes
+	    randomBytes: function randomBytes(n) {
+	      for (var bytes = []; n > 0; n--) {
+	        bytes.push(Math.floor(Math.random() * 256));
+	      }return bytes;
+	    },
+	
+	    // Convert a byte array to big-endian 32-bit words
+	    bytesToWords: function bytesToWords(bytes) {
+	      for (var words = [], i = 0, b = 0; i < bytes.length; i++, b += 8) {
+	        words[b >>> 5] |= bytes[i] << 24 - b % 32;
+	      }return words;
+	    },
+	
+	    // Convert big-endian 32-bit words to a byte array
+	    wordsToBytes: function wordsToBytes(words) {
+	      for (var bytes = [], b = 0; b < words.length * 32; b += 8) {
+	        bytes.push(words[b >>> 5] >>> 24 - b % 32 & 0xFF);
+	      }return bytes;
+	    },
+	
+	    // Convert a byte array to a hex string
+	    bytesToHex: function bytesToHex(bytes) {
+	      for (var hex = [], i = 0; i < bytes.length; i++) {
+	        hex.push((bytes[i] >>> 4).toString(16));
+	        hex.push((bytes[i] & 0xF).toString(16));
+	      }
+	      return hex.join('');
+	    },
+	
+	    // Convert a hex string to a byte array
+	    hexToBytes: function hexToBytes(hex) {
+	      for (var bytes = [], c = 0; c < hex.length; c += 2) {
+	        bytes.push(parseInt(hex.substr(c, 2), 16));
+	      }return bytes;
+	    },
+	
+	    // Convert a byte array to a base-64 string
+	    bytesToBase64: function bytesToBase64(bytes) {
+	      for (var base64 = [], i = 0; i < bytes.length; i += 3) {
+	        var triplet = bytes[i] << 16 | bytes[i + 1] << 8 | bytes[i + 2];
+	        for (var j = 0; j < 4; j++) {
+	          if (i * 8 + j * 6 <= bytes.length * 8) base64.push(base64map.charAt(triplet >>> 6 * (3 - j) & 0x3F));else base64.push('=');
+	        }
+	      }
+	      return base64.join('');
+	    },
+	
+	    // Convert a base-64 string to a byte array
+	    base64ToBytes: function base64ToBytes(base64) {
+	      // Remove non-base-64 characters
+	      base64 = base64.replace(/[^A-Z0-9+\/]/ig, '');
+	
+	      for (var bytes = [], i = 0, imod4 = 0; i < base64.length; imod4 = ++i % 4) {
+	        if (imod4 == 0) continue;
+	        bytes.push((base64map.indexOf(base64.charAt(i - 1)) & Math.pow(2, -2 * imod4 + 8) - 1) << imod4 * 2 | base64map.indexOf(base64.charAt(i)) >>> 6 - imod4 * 2);
+	      }
+	      return bytes;
+	    }
+	  };
+	
+	  module.exports = crypt;
+	})();
+
+/***/ },
+/* 326 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var charenc = {
+	  // UTF-8 encoding
+	  utf8: {
+	    // Convert a string to a byte array
+	    stringToBytes: function stringToBytes(str) {
+	      return charenc.bin.stringToBytes(unescape(encodeURIComponent(str)));
+	    },
+	
+	    // Convert a byte array to a string
+	    bytesToString: function bytesToString(bytes) {
+	      return decodeURIComponent(escape(charenc.bin.bytesToString(bytes)));
+	    }
+	  },
+	
+	  // Binary encoding
+	  bin: {
+	    // Convert a string to a byte array
+	    stringToBytes: function stringToBytes(str) {
+	      for (var bytes = [], i = 0; i < str.length; i++) {
+	        bytes.push(str.charCodeAt(i) & 0xFF);
+	      }return bytes;
+	    },
+	
+	    // Convert a byte array to a string
+	    bytesToString: function bytesToString(bytes) {
+	      for (var str = [], i = 0; i < bytes.length; i++) {
+	        str.push(String.fromCharCode(bytes[i]));
+	      }return str.join('');
+	    }
+	  }
+	};
+	
+	module.exports = charenc;
+
+/***/ },
+/* 327 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	exports.default = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -33422,7 +35699,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Header = __webpack_require__(319);
+	var _Header = __webpack_require__(328);
 	
 	var _Header2 = _interopRequireDefault(_Header);
 	
@@ -33461,7 +35738,7 @@
 	exports.default = Template;
 
 /***/ },
-/* 319 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33558,14 +35835,10 @@
 	                            client.profile['first_name']
 	                        ),
 	                        ' '
-	                    ),
-	                    ' | ',
-	                    _react2.default.createElement(
-	                        _reactRouter.Link,
-	                        { className: 'navbar-link', onClick: this.onLogoutClick },
-	                        'Log out'
 	                    )
 	                );
+	
+	                // | <Link className="navbar-link" onClick={this.onLogoutClick}>Log out</Link>
 	            }
 	
 	            var nav_style = {
@@ -33590,6 +35863,19 @@
 	                        'div',
 	                        { className: 'collapse navbar-collapse' },
 	                        _react2.default.createElement(
+	                            'ul',
+	                            { className: 'nav navbar-nav' },
+	                            _react2.default.createElement(
+	                                'li',
+	                                null,
+	                                _react2.default.createElement(
+	                                    _reactRouter.Link,
+	                                    { to: '/demo_paywall' },
+	                                    'New payment'
+	                                )
+	                            )
+	                        ),
+	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'navbar-right' },
 	                            _react2.default.createElement(
@@ -33611,7 +35897,7 @@
 	exports.default = Header;
 
 /***/ },
-/* 320 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33622,6 +35908,8 @@
 	exports.default = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
 	
 	var _react = __webpack_require__(1);
 	
@@ -33633,6 +35921,8 @@
 	
 	var _api2 = _interopRequireDefault(_api);
 	
+	var _reactRedux = __webpack_require__(233);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -33643,7 +35933,12 @@
 	
 	var my_api = (0, _api2.default)();
 	
-	var Main = function (_React$Component) {
+	var Main = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        client: store.reducer.client,
+	        employee: store.reducer.employee
+	    };
+	}), _dec(_class = function (_React$Component) {
 	    _inherits(Main, _React$Component);
 	
 	    function Main() {
@@ -33655,145 +35950,216 @@
 	    _createClass(Main, [{
 	        key: 'render',
 	        value: function render() {
+	            var client = this.props.client;
+	            var employee = this.props.employee;
+	
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'row' },
-	                _react2.default.createElement(
+	                null,
+	                !client.isAuthenticated || !employee.isAuthenticated ? _react2.default.createElement(
 	                    'div',
-	                    { className: 'col-sm-12 col-md-4 col-md-offset-2' },
+	                    { className: 'row' },
 	                    _react2.default.createElement(
 	                        'div',
-	                        { className: 'panel panel-default' },
+	                        { className: 'col-sm-12' },
 	                        _react2.default.createElement(
 	                            'div',
-	                            { className: 'panel-heading' },
+	                            { className: 'alert alert-warning', role: 'alert' },
+	                            'After authorization, please reload page using ',
 	                            _react2.default.createElement(
-	                                'h3',
-	                                { className: 'panel-title' },
-	                                'For clients'
-	                            )
-	                        ),
-	                        _react2.default.createElement(
-	                            'ul',
-	                            { className: 'list-group' },
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'list-group-item' },
-	                                _react2.default.createElement(
-	                                    _reactRouter.Link,
-	                                    { to: 'signup', className: 'btn btn-success btn-block' },
-	                                    'Sign up'
-	                                )
+	                                'b',
+	                                null,
+	                                'F5'
 	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'list-group-item' },
-	                                _react2.default.createElement(
-	                                    _reactRouter.Link,
-	                                    { to: 'login', className: 'btn btn-primary btn-block' },
-	                                    'Log in'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'list-group-item' },
-	                                _react2.default.createElement(
-	                                    'b',
-	                                    null,
-	                                    'Features:'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'list-group-item' },
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
-	                                ' Sign up ',
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
-	                                ' Log in ',
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
-	                                ' Profile info ',
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
-	                                ' Watch own cards ',
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
-	                                ' Issue card ',
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
-	                                ' Watch own transactions ',
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
-	                                ' Watch analytics ',
-	                                _react2.default.createElement('br', null)
-	                            )
+	                            ' button'
 	                        )
 	                    )
-	                ),
+	                ) : _react2.default.createElement('div', null),
 	                _react2.default.createElement(
 	                    'div',
-	                    { className: 'col-sm-12 col-md-4' },
+	                    { className: 'row' },
 	                    _react2.default.createElement(
 	                        'div',
-	                        { className: 'panel panel-default' },
+	                        { className: 'col-sm-12 col-md-4 col-md-offset-2' },
 	                        _react2.default.createElement(
 	                            'div',
-	                            { className: 'panel-heading' },
+	                            { className: 'panel panel-default' },
 	                            _react2.default.createElement(
-	                                'h3',
-	                                { className: 'panel-title' },
-	                                'For employee'
-	                            )
-	                        ),
-	                        _react2.default.createElement(
-	                            'ul',
-	                            { className: 'list-group' },
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'list-group-item' },
+	                                'div',
+	                                { className: 'panel-heading' },
 	                                _react2.default.createElement(
-	                                    _reactRouter.Link,
-	                                    { to: 'admin/signup', className: 'btn btn-success btn-block' },
-	                                    'Sign up'
+	                                    'h3',
+	                                    { className: 'panel-title' },
+	                                    'For clients'
 	                                )
 	                            ),
 	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'list-group-item' },
-	                                _react2.default.createElement(
-	                                    _reactRouter.Link,
-	                                    { to: 'admin/login', className: 'btn btn-primary btn-block' },
-	                                    'Log in'
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'list-group-item' },
-	                                _react2.default.createElement(
-	                                    'b',
+	                                'ul',
+	                                { className: 'list-group' },
+	                                client.isAuthenticated == true ? _react2.default.createElement(
+	                                    'div',
 	                                    null,
-	                                    'Features:'
+	                                    _react2.default.createElement(
+	                                        'li',
+	                                        { className: 'list-group-item' },
+	                                        'Welcome back, ',
+	                                        client.profile.first_name + ' ' + client.profile.last_name,
+	                                        '!'
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'li',
+	                                        { className: 'list-group-item' },
+	                                        _react2.default.createElement(
+	                                            _reactRouter.Link,
+	                                            { to: 'profile', className: 'btn btn-success btn-block' },
+	                                            'Continue'
+	                                        )
+	                                    )
+	                                ) : _react2.default.createElement(
+	                                    'div',
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        'li',
+	                                        { className: 'list-group-item' },
+	                                        _react2.default.createElement(
+	                                            _reactRouter.Link,
+	                                            { to: 'login', className: 'btn btn-primary btn-block' },
+	                                            'Log in'
+	                                        )
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'li',
+	                                        { className: 'list-group-item' },
+	                                        _react2.default.createElement(
+	                                            _reactRouter.Link,
+	                                            { to: 'signup', className: 'btn btn-success btn-block' },
+	                                            'Sign up'
+	                                        )
+	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'li',
+	                                    { className: 'list-group-item' },
+	                                    _react2.default.createElement(
+	                                        'b',
+	                                        null,
+	                                        'Features:'
+	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'li',
+	                                    { className: 'list-group-item' },
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                    ' Sign up ',
+	                                    _react2.default.createElement('br', null),
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                    ' Log in ',
+	                                    _react2.default.createElement('br', null),
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                    ' Profile info ',
+	                                    _react2.default.createElement('br', null),
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                    ' Watch own cards ',
+	                                    _react2.default.createElement('br', null),
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                    ' Issue card ',
+	                                    _react2.default.createElement('br', null),
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                    ' Watch own transactions ',
+	                                    _react2.default.createElement('br', null),
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                    ' Watch analytics ',
+	                                    _react2.default.createElement('br', null)
+	                                )
+	                            )
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-sm-12 col-md-4' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'panel panel-default' },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'panel-heading' },
+	                                _react2.default.createElement(
+	                                    'h3',
+	                                    { className: 'panel-title' },
+	                                    'For employee'
 	                                )
 	                            ),
 	                            _react2.default.createElement(
-	                                'li',
-	                                { className: 'list-group-item' },
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
-	                                ' Sign up ',
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
-	                                ' Log in ',
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
-	                                ' Employee profile info ',
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
-	                                ' Manage client ',
-	                                _react2.default.createElement('br', null),
-	                                _react2.default.createElement('i', { className: 'glyphicon glyphicon-remove' }),
-	                                ' Bank analytics ',
-	                                _react2.default.createElement('br', null)
+	                                'ul',
+	                                { className: 'list-group' },
+	                                employee.isAuthenticated == true ? _react2.default.createElement(
+	                                    'div',
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        'li',
+	                                        { className: 'list-group-item' },
+	                                        'Logged in as @',
+	                                        employee.profile.username
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'li',
+	                                        { className: 'list-group-item' },
+	                                        _react2.default.createElement(
+	                                            _reactRouter.Link,
+	                                            { to: 'admin/dashboard', className: 'btn btn-success btn-block' },
+	                                            'Continue'
+	                                        )
+	                                    )
+	                                ) : _react2.default.createElement(
+	                                    'div',
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        'li',
+	                                        { className: 'list-group-item' },
+	                                        _react2.default.createElement(
+	                                            _reactRouter.Link,
+	                                            { to: 'admin/login', className: 'btn btn-primary btn-block' },
+	                                            'Log in'
+	                                        )
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'li',
+	                                        { className: 'list-group-item' },
+	                                        _react2.default.createElement(
+	                                            _reactRouter.Link,
+	                                            { to: 'admin/signup', className: 'btn btn-success btn-block' },
+	                                            'New employee'
+	                                        )
+	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'li',
+	                                    { className: 'list-group-item' },
+	                                    _react2.default.createElement(
+	                                        'b',
+	                                        null,
+	                                        'Features:'
+	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'li',
+	                                    { className: 'list-group-item' },
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                    ' Sign up ',
+	                                    _react2.default.createElement('br', null),
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                    ' Log in ',
+	                                    _react2.default.createElement('br', null),
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                    ' Employee profile info ',
+	                                    _react2.default.createElement('br', null),
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-ok' }),
+	                                    ' Manage client ',
+	                                    _react2.default.createElement('br', null),
+	                                    _react2.default.createElement('i', { className: 'glyphicon glyphicon-remove' }),
+	                                    ' Bank analytics ',
+	                                    _react2.default.createElement('br', null)
+	                                )
 	                            )
 	                        )
 	                    )
@@ -33803,12 +36169,11 @@
 	    }]);
 	
 	    return Main;
-	}(_react2.default.Component);
-	
+	}(_react2.default.Component)) || _class);
 	exports.default = Main;
 
 /***/ },
-/* 321 */
+/* 330 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33820,9 +36185,15 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
+	var _dec, _class;
+	
 	var _react = __webpack_require__(1);
 	
 	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _demo_payment = __webpack_require__(319);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -33832,36 +36203,245 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var About = function (_React$Component) {
-	    _inherits(About, _React$Component);
+	// make_payment
 	
-	    function About() {
-	        _classCallCheck(this, About);
+	var DemoPaywall = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        demo_transaction: store.reducer.demo_transaction
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(DemoPaywall, _React$Component);
 	
-	        var _this = _possibleConstructorReturn(this, (About.__proto__ || Object.getPrototypeOf(About)).call(this));
+	    function DemoPaywall(props) {
+	        _classCallCheck(this, DemoPaywall);
 	
-	        console.log(_this);
+	        var _this = _possibleConstructorReturn(this, (DemoPaywall.__proto__ || Object.getPrototypeOf(DemoPaywall)).call(this, props));
+	
+	        var currencies = ["RUB", "USD"];
+	        var categories = [{ id: 5, name: "Cash-out", type: "out" }, { id: 6, name: "Cash-in", type: "in" }, { id: 7, name: "Food", type: "out" }, { id: 8, name: "Restaurants", type: "out" }, { id: 9, name: "Transit", type: "out" }, { id: 10, name: "Pharmacy", type: "out" }, { id: 11, name: "Internet/Mobile phone", type: "out" }, { id: 12, name: "Goods for home", type: "out" }, { id: 13, name: "Clothes", type: "out" }, { id: 14, name: "Shoes", type: "out" }, { id: 15, name: "Pet shop", type: "out" }, { id: 16, name: "Cosmetics", type: "out" }, { id: 17, name: "Software, music, video", type: "out" }, { id: 18, name: "Services", type: "out" }, { id: 19, name: "Bar", type: "out" }, { id: 20, name: "Education", type: "out" }, { id: 21, name: "For kids", type: "out" }, { id: 22, name: "Gifts", type: "out" }, { id: 23, name: "Cinema, theater, concert", type: "out" }, { id: 24, name: "Sport", type: "out" }];
+	
+	        _this.state = {
+	            payment: {
+	                card_number: '',
+	                expire_at: '',
+	                pin_code: '',
+	                amount: 0.00,
+	                currency: currencies[0],
+	                category: categories[0]['id']
+	            },
+	            categories: categories,
+	            currencies: currencies,
+	            error: null
+	        };
+	
+	        _this.onChange = _this.onChange.bind(_this);
+	        _this.onSubmit = _this.onSubmit.bind(_this);
+	        _this.verifyInput = _this.verifyInput.bind(_this);
 	        return _this;
 	    }
 	
-	    _createClass(About, [{
+	    _createClass(DemoPaywall, [{
+	        key: 'onChange',
+	        value: function onChange(e) {
+	            var new_state = Object.assign({}, this.state);
+	            new_state.payment[e.target.name] = e.target.value;
+	            this.setState(new_state);
+	        }
+	    }, {
+	        key: 'onSubmit',
+	        value: function onSubmit(e) {
+	            e.preventDefault();
+	            // console.info('Login: ' + this.state.login);
+	            var verification = this.verifyInput(Object.assign({}, this.state.payment));
+	            if (verification.ok === true) {
+	                console.log('new payment', this.state.payment);
+	                this.setState({
+	                    error: null
+	                });
+	                this.props.dispatch((0, _demo_payment.make_payment)(this.state.payment));
+	            } else {
+	                this.setState({
+	                    error: verification.message
+	                });
+	            }
+	        }
+	    }, {
+	        key: 'verifyInput',
+	        value: function verifyInput(input) {
+	            var i = input;
+	            i.amount = Number(i.amount);
+	
+	            var ok = true;
+	            var err_msg = '';
+	
+	            if (i.card_number.length !== 16) {
+	                err_msg = 'Wrong card number length (should be 16 digits)';
+	            } else if (i.pin_code.length !== 4) {
+	                err_msg = 'Wrong PIN code length (should be 4 digits)';
+	            } else if (!(this.state.currencies.indexOf(i.currency) >= 0)) {
+	                err_msg = 'Unknown currency';
+	            } else {
+	                var c_found = false;
+	                this.state.categories.forEach(function (c) {
+	                    if (c.id == i.category) {
+	                        c_found = true;
+	                        if (c.type == "in" && i.amount <= 0) {
+	                            err_msg = 'Amount should be positive in this category';
+	                        } else if (c.type == "out" && i.amount >= 0) {
+	                            err_msg = 'Amount should be negative in this category';
+	                        }
+	                    }
+	                });
+	                if (!c_found) {
+	                    err_msg = 'Unknown category';
+	                }
+	            }
+	
+	            ok = !(err_msg.length > 0);
+	
+	            return {
+	                ok: ok,
+	                message: err_msg
+	            };
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var demo_transaction = this.props.demo_transaction;
+	            var alert = _react2.default.createElement('div', null);
+	
+	            if (this.state.error) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    this.state.error
+	                );
+	            } else if (demo_transaction.error) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    demo_transaction.error
+	                );
+	            }
+	
+	            console.log('demo_transaction', demo_transaction);
+	
 	            return _react2.default.createElement(
-	                'b',
-	                null,
-	                'something about us....'
+	                'div',
+	                { className: 'col-sm-12 col-md-6 col-md-offset-3' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-primary' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            { className: 'panel-title' },
+	                            'PAYWALL (ONLY FOR DEMO)'
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-body' },
+	                        _react2.default.createElement(
+	                            'form',
+	                            { onSubmit: this.onSubmit },
+	                            alert,
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'form-group' },
+	                                _react2.default.createElement(
+	                                    'label',
+	                                    null,
+	                                    'Card number'
+	                                ),
+	                                _react2.default.createElement('input', { type: 'text', className: 'form-control', name: 'card_number', onChange: this.onChange, placeholder: 'Card number (16 digits)' })
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'form-group' },
+	                                _react2.default.createElement(
+	                                    'label',
+	                                    null,
+	                                    'Expire date'
+	                                ),
+	                                _react2.default.createElement('input', { type: 'date', className: 'form-control', name: 'expire_at', onChange: this.onChange, placeholder: 'Expire date' })
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'form-group' },
+	                                _react2.default.createElement(
+	                                    'label',
+	                                    null,
+	                                    'PIN code'
+	                                ),
+	                                _react2.default.createElement('input', { type: 'password', className: 'form-control', name: 'pin_code', onChange: this.onChange, placeholder: 'PIN code (XXXX)' })
+	                            ),
+	                            _react2.default.createElement('hr', null),
+	                            _react2.default.createElement(
+	                                'label',
+	                                null,
+	                                'Amount'
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'form-group' },
+	                                _react2.default.createElement('input', { type: 'number', className: 'form-control', name: 'amount', onChange: this.onChange, placeholder: 'Amount' })
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'form-group' },
+	                                _react2.default.createElement(
+	                                    'select',
+	                                    { className: 'form-control', onChange: this.onChange, name: 'currency' },
+	                                    this.state.currencies.map(function (c) {
+	                                        return _react2.default.createElement(
+	                                            'option',
+	                                            { value: c },
+	                                            c
+	                                        );
+	                                    })
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'label',
+	                                null,
+	                                'Category'
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'form-group' },
+	                                _react2.default.createElement(
+	                                    'select',
+	                                    { className: 'form-control', onChange: this.onChange, name: 'category' },
+	                                    this.state.categories.map(function (c) {
+	                                        return _react2.default.createElement(
+	                                            'option',
+	                                            { value: c.id },
+	                                            c.name
+	                                        );
+	                                    })
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'button',
+	                                { type: 'submit', className: 'btn btn-primary' },
+	                                'Make a payment'
+	                            )
+	                        )
+	                    )
+	                )
 	            );
 	        }
 	    }]);
 	
-	    return About;
-	}(_react2.default.Component);
-	
-	exports.default = About;
+	    return DemoPaywall;
+	}(_react2.default.Component)) || _class);
+	exports.default = DemoPaywall;
 
 /***/ },
-/* 322 */
+/* 331 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34027,7 +36607,7 @@
 	exports.default = SignUp;
 
 /***/ },
-/* 323 */
+/* 332 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34142,7 +36722,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 324 */
+/* 333 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34162,19 +36742,19 @@
 	
 	var _reactRedux = __webpack_require__(233);
 	
-	var _MainInfo = __webpack_require__(325);
+	var _MainInfo = __webpack_require__(334);
 	
 	var _MainInfo2 = _interopRequireDefault(_MainInfo);
 	
-	var _Cards = __webpack_require__(326);
+	var _Cards = __webpack_require__(335);
 	
 	var _Cards2 = _interopRequireDefault(_Cards);
 	
-	var _Transactions = __webpack_require__(327);
+	var _Transactions = __webpack_require__(336);
 	
 	var _Transactions2 = _interopRequireDefault(_Transactions);
 	
-	var _Analysis = __webpack_require__(328);
+	var _Analysis = __webpack_require__(337);
 	
 	var _Analysis2 = _interopRequireDefault(_Analysis);
 	
@@ -34237,7 +36817,7 @@
 	exports.default = Profile;
 
 /***/ },
-/* 325 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34327,7 +36907,7 @@
 	exports.default = MainInfo;
 
 /***/ },
-/* 326 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34511,7 +37091,7 @@
 	exports.default = Cards;
 
 /***/ },
-/* 327 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34703,7 +37283,7 @@
 	exports.default = Transactions;
 
 /***/ },
-/* 328 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34902,7 +37482,7 @@
 	exports.default = Analysis;
 
 /***/ },
-/* 329 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35019,7 +37599,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 330 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35175,7 +37755,7 @@
 	exports.default = SignUp;
 
 /***/ },
-/* 331 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35197,7 +37777,7 @@
 	
 	var _reactRouter = __webpack_require__(178);
 	
-	var _EmployeeInfo = __webpack_require__(332);
+	var _EmployeeInfo = __webpack_require__(341);
 	
 	var _EmployeeInfo2 = _interopRequireDefault(_EmployeeInfo);
 	
@@ -35281,7 +37861,7 @@
 	exports.default = Dashboard;
 
 /***/ },
-/* 332 */
+/* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35366,7 +37946,7 @@
 	exports.default = EmployeeInfo;
 
 /***/ },
-/* 333 */
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35614,7 +38194,7 @@
 	exports.default = Clients;
 
 /***/ },
-/* 334 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35636,19 +38216,19 @@
 	
 	var _reactRouter = __webpack_require__(178);
 	
-	var _MainInfo = __webpack_require__(335);
+	var _MainInfo = __webpack_require__(344);
 	
 	var _MainInfo2 = _interopRequireDefault(_MainInfo);
 	
-	var _BankAccounts = __webpack_require__(336);
+	var _BankAccounts = __webpack_require__(345);
 	
 	var _BankAccounts2 = _interopRequireDefault(_BankAccounts);
 	
-	var _Analysis = __webpack_require__(337);
+	var _Analysis = __webpack_require__(346);
 	
 	var _Analysis2 = _interopRequireDefault(_Analysis);
 	
-	var _Transactions = __webpack_require__(338);
+	var _Transactions = __webpack_require__(347);
 	
 	var _Transactions2 = _interopRequireDefault(_Transactions);
 	
@@ -35749,7 +38329,7 @@
 	exports.default = Client;
 
 /***/ },
-/* 335 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35839,7 +38419,7 @@
 	exports.default = MainInfo;
 
 /***/ },
-/* 336 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36038,7 +38618,7 @@
 	exports.default = BankAccounts;
 
 /***/ },
-/* 337 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36239,7 +38819,7 @@
 	exports.default = Analysis;
 
 /***/ },
-/* 338 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36489,7 +39069,7 @@
 	exports.default = Transactions;
 
 /***/ },
-/* 339 */
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

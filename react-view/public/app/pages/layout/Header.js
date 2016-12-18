@@ -42,9 +42,11 @@ export default class Header extends React.Component {
         } else {
             header_auth = (
                 <span>
-                    <b><Link to="profile" className="navbar-link">{client.profile['last_name']} {client.profile['first_name']}</Link> </b> | <Link className="navbar-link" onClick={this.onLogoutClick}>Log out</Link>
+                    <b><Link to="profile" className="navbar-link">{client.profile['last_name']} {client.profile['first_name']}</Link> </b>
                 </span>
             )
+
+            // | <Link className="navbar-link" onClick={this.onLogoutClick}>Log out</Link>
         }
 
         const nav_style = {
@@ -57,6 +59,9 @@ export default class Header extends React.Component {
                         <Link to="/" className="navbar-brand">Virtual Bank</Link>
                     </div>
                     <div className="collapse navbar-collapse">
+                        <ul className="nav navbar-nav">
+                            <li><Link to="/demo_paywall">New payment</Link></li>
+                        </ul>
                         <div className="navbar-right">
                             <p className="navbar-text">
                                 {header_auth} {admin_link}

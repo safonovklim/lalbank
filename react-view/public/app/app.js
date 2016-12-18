@@ -9,22 +9,10 @@ import {syncHistoryWithStore} from 'react-router-redux'
 
 import store from './store';
 const history = syncHistoryWithStore(hashHistory, store)
-/*
-import {INCREMENT} from './actions/counter'
-import {ADD_TODO} from './actions/todos'
-store.dispatch({
-    type: INCREMENT
-});
-
-store.dispatch({
-    type: ADD_TODO,
-    text: 'HELLO WORLD BLEAT'
-})
-*/
 
 import VTemplate from './pages/layout/Template'
 import VMain from './pages/Main'
-import VAbout from './pages/About'
+import VDemoPaywall from './pages/DemoPaywall'
 
 import VSignUp from './pages/SignUp'
 import VLogin from './pages/Login'
@@ -54,10 +42,12 @@ let init_app = () => {
             <Router history={history}>
                 <Route path="/" component={VTemplate}>
                     <IndexRoute component={VMain}></IndexRoute>
-                    <Route path="about" component={VAbout}></Route>
+
                     <Route path="signup" component={VSignUp}></Route>
                     <Route path="login" component={VLogin}></Route>
                     <Route path="profile" component={routeProtector(VProfile, ONLY_AUTHENTICATED)}></Route>
+
+                    <Route path="demo_paywall" component={VDemoPaywall}></Route>
 
                     <Route path="admin/">
                         <Route path="signup" component={VAdminSignUp}></Route>
