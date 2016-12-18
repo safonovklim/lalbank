@@ -30536,7 +30536,7 @@
 	        headers['Authorization-Employee'] = employee_token;
 	    }
 	    return _axios2.default.create(Object.assign({}, {
-	        baseURL: 'http://localhost:3000/',
+	        baseURL: window.location.origin + '/',
 	        headers: headers
 	    }));
 	}

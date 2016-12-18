@@ -12,7 +12,7 @@ export default function api(headers = {}) {
         headers['Authorization-Employee'] = employee_token
     }
     return axios.create(Object.assign({}, {
-        baseURL: 'http://localhost:3000/',
+        baseURL: window.location.origin + '/',
         headers: headers
     }))
 }
