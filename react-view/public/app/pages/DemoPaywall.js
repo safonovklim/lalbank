@@ -127,10 +127,8 @@ export default class DemoPaywall extends React.Component {
         } else if (demo_transaction.error) {
             alert = <div className="alert alert-danger">{demo_transaction.error}</div>
         } else if (demo_transaction.transaction_completed) {
-            alert = <div className="alert alert-danger">Transaction completed</div>
+            alert = <div className="alert alert-success">Transaction completed</div>
         }
-
-        console.log('demo_transaction', demo_transaction)
 
         return(
             <div className="col-sm-12 col-md-6 col-md-offset-3">

@@ -36322,9 +36322,13 @@
 	                    { className: 'alert alert-danger' },
 	                    demo_transaction.error
 	                );
+	            } else if (demo_transaction.transaction_completed) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-success' },
+	                    'Transaction completed'
+	                );
 	            }
-	
-	            console.log('demo_transaction', demo_transaction);
 	
 	            return _react2.default.createElement(
 	                'div',
