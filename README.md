@@ -12,8 +12,8 @@ Framework: **Ruby on Rails**
 
 * Install front-end (second)<br>
 1) `cd react-view`<br>
-4) `npm install`<br>
-5) `webpack`<br>
+2) `npm install`<br>
+3) `webpack`<br>
 
 ## API Objects
 * **Employee**<br>
