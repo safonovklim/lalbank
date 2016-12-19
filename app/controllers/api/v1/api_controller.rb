@@ -14,7 +14,7 @@ module Api::V1
           c_token = ClientToken.find_by_token(token)
           if !c_token.blank? && c_token.expire_at > Time.now
             client = c_token.client
-            if !(client['status'] == "not_approved" or client['role'] == "banned")
+            if !(client['status'] == "not_approved" or client['status'] == "banned")
               @current_client = client
             end
           end
