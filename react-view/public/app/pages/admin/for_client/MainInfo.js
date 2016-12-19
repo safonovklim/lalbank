@@ -18,6 +18,7 @@ export default class MainInfo extends React.Component {
                     <li className="list-group-item">{user_info['last_name'] + ' ' + user_info['first_name'] + ' ' + user_info['middle_name']}</li>
                     <li className="list-group-item">Birth date <b>{user_info['birth_at']}</b></li>
                     <li className="list-group-item">Login <b>{user_info['username']}</b></li>
+                    <li className="list-group-item">Status <b>{user_info['status']}</b></li>
                 </ul>
             </div>
         )

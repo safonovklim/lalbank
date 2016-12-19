@@ -36,6 +36,11 @@ import {
     E_SWITCH_TRANSACTIONS_PAGE
 } from '../actions/employee_transactions'
 
+import {
+    E_UPDATE_USER_OK,
+    E_UPDATE_USER_FAILED
+} from '../actions/employee_client'
+
 import cookie from 'react-cookie'
 
 const date_now = new Date()
@@ -46,7 +51,8 @@ const startState = {
         clients: null,
         bank_accounts: null,
         transactions: null,
-        analysis: null
+        analysis: null,
+        client_update: null
     },
     isAuthenticated: false,
     profile: null,
@@ -386,6 +392,20 @@ export default function employee(state = initialState, action) {
 
 
             return new_state
+        }
+
+
+        case E_UPDATE_USER_OK: {
+            let new_state =  Object.assign({}, state)
+            new_state.data.client.profile = action.data.client
+            return new_state
+        }
+        case E_UPDATE_USER_FAILED: {
+            return Object.assign({}, state, {
+                errors: Object.assign({}, state.errors, {
+                    client_update: (action.data['message']) ? action.data.message : 'Unknown error'
+                })
+            })
         }
 
         default: {

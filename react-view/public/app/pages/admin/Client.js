@@ -6,6 +6,7 @@ import MainInfo from './for_client/MainInfo'
 import BankAccounts from './for_client/BankAccounts'
 import Analysis from './for_client/Analysis'
 import Transactions from './for_client/Transactions'
+import Actions from './for_client/Actions'
 
 import {
     open_client,
@@ -39,13 +40,14 @@ export default class Client extends React.Component {
             <div>
                 <div className="row">
                     <div className="col-sm-12 col-md-3">
-                        <Link to="admin/clients" className="btn btn-danger">back to all clients</Link>
+                        <Link to="admin/clients" className="btn btn-danger btn-block">back to all clients</Link>
                     </div>
                 </div>
                 <hr/>
                 <div className="row">
                     <div className="col-sm-12 col-md-6">
                         <MainInfo employee={employee}/>
+                        <Actions employee={employee} />
                     </div>
                     <div className="col-sm-12 col-md-6">
                         <Analysis employee={employee}/>

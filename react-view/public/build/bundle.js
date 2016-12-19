@@ -64,51 +64,51 @@
 	
 	var _store2 = _interopRequireDefault(_store);
 	
-	var _Template = __webpack_require__(327);
+	var _Template = __webpack_require__(328);
 	
 	var _Template2 = _interopRequireDefault(_Template);
 	
-	var _Main = __webpack_require__(329);
+	var _Main = __webpack_require__(330);
 	
 	var _Main2 = _interopRequireDefault(_Main);
 	
-	var _DemoPaywall = __webpack_require__(330);
+	var _DemoPaywall = __webpack_require__(331);
 	
 	var _DemoPaywall2 = _interopRequireDefault(_DemoPaywall);
 	
-	var _SignUp = __webpack_require__(331);
+	var _SignUp = __webpack_require__(332);
 	
 	var _SignUp2 = _interopRequireDefault(_SignUp);
 	
-	var _Login = __webpack_require__(332);
+	var _Login = __webpack_require__(333);
 	
 	var _Login2 = _interopRequireDefault(_Login);
 	
-	var _Profile = __webpack_require__(333);
+	var _Profile = __webpack_require__(334);
 	
 	var _Profile2 = _interopRequireDefault(_Profile);
 	
-	var _Login3 = __webpack_require__(338);
+	var _Login3 = __webpack_require__(339);
 	
 	var _Login4 = _interopRequireDefault(_Login3);
 	
-	var _SignUp3 = __webpack_require__(339);
+	var _SignUp3 = __webpack_require__(340);
 	
 	var _SignUp4 = _interopRequireDefault(_SignUp3);
 	
-	var _Dashboard = __webpack_require__(340);
+	var _Dashboard = __webpack_require__(341);
 	
 	var _Dashboard2 = _interopRequireDefault(_Dashboard);
 	
-	var _Clients = __webpack_require__(342);
+	var _Clients = __webpack_require__(343);
 	
 	var _Clients2 = _interopRequireDefault(_Clients);
 	
-	var _Client = __webpack_require__(343);
+	var _Client = __webpack_require__(344);
 	
 	var _Client2 = _interopRequireDefault(_Client);
 	
-	var _routeProtector = __webpack_require__(348);
+	var _routeProtector = __webpack_require__(350);
 	
 	var _routeProtector2 = _interopRequireDefault(_routeProtector);
 	
@@ -30074,7 +30074,7 @@
 	
 	var _employee2 = _interopRequireDefault(_employee);
 	
-	var _demo_transaction = __webpack_require__(318);
+	var _demo_transaction = __webpack_require__(319);
 	
 	var _demo_transaction2 = _interopRequireDefault(_demo_transaction);
 	
@@ -32594,6 +32594,8 @@
 	
 	var _employee_transactions = __webpack_require__(317);
 	
+	var _employee_client = __webpack_require__(318);
+	
 	var _reactCookie = __webpack_require__(305);
 	
 	var _reactCookie2 = _interopRequireDefault(_reactCookie);
@@ -32608,7 +32610,8 @@
 	        clients: null,
 	        bank_accounts: null,
 	        transactions: null,
-	        analysis: null
+	        analysis: null,
+	        client_update: null
 	    },
 	    isAuthenticated: false,
 	    profile: null,
@@ -32976,6 +32979,21 @@
 	
 	
 	                return _new_state5;
+	            }
+	
+	        case _employee_client.E_UPDATE_USER_OK:
+	            {
+	                var _new_state6 = Object.assign({}, state);
+	                _new_state6.data.client.profile = action.data.client;
+	                return _new_state6;
+	            }
+	        case _employee_client.E_UPDATE_USER_FAILED:
+	            {
+	                return Object.assign({}, state, {
+	                    errors: Object.assign({}, state.errors, {
+	                        client_update: action.data['message'] ? action.data.message : 'Unknown error'
+	                    })
+	                });
 	            }
 	
 	        default:
@@ -33402,9 +33420,63 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.E_UPDATE_USER_FAILED = exports.E_UPDATE_USER_OK = undefined;
+	exports.update = update;
+	
+	var _api = __webpack_require__(279);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var my_api = (0, _api2.default)();
+	
+	var E_UPDATE_USER_OK = exports.E_UPDATE_USER_OK = 'E_UPDATE_USER_OK';
+	var E_UPDATE_USER_FAILED = exports.E_UPDATE_USER_FAILED = 'E_UPDATE_USER_FAILED';
+	
+	function update(client_id) {
+	    var action = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+	
+	    return function (dispatch) {
+	        if (action.length == 0) {
+	            dispatch({
+	                type: E_UPDATE_USER_FAILED,
+	                data: {
+	                    message: 'Unknown action'
+	                }
+	            });
+	        } else {
+	            my_api.post("api/v1/clients/" + client_id + "/" + action).then(function (response) {
+	                dispatch({
+	                    type: E_UPDATE_USER_OK,
+	                    data: response.data
+	                });
+	            }).catch(function (err) {
+	                console.error(err);
+	                dispatch({
+	                    type: E_UPDATE_USER_FAILED,
+	                    data: {
+	                        handle: err,
+	                        message: err.response.data.message
+	                    }
+	                });
+	            });
+	        }
+	    };
+	}
+
+/***/ },
+/* 319 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	exports.default = demo_transaction;
 	
-	var _demo_payment = __webpack_require__(319);
+	var _demo_payment = __webpack_require__(320);
 	
 	var _reactCookie = __webpack_require__(305);
 	
@@ -33445,7 +33517,7 @@
 	}
 
 /***/ },
-/* 319 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33460,7 +33532,7 @@
 	
 	var _api2 = _interopRequireDefault(_api);
 	
-	var _sha = __webpack_require__(320);
+	var _sha = __webpack_require__(321);
 	
 	var _sha2 = _interopRequireDefault(_sha);
 	
@@ -33503,15 +33575,15 @@
 	}
 
 /***/ },
-/* 320 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {'use strict';
 	
 	(function () {
-	  var crypt = __webpack_require__(325),
-	      utf8 = __webpack_require__(326).utf8,
-	      bin = __webpack_require__(326).bin,
+	  var crypt = __webpack_require__(326),
+	      utf8 = __webpack_require__(327).utf8,
+	      bin = __webpack_require__(327).bin,
 	
 	
 	  // The core
@@ -33579,10 +33651,10 @@
 	
 	  module.exports = api;
 	})();
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(321).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(322).Buffer))
 
 /***/ },
-/* 321 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/*!
@@ -33595,9 +33667,9 @@
 	
 	'use strict';
 	
-	var base64 = __webpack_require__(322);
-	var ieee754 = __webpack_require__(323);
-	var isArray = __webpack_require__(324);
+	var base64 = __webpack_require__(323);
+	var ieee754 = __webpack_require__(324);
+	var isArray = __webpack_require__(325);
 	
 	exports.Buffer = Buffer;
 	exports.SlowBuffer = SlowBuffer;
@@ -35325,7 +35397,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 322 */
+/* 323 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35444,7 +35516,7 @@
 	}
 
 /***/ },
-/* 323 */
+/* 324 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35535,7 +35607,7 @@
 	};
 
 /***/ },
-/* 324 */
+/* 325 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35547,7 +35619,7 @@
 	};
 
 /***/ },
-/* 325 */
+/* 326 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35643,7 +35715,7 @@
 	})();
 
 /***/ },
-/* 326 */
+/* 327 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35683,7 +35755,7 @@
 	module.exports = charenc;
 
 /***/ },
-/* 327 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35699,7 +35771,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _Header = __webpack_require__(328);
+	var _Header = __webpack_require__(329);
 	
 	var _Header2 = _interopRequireDefault(_Header);
 	
@@ -35738,7 +35810,7 @@
 	exports.default = Template;
 
 /***/ },
-/* 328 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35897,7 +35969,7 @@
 	exports.default = Header;
 
 /***/ },
-/* 329 */
+/* 330 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36173,7 +36245,7 @@
 	exports.default = Main;
 
 /***/ },
-/* 330 */
+/* 331 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36193,7 +36265,7 @@
 	
 	var _reactRedux = __webpack_require__(233);
 	
-	var _demo_payment = __webpack_require__(319);
+	var _demo_payment = __webpack_require__(320);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -36445,7 +36517,7 @@
 	exports.default = DemoPaywall;
 
 /***/ },
-/* 331 */
+/* 332 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36611,7 +36683,7 @@
 	exports.default = SignUp;
 
 /***/ },
-/* 332 */
+/* 333 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36726,7 +36798,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 333 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36746,19 +36818,19 @@
 	
 	var _reactRedux = __webpack_require__(233);
 	
-	var _MainInfo = __webpack_require__(334);
+	var _MainInfo = __webpack_require__(335);
 	
 	var _MainInfo2 = _interopRequireDefault(_MainInfo);
 	
-	var _Cards = __webpack_require__(335);
+	var _Cards = __webpack_require__(336);
 	
 	var _Cards2 = _interopRequireDefault(_Cards);
 	
-	var _Transactions = __webpack_require__(336);
+	var _Transactions = __webpack_require__(337);
 	
 	var _Transactions2 = _interopRequireDefault(_Transactions);
 	
-	var _Analysis = __webpack_require__(337);
+	var _Analysis = __webpack_require__(338);
 	
 	var _Analysis2 = _interopRequireDefault(_Analysis);
 	
@@ -36821,7 +36893,7 @@
 	exports.default = Profile;
 
 /***/ },
-/* 334 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36911,7 +36983,7 @@
 	exports.default = MainInfo;
 
 /***/ },
-/* 335 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37095,7 +37167,7 @@
 	exports.default = Cards;
 
 /***/ },
-/* 336 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37287,7 +37359,7 @@
 	exports.default = Transactions;
 
 /***/ },
-/* 337 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37486,7 +37558,7 @@
 	exports.default = Analysis;
 
 /***/ },
-/* 338 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37603,7 +37675,7 @@
 	exports.default = Login;
 
 /***/ },
-/* 339 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37759,7 +37831,7 @@
 	exports.default = SignUp;
 
 /***/ },
-/* 340 */
+/* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37781,7 +37853,7 @@
 	
 	var _reactRouter = __webpack_require__(178);
 	
-	var _EmployeeInfo = __webpack_require__(341);
+	var _EmployeeInfo = __webpack_require__(342);
 	
 	var _EmployeeInfo2 = _interopRequireDefault(_EmployeeInfo);
 	
@@ -37865,7 +37937,7 @@
 	exports.default = Dashboard;
 
 /***/ },
-/* 341 */
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37950,7 +38022,7 @@
 	exports.default = EmployeeInfo;
 
 /***/ },
-/* 342 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38198,7 +38270,7 @@
 	exports.default = Clients;
 
 /***/ },
-/* 343 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38220,21 +38292,25 @@
 	
 	var _reactRouter = __webpack_require__(178);
 	
-	var _MainInfo = __webpack_require__(344);
+	var _MainInfo = __webpack_require__(345);
 	
 	var _MainInfo2 = _interopRequireDefault(_MainInfo);
 	
-	var _BankAccounts = __webpack_require__(345);
+	var _BankAccounts = __webpack_require__(346);
 	
 	var _BankAccounts2 = _interopRequireDefault(_BankAccounts);
 	
-	var _Analysis = __webpack_require__(346);
+	var _Analysis = __webpack_require__(347);
 	
 	var _Analysis2 = _interopRequireDefault(_Analysis);
 	
-	var _Transactions = __webpack_require__(347);
+	var _Transactions = __webpack_require__(348);
 	
 	var _Transactions2 = _interopRequireDefault(_Transactions);
+	
+	var _Actions = __webpack_require__(349);
+	
+	var _Actions2 = _interopRequireDefault(_Actions);
 	
 	var _employee_clients = __webpack_require__(314);
 	
@@ -38286,7 +38362,7 @@
 	                        { className: 'col-sm-12 col-md-3' },
 	                        _react2.default.createElement(
 	                            _reactRouter.Link,
-	                            { to: 'admin/clients', className: 'btn btn-danger' },
+	                            { to: 'admin/clients', className: 'btn btn-danger btn-block' },
 	                            'back to all clients'
 	                        )
 	                    )
@@ -38298,7 +38374,8 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'col-sm-12 col-md-6' },
-	                        _react2.default.createElement(_MainInfo2.default, { employee: employee })
+	                        _react2.default.createElement(_MainInfo2.default, { employee: employee }),
+	                        _react2.default.createElement(_Actions2.default, { employee: employee })
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',
@@ -38333,7 +38410,7 @@
 	exports.default = Client;
 
 /***/ },
-/* 344 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38411,6 +38488,16 @@
 	                            null,
 	                            user_info['username']
 	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'li',
+	                        { className: 'list-group-item' },
+	                        'Status ',
+	                        _react2.default.createElement(
+	                            'b',
+	                            null,
+	                            user_info['status']
+	                        )
 	                    )
 	                )
 	            );
@@ -38423,7 +38510,7 @@
 	exports.default = MainInfo;
 
 /***/ },
-/* 345 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38622,7 +38709,7 @@
 	exports.default = BankAccounts;
 
 /***/ },
-/* 346 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38823,7 +38910,7 @@
 	exports.default = Analysis;
 
 /***/ },
-/* 347 */
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39073,7 +39160,147 @@
 	exports.default = Transactions;
 
 /***/ },
-/* 348 */
+/* 349 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _dec, _class;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRedux = __webpack_require__(233);
+	
+	var _employee_client = __webpack_require__(318);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Analysis = (_dec = (0, _reactRedux.connect)(function (store) {
+	    return {
+	        errors: store.reducer.employee.errors,
+	        employee_data: store.reducer.employee.data.client,
+	        employee: store.reducer.employee
+	    };
+	}), _dec(_class = function (_React$Component) {
+	    _inherits(Analysis, _React$Component);
+	
+	    function Analysis(props) {
+	        _classCallCheck(this, Analysis);
+	
+	        var _this = _possibleConstructorReturn(this, (Analysis.__proto__ || Object.getPrototypeOf(Analysis)).call(this, props));
+	
+	        _this.update = _this.update.bind(_this);
+	        return _this;
+	    }
+	
+	    _createClass(Analysis, [{
+	        key: 'update',
+	        value: function update() {
+	            var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+	
+	            this.props.dispatch((0, _employee_client.update)(this.props.employee.data.client.profile.id, action));
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+	
+	            var a_error = this.props.errors.client_update;
+	            var a_data = this.props.employee_data; // analysis data
+	            var e_data = this.props.employee;
+	
+	            if (!(e_data.profile.role == "security_staff" || e_data.profile.role == "founder")) {
+	                return _react2.default.createElement('div', null);
+	            }
+	
+	            var alert = _react2.default.createElement('div', null);
+	            if (a_error) {
+	                alert = _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    a_error
+	                );
+	            }
+	
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                alert,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'panel panel-default' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'panel-heading' },
+	                        _react2.default.createElement(
+	                            'h3',
+	                            { className: 'panel-title' },
+	                            'Actions'
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'ul',
+	                        { className: 'list-group' },
+	                        e_data.profile.role == "security_staff" && a_data.profile.status == "not_approved" ? _react2.default.createElement(
+	                            'li',
+	                            { className: 'list-group-item' },
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-success btn-block', onClick: function onClick() {
+	                                        return _this2.update('approve');
+	                                    } },
+	                                'approve'
+	                            )
+	                        ) : _react2.default.createElement('div', null),
+	                        a_data.profile.status == "activated" ? _react2.default.createElement(
+	                            'li',
+	                            { className: 'list-group-item' },
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-block btn-danger', onClick: function onClick() {
+	                                        return _this2.update('ban');
+	                                    } },
+	                                'block'
+	                            )
+	                        ) : _react2.default.createElement('div', null),
+	                        a_data.profile.status == "banned" ? _react2.default.createElement(
+	                            'li',
+	                            { className: 'list-group-item' },
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-block btn-danger', onClick: function onClick() {
+	                                        return _this2.update('unban');
+	                                    } },
+	                                'unblock'
+	                            )
+	                        ) : _react2.default.createElement('div', null)
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Analysis;
+	}(_react2.default.Component)) || _class);
+	exports.default = Analysis;
+
+/***/ },
+/* 350 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
