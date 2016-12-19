@@ -6,7 +6,7 @@ Framework: **Ruby on Rails**
 * Install back-end (first)<br>
 1) `git clone https://github.com/safonovklim/lalbank && cd lalbank`<br>
 2) Configure PostgreSQL in `config/database.yml`<br>
-3) Configure secrets (more info below)
+3) Configure secrets (more info below)<br>
 4) `rake db:setup`<br>
 5) `rails server`<br>
 
@@ -80,6 +80,15 @@ No parameters
 If success, will return card_number, expire date and pin code. Save it.<br>
 Parameters:<br>
 card[currency] - string (ex. **RUB**)<br>
+
+* [GET] **/transactions**<br>
+Parameters:<br>
+page - integer (1 to ...)
+
+* [GET] **/analysis**<br>
+Parameters:<br>
+year - integer
+month - integer (1 to 12)
 
 ### For employee
 before endpoint add: **/api/v1**
